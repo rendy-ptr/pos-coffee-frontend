@@ -1,6 +1,6 @@
 const LandingPageLayout = () => {
   return (
-    <h1 className="text-2xl text-center                            text-emerald-600">
+    <h1 className="text-center text-2xl text-emerald-600">
       Testing Landing Page!
     </h1>
   );
