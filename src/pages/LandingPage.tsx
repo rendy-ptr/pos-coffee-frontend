@@ -1,7 +1,7 @@
-import LandingPageLayout from '../layouts/LandingPageLayout'
+import LandingPageLayout from '../layouts/LandingPageLayout';
 
 const LandingPage = () => {
-  return <LandingPageLayout />
-}
+  return <LandingPageLayout />;
+};
 
-export default LandingPage
+export default LandingPage;

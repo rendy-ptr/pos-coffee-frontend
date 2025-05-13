@@ -5,7 +5,7 @@ const LandingPageLayout = () => {
         Testing Landing Page!
       </h1>
     </div>
-  )
-}
+  );
+};
 
-export default LandingPageLayout
+export default LandingPageLayout;
