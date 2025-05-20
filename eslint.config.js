@@ -64,4 +64,33 @@ export default [
       },
     },
   },
+  {
+    files: ['vite.config.ts', '**/*.config.{js,ts}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: tsParser,
+      globals: {
+        ...globals.node,
+      },
+    },
+    plugins: {
+      prettier: prettierPlugin,
+      '@typescript-eslint': tsEslintPlugin,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...prettierConfig.rules,
+      ...tsEslintPlugin.configs.recommended.rules,
+      'prettier/prettier': 'error',
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          varsIgnorePattern: '^_',
+          argsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
 ];
