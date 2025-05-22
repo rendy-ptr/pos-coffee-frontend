@@ -30,7 +30,7 @@ const Navbar = () => {
 
         {/* Kanan: Button */}
         <div className="ml-auto">
-          <Button className="bg-[#6f4e37] text-white hover:bg-[#5d4130]">
+          <Button className="cursor-pointer bg-[#6f4e37] text-white hover:bg-[#5d4130]">
             Pesan Sekarang
           </Button>
         </div>
