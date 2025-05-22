@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Link } from 'react-router-dom';
+import { NAV_LINKS } from '@/contants/navLinks';
 
 const Navbar = () => {
   const { Coffee } = lucideIcons;
@@ -16,12 +17,7 @@ const Navbar = () => {
 
         {/* Tengah: Nav */}
         <nav className="absolute top-1/2 left-1/2 hidden -translate-x-1/2 -translate-y-1/2 gap-6 md:flex">
-          {[
-            { name: 'Beranda', to: '#' },
-            { name: 'Menu', to: '#menu' },
-            { name: 'Tentang Kami', to: '#about' },
-            { name: 'Lokasi', to: '#location' },
-          ].map(item => (
+          {NAV_LINKS.map(item => (
             <Link
               key={item.name}
               to={item.to}
