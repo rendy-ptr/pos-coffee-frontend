@@ -1,22 +1,9 @@
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
 import { Button } from '@/components/ui/button';
 import { HERO_FEATURES } from '@/contants/heroFeatures';
-import { heroAnimation } from '@/animation/heroAnimation';
+import { useHeroAnimation } from '@/hooks/useHeroAnimation';
 
 const HeroSection = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const ctx = gsap.context(self => {
-      heroAnimation(self);
-    }, containerRef);
-
-    return () => ctx.revert();
-  }, []);
-
+  const containerRef = useHeroAnimation();
   return (
     <section
       ref={containerRef}
