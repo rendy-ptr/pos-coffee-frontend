@@ -4,7 +4,7 @@ import { menuFavorits } from '@/contants/menuFavorits';
 const MenuFavoritSection = () => {
   return (
     <section id="menu" className="bg-[#f8f3e9] py-16">
-      <div className="mx-auto max-w-6xl px-4 md:px-6">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
         {/* Judul dan deskripsi di tengah */}
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
