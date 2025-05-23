@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { menuFavorits } from '@/contants/menuFavorits';
+import { MENU_FAVORITS } from '@/contants/menuFavorits';
 
 const MenuFavoritSection = () => {
   return (
@@ -20,7 +20,7 @@ const MenuFavoritSection = () => {
 
         {/* Kartu menu */}
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {menuFavorits.map((item, index) => (
+          {MENU_FAVORITS.map((item, index) => (
             <div
               key={index}
               className="group relative overflow-hidden rounded-lg border border-[#e6d9c9] bg-white shadow-sm transition-all hover:shadow-md"

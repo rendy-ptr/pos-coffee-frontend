@@ -3,6 +3,7 @@ import HeroSection from '@/sections/HeroSection';
 import MenuFavoritSection from '@/sections/MenuFavoritSection';
 import AboutSection from '@/sections/AboutSection';
 import LocationSection from '@/sections/LocationSection';
+import ServiceSection from '@/sections/ServiceSection';
 
 const LandingPageLayout = () => {
   return (
@@ -18,6 +19,8 @@ const LandingPageLayout = () => {
         <AboutSection />
         {/* Location Section */}
         <LocationSection />
+        {/* Services Section */}
+        <ServiceSection />
       </main>
     </div>
   );

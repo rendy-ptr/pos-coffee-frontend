@@ -1,11 +1,11 @@
-type menus = {
+type menu = {
   name: string;
   description: string;
   price: string;
   image: string;
 };
 
-export const menuFavorits: menus[] = [
+export const MENU_FAVORITS: menu[] = [
   {
     name: 'Espresso',
     description: 'Kopi hitam pekat dengan cita rasa kuat',

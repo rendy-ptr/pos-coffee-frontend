@@ -6,6 +6,11 @@ import {
   Instagram,
   Facebook,
   Twitter,
+  Calendar,
+  Package,
+  Users,
+  BookOpen,
+  ShoppingBag,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -16,4 +21,9 @@ export const lucideIcons = {
   Instagram,
   Facebook,
   Twitter,
+  Calendar,
+  Package,
+  Users,
+  BookOpen,
+  ShoppingBag,
 } as const;
