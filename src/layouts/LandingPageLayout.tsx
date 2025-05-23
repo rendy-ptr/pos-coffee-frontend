@@ -4,6 +4,7 @@ import MenuFavoritSection from '@/sections/MenuFavoritSection';
 import AboutSection from '@/sections/AboutSection';
 import LocationSection from '@/sections/LocationSection';
 import ServiceSection from '@/sections/ServiceSection';
+import TestimonialSection from '@/sections/TestimonialSection';
 
 const LandingPageLayout = () => {
   return (
@@ -21,6 +22,8 @@ const LandingPageLayout = () => {
         <LocationSection />
         {/* Services Section */}
         <ServiceSection />
+        {/* Testimonials */}
+        <TestimonialSection />
       </main>
     </div>
   );
