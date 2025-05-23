@@ -33,7 +33,7 @@ export const heroAnimation = (context: unknown) => {
   // 4. Hero buttons container - slide up and fade in
   tl.fromTo(
     '.hero-buttons',
-    { y: 12, opacity: 0 },
+    { y: 120, opacity: 0 },
     {
       y: 0,
       opacity: 1,
@@ -46,7 +46,7 @@ export const heroAnimation = (context: unknown) => {
   // 5. Hero buttons individual - staggered pop-in
   tl.fromTo(
     '.hero-buttons > button',
-    { y: 10, opacity: 0, scale: 0.92 },
+    { y: 0, opacity: 0 },
     {
       y: 0,
       opacity: 1,

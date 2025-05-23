@@ -1,5 +1,6 @@
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/sections/HeroSection';
+import MenuFavoritSection from '@/sections/MenuFavoritSection';
 
 const LandingPageLayout = () => {
   return (
@@ -7,7 +8,10 @@ const LandingPageLayout = () => {
       <Navbar />
       {/* Main Content */}
       <main className="flex-1">
+        {/* Hero Section */}
         <HeroSection />
+        {/* Featured Products */}
+        <MenuFavoritSection />
       </main>
     </div>
   );
