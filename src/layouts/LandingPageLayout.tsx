@@ -2,6 +2,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '@/sections/HeroSection';
 import MenuFavoritSection from '@/sections/MenuFavoritSection';
 import AboutSection from '@/sections/AboutSection';
+import LocationSection from '@/sections/LocationSection';
 
 const LandingPageLayout = () => {
   return (
@@ -15,6 +16,8 @@ const LandingPageLayout = () => {
         <MenuFavoritSection />
         {/* About Section */}
         <AboutSection />
+        {/* Location Section */}
+        <LocationSection />
       </main>
     </div>
   );
