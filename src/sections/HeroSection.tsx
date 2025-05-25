@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { HERO_FEATURES } from '@/contants/heroFeatures';
+import { HERO_FEATURES } from '@/constants/heroFeatures';
 import { useHeroAnimation } from '@/hooks/useHeroAnimation';
 
 const HeroSection = () => {

@@ -1,4 +1,4 @@
-import { TESTIMONIALS } from '@/contants/testimonial';
+import { TESTIMONIALS } from '@/constants/testimonial';
 import TestimonialCard from '@/components/TestimonialCard';
 
 const TestimonialSection = () => {

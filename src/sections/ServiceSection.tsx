@@ -1,4 +1,4 @@
-import { SERVICE_FEATURES } from '@/contants/serviceFeatures';
+import { SERVICE_FEATURES } from '@/constants/serviceFeatures';
 
 const ServiceSection = () => {
   return (

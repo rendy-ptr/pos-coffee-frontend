@@ -1,6 +1,6 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Link } from 'react-router-dom';
-import { NAV_LINKS } from '@/contants/navLinks';
+import { NAV_LINKS } from '@/constants/navLinks';
 
 const Navbar = () => {
   const { Coffee } = lucideIcons;
@@ -20,7 +20,7 @@ const Navbar = () => {
             <Link
               key={index}
               to={item.to}
-              className="text-lg font-medium text-[#6f4e37] transition-colors hover:text-[#a67c52]"
+              className="text-md font-medium text-[#6f4e37] transition-colors hover:text-[#a67c52]"
             >
               {item.name}
             </Link>
