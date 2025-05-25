@@ -5,6 +5,7 @@ import AboutSection from '@/sections/AboutSection';
 import LocationSection from '@/sections/LocationSection';
 import ServiceSection from '@/sections/ServiceSection';
 import TestimonialSection from '@/sections/TestimonialSection';
+import MemberSection from '@/sections/MemberSection';
 import Footer from '@/components/layout/Footer';
 
 const LandingPageLayout = () => {
@@ -25,6 +26,8 @@ const LandingPageLayout = () => {
         <ServiceSection />
         {/* Testimonials */}
         <TestimonialSection />
+        {/* Member Section */}
+        <MemberSection />
       </main>
       <Footer />
     </div>
