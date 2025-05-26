@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MENU_FAVORITES, MENU_CATEGORIES } from '@/constants/menuFavorites';
+import { Link } from 'react-router-dom';
 
 const MenuFavoriteSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('kopi');
@@ -58,6 +59,11 @@ const MenuFavoriteSection = () => {
                 />
               </div>
               <div className="p-6">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="rounded-full bg-[#f8f3e9] px-2 py-1 text-xs font-medium text-[#a67c52]">
+                    {item.category}
+                  </span>
+                </div>
                 <h3 className="text-xl font-bold text-[#6f4e37]">
                   {item.name}
                 </h3>
@@ -77,9 +83,11 @@ const MenuFavoriteSection = () => {
 
         {/* Tombol aksi */}
         <div className="mt-12 text-center">
-          <Button className="cursor-pointer bg-[#6f4e37] text-white hover:bg-[#5d4130]">
-            Lihat Menu Lengkap
-          </Button>
+          <Link to="/menu-lengkap">
+            <Button className="cursor-pointer bg-[#6f4e37] text-white hover:bg-[#5d4130]">
+              Lihat Menu Lengkap
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

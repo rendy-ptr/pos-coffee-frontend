@@ -1,13 +1,8 @@
-import type { LucideIcon } from 'lucide-react';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 
 const { Coffee, Clock, MapPin, Phone } = lucideIcons;
 
-type HeroFeature = {
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-};
+import type { HeroFeature } from '@/types/landingpage/hero-section';
 
 export const HERO_FEATURES: HeroFeature[] = [
   { icon: Coffee, title: 'Kopi Premium', desc: 'Biji kopi pilihan' },

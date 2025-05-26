@@ -1,18 +1,7 @@
-type menu = {
-  name: string;
-  description: string;
-  price: string;
-  category: string;
-  categoryId: string;
-  image: string;
-};
+import type { menuData } from '@/types/menu/menu-data';
+import type { menuCategory } from '@/types/menu/menu-category';
 
-type menuCategory = {
-  id: string;
-  label: string;
-};
-
-export const MENU_FAVORITES: menu[] = [
+export const MENU_FAVORITES: menuData[] = [
   {
     name: 'Espresso',
     description: 'Kopi hitam pekat dengan cita rasa kuat',

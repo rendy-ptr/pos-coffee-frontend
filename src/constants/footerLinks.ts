@@ -1,12 +1,7 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type { LucideIcon } from 'lucide-react';
 const { Instagram, Facebook, Twitter } = lucideIcons;
 
-type FooterLink = {
-  to: string;
-  icon: LucideIcon;
-  label: string;
-};
+import type { FooterLink } from '@/types/footer';
 
 export const FOOTER_LINKS: FooterLink[] = [
   { to: '#', icon: Instagram, label: 'Instagram' },

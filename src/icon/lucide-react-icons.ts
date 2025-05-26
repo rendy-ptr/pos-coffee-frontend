@@ -12,6 +12,8 @@ import {
   BookOpen,
   ShoppingBag,
   Gift,
+  ArrowLeft,
+  Search,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -28,4 +30,6 @@ export const lucideIcons = {
   BookOpen,
   ShoppingBag,
   Gift,
+  ArrowLeft,
+  Search,
 } as const;

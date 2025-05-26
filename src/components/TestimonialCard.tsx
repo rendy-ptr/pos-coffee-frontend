@@ -1,4 +1,4 @@
-import type { Testimonial } from '@/types/testimonial';
+import type { Testimonial } from '@/types/landingpage/testimonial';
 
 const TestimonialCard = ({ name, comment, rating }: Testimonial) => (
   <div className="rounded-lg border border-[#d5c4b0] bg-white p-6 shadow-sm">

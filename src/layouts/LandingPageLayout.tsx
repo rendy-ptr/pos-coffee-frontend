@@ -1,11 +1,11 @@
 import Navbar from '@/components/layout/Navbar';
-import HeroSection from '@/sections/HeroSection';
-import MenuFavoriteSection from '@/sections/MenuFavoriteSection';
-import AboutSection from '@/sections/AboutSection';
-import LocationSection from '@/sections/LocationSection';
-import ServiceSection from '@/sections/ServiceSection';
-import TestimonialSection from '@/sections/TestimonialSection';
-import MemberSection from '@/sections/MemberSection';
+import HeroSection from '@/sections/LandingPage/HeroSection';
+import MenuFavoriteSection from '@/sections/LandingPage/MenuFavoriteSection';
+import AboutSection from '@/sections/LandingPage/AboutSection';
+import LocationSection from '@/sections/LandingPage/LocationSection';
+import ServiceSection from '@/sections/LandingPage/ServiceSection';
+import TestimonialSection from '@/sections/LandingPage/TestimonialSection';
+import MemberSection from '@/sections/LandingPage/MemberSection';
 import Footer from '@/components/layout/Footer';
 
 const LandingPageLayout = () => {

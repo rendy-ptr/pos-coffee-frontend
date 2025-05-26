@@ -1,7 +1,4 @@
-type NavLink = {
-  name: string;
-  to: string;
-};
+import type { NavLink } from '@/types/landingpage/navbar';
 
 export const NAV_LINKS: NavLink[] = [
   { name: 'Beranda', to: '#beranda' },

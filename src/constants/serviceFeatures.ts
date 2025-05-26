@@ -1,13 +1,8 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type React from 'react';
 
 const { Coffee, Calendar, Package, Users, BookOpen, ShoppingBag } = lucideIcons;
 
-type ServiceFeature = {
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-  title: string;
-  desc: string;
-};
+import type { ServiceFeature } from '@/types/landingpage/service';
 
 export const SERVICE_FEATURES: ServiceFeature[] = [
   {
