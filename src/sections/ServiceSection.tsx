@@ -2,7 +2,7 @@ import { SERVICE_FEATURES } from '@/constants/serviceFeatures';
 
 const ServiceSection = () => {
   return (
-    <section className="bg-[#e6d9c9] py-16">
+    <section id="layanan" className="bg-[#e6d9c9] py-16">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">

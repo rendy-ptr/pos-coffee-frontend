@@ -6,6 +6,7 @@ const HeroSection = () => {
   const containerRef = useHeroAnimation();
   return (
     <section
+      id="beranda"
       ref={containerRef}
       className="relative overflow-hidden bg-[#2c1810]"
     >
