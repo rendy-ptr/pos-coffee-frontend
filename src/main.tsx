@@ -4,10 +4,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import LandingPage from './pages/LandingPage';
 import MenuLengkapPage from './pages/MenuLengkapPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 const router = createBrowserRouter([
   { path: '/', element: <LandingPage /> },
   { path: '/menu-lengkap', element: <MenuLengkapPage /> },
+  { path: '*', element: <NotFoundPage /> },
 ]);
 
 createRoot(document.getElementById('root')!).render(
