@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { HERO_FEATURES } from '@/constants/heroFeatures';
 import { useHeroAnimation } from '@/hooks/useHeroAnimation';
+import ImageElement from '../elements/ImageElement';
 
 const HeroSection = () => {
   const containerRef = useHeroAnimation();
@@ -11,12 +12,12 @@ const HeroSection = () => {
       className="relative overflow-hidden bg-[#2c1810]"
     >
       <div className="absolute inset-0 z-0">
-        <img
-          src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=1920&auto=format&fit=crop"
-          alt="Coffee beans background"
+        <ImageElement
+          image_url="https://images.unsplash.com/photo-1447933601403-0c6688de566e?q=80&w=1920&auto=format&fit=crop"
+          alt_text="Coffee beans background"
           width={1920}
           height={1080}
-          className="h-full w-full object-cover opacity-50"
+          class_name="h-full w-full object-cover opacity-50"
         />
       </div>
 
@@ -55,12 +56,12 @@ const HeroSection = () => {
             <div className="hero-circle-2 absolute -bottom-10 -left-10 h-60 w-60 scale-75 rounded-full bg-[#e6d9c9] opacity-0"></div>
             {/* Initial state: opacity-0, scale and rotation set in gsap */}
             <div className="hero-image relative z-10 rotate-3 transform overflow-hidden rounded-2xl border-8 border-[#e6d9c9]/30 opacity-0 shadow-2xl">
-              <img
-                src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop"
-                alt="Coffee cup"
+              <ImageElement
+                image_url="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=600&auto=format&fit=crop"
+                alt_text="Coffee cup"
                 width={600}
                 height={800}
-                className="h-full w-full object-cover"
+                class_name="h-full w-full object-cover"
               />
             </div>
           </div>

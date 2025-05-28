@@ -1,4 +1,4 @@
-import LandingPageLayout from '../layouts/LandingPageLayout';
+import LandingPageLayout from '@/layouts/LandingPageLayout/LandingPageLayout';
 
 const LandingPage = () => {
   return <LandingPageLayout />;

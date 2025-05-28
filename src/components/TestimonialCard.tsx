@@ -1,6 +1,6 @@
-import type { Testimonial } from '@/types/landingpage/testimonial';
+import type { TestimonialProps } from '@/types/landingpage/testimonial';
 
-const TestimonialCard = ({ name, comment, rating }: Testimonial) => (
+const TestimonialCard = ({ name, comment, rating }: TestimonialProps) => (
   <div className="rounded-lg border border-[#d5c4b0] bg-white p-6 shadow-sm">
     <div className="space-y-4">
       <p className="text-[#8c7158]">“{comment}”</p>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { menuItems } from '../../TEMP/menudata';
+import { menuItems } from '../../../TEMP/menudata';
 import FilterBar from './FilterBar';
 import MenuGrid from './MenuGrid';
 

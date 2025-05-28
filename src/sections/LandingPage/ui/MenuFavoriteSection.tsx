@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MENU_FAVORITES, MENU_CATEGORIES } from '@/constants/menuFavorites';
 import { Link } from 'react-router-dom';
+import ImageElement from '../elements/ImageElement';
 
 const MenuFavoriteSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('kopi');
@@ -50,12 +51,12 @@ const MenuFavoriteSection = () => {
               className="group relative overflow-hidden rounded-lg border border-[#e6d9c9] bg-white shadow-sm transition-all hover:shadow-md"
             >
               <div className="aspect-square overflow-hidden">
-                <img
-                  src={item.image || '/placeholder.svg'}
-                  alt={item.name}
+                <ImageElement
+                  image_url={item.image || '/placeholder.svg'}
+                  alt_text={item.name}
                   width={400}
                   height={400}
-                  className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  class_name="h-full w-full object-cover transition-transform group-hover:scale-105"
                 />
               </div>
               <div className="p-6">

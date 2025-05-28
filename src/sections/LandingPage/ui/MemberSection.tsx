@@ -71,7 +71,7 @@ const MemberSection = () => {
 
           <div className="mt-8 flex flex-col gap-4 sm:flex-row">
             <Button className="bg-white px-8 py-3 text-lg text-[#6f4e37] hover:bg-white/90">
-              <Link to="/register">Daftar Jadi Member</Link>
+              <Link to="/auth/register">Daftar Jadi Member</Link>
             </Button>
             <Button className="bg-white px-8 py-3 text-lg text-[#6f4e37] hover:bg-white/90">
               <Link to="/login">Sudah Member? Masuk</Link>

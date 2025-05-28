@@ -1,4 +1,5 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import ImageElement from '../elements/ImageElement';
 
 const AboutSection = () => {
   const { Coffee, Clock } = lucideIcons;
@@ -36,12 +37,12 @@ const AboutSection = () => {
             </div>
           </div>
           <div className="relative h-[400px] overflow-hidden rounded-lg">
-            <img
-              src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop"
-              alt="Coffee shop interior"
+            <ImageElement
+              image_url="https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=600&auto=format&fit=crop"
+              alt_text="Coffee shop interior"
               width={600}
               height={800}
-              className="h-full w-full object-cover"
+              class_name="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
             />
           </div>
         </div>

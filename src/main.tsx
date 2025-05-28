@@ -1,16 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import './index.css';
-import LandingPage from './pages/LandingPage';
-import MenuLengkapPage from './pages/MenuLengkapPage';
-import NotFoundPage from './pages/NotFoundPage';
-
-const router = createBrowserRouter([
-  { path: '/', element: <LandingPage /> },
-  { path: '/menu-lengkap', element: <MenuLengkapPage /> },
-  { path: '*', element: <NotFoundPage /> },
-]);
+import router from '@/routes/index';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

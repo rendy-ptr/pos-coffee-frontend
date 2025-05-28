@@ -1,4 +1,5 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import ImageElement from '../elements/ImageElement';
 
 const LocationSection = () => {
   const { MapPin, Clock, Phone } = lucideIcons;
@@ -40,12 +41,12 @@ const LocationSection = () => {
             </div>
           </div>
           <div className="relative h-[300px] overflow-hidden rounded-lg">
-            <img
-              src="https://images.unsplash.com/photo-1453614512568-c4024d13c247?q=80&w=800&auto=format&fit=crop"
-              alt="Coffee shop location"
+            <ImageElement
+              image_url="https://images.unsplash.com/photo-1453614512568-c4024d13c247?q=80&w=800&auto=format&fit=crop"
+              alt_text="Coffee shop location"
               width={800}
               height={600}
-              className="h-full w-full object-cover"
+              class_name="h-full w-full object-cover transition-transform duration-300 ease-in-out hover:scale-105"
             />
           </div>
         </div>
