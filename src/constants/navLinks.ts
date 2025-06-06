@@ -6,4 +6,6 @@ export const NAV_LINKS: NavLink[] = [
   { name: 'Tentang Kami', to: '#about' },
   { name: 'Lokasi', to: '#location' },
   { name: 'Layanan', to: '#layanan' },
+  { name: 'Testimoni', to: '#testimoni' },
+  { name: 'Membership', to: '#member' },
 ];
