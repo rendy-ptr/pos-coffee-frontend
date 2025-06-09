@@ -6,12 +6,17 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '../schema/FormRegisterSchema';
+import { useNavigate } from 'react-router-dom';
+import apiClient from '@/utils/apiClient';
 import type { RegisterFormData } from '../schema/FormRegisterSchema';
 import type { SubmitHandler } from 'react-hook-form';
 
 const FormRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { EyeOff, Eye } = lucideIcons;
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -19,8 +24,25 @@ const FormRegister = () => {
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
-  const onSubmit: SubmitHandler<RegisterFormData> = data => {
-    console.log('Form submitted:', data);
+  const onSubmit: SubmitHandler<RegisterFormData> = async data => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    try {
+      const response = await apiClient.post('/auth/register', data);
+      console.log('Registration successful:', response.data);
+      navigate('/auth/login', {
+        state: { message: 'Registration successful! Please log in.' },
+      });
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message || 'Registration failed'
+          : 'Registration failed';
+      console.error('Registration error:', errorMsg);
+      setErrorMessage(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -85,12 +107,15 @@ const FormRegister = () => {
           )}
         </div>
       </div>
-
+      {errorMessage && (
+        <div className="mb-4 text-sm text-red-500">{errorMessage}</div>
+      )}
       <Button
         type="submit"
+        disabled={isSubmitting}
         className="w-full cursor-pointer bg-[#6f4e37] py-3 text-lg font-medium text-white hover:bg-[#5d4130]"
       >
-        Daftar Sekarang
+        {isSubmitting ? 'Submitting...' : 'Daftar Sekarang'}
       </Button>
     </form>
   );

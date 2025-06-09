@@ -1,8 +1,21 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import { useEffect, useState } from 'react';
 
 const HeaderLogin = () => {
   const { Coffee, ArrowLeft } = lucideIcons;
+  const { state } = useLocation();
+  const [isMessageVisible, setIsMessageVisible] = useState(!!state?.message);
+  useEffect(() => {
+    if (state?.message) {
+      setIsMessageVisible(true);
+      const timer = setTimeout(() => {
+        setIsMessageVisible(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [state]);
   return (
     <div className="text-center">
       <Link to="/" className="mb-8 inline-flex items-center gap-2">
@@ -19,6 +32,11 @@ const HeaderLogin = () => {
       <p className="text-[#8c7158]">
         Masuk untuk mengakses keuntungan member Anda
       </p>
+      {state?.message && isMessageVisible && (
+        <div className="rounded bg-green-100 p-2 text-sm text-green-500">
+          {state.message}
+        </div>
+      )}
     </div>
   );
 };

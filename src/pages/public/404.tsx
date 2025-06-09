@@ -90,13 +90,13 @@ const NotFoundPage = () => {
                     • Menu Lengkap
                   </Link>
                   <Link
-                    to="/login"
+                    to="/auth/login"
                     className="block text-[#6f4e37] transition-colors hover:text-[#a67c52]"
                   >
                     • Login Member
                   </Link>
                   <Link
-                    to="/register"
+                    to="/auth/register"
                     className="block text-[#6f4e37] transition-colors hover:text-[#a67c52]"
                   >
                     • Daftar Member
