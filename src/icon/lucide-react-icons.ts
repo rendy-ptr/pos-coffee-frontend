@@ -17,6 +17,13 @@ import {
   EyeOff,
   Eye,
   Check,
+  User,
+  Star,
+  Heart,
+  Bell,
+  LogOut,
+  Settings,
+  Menu,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -38,4 +45,11 @@ export const lucideIcons = {
   EyeOff,
   Eye,
   Check,
+  User,
+  Star,
+  Heart,
+  Bell,
+  LogOut,
+  Settings,
+  Menu,
 } as const;

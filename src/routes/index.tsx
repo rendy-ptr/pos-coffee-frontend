@@ -4,6 +4,7 @@ import MenuLengkapPage from '@/pages/public/MenuLengkap';
 import NotFoundPage from '@/pages/public/404';
 import RegisterPage from '@/pages/public/Register';
 import LoginPage from '@/pages/public/Login';
+import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,15 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <LoginPage />,
+      },
+    ],
+  },
+  {
+    path: 'dashboard',
+    children: [
+      {
+        path: 'customer',
+        element: <CustomerPage />,
       },
     ],
   },
