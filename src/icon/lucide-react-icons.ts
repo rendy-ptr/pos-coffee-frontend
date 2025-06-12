@@ -24,6 +24,10 @@ import {
   LogOut,
   Settings,
   Menu,
+  Copy,
+  Upload,
+  Trash2,
+  Home,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -52,4 +56,8 @@ export const lucideIcons = {
   LogOut,
   Settings,
   Menu,
+  Copy,
+  Upload,
+  Trash2,
+  Home,
 } as const;

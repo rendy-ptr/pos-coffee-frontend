@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
-import type { FavoriteType } from '../mocks/favorite';
+import type { FavoriteType } from '@/types/customer/favorite';
 
 interface FavoriteItemCustomerProps {
   item: FavoriteType;

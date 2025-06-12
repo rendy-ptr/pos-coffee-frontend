@@ -2,13 +2,13 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { CARD_STYLES, TEXT_COLORS } from '../constant/Style';
 import type { LucideIcon } from 'lucide-react';
 
-type MetricCardProps = {
+interface MetricCardProps {
   title: string;
   value: string | number;
   subtext: string;
   Icon: LucideIcon;
   iconColor?: string;
-};
+}
 
 const MetricCard = ({
   title,

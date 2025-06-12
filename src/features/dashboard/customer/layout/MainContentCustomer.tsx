@@ -12,7 +12,7 @@ const MainContentCustomer = ({ children }: MainContentCustomerProps) => {
   return (
     <div className="order-2 lg:order-2 lg:col-span-3">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="mb-4 grid h-auto w-full grid-cols-4 gap-1 rounded-xl bg-[#eaddd0] p-1">
+        <TabsList className="mb-4 grid h-auto w-full grid-cols-5 gap-1 rounded-xl bg-[#eaddd0] p-1">
           {TAB_LINK.map(tab => (
             <TabsTrigger
               key={tab.value}

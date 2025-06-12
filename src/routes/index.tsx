@@ -4,7 +4,9 @@ import MenuLengkapPage from '@/pages/public/MenuLengkap';
 import NotFoundPage from '@/pages/public/404';
 import RegisterPage from '@/pages/public/Register';
 import LoginPage from '@/pages/public/Login';
+import CustomerLayout from '@/layouts/dashboard/customer/CustomerLayout';
 import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
+import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 
 const router = createBrowserRouter([
   {
@@ -33,7 +35,17 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'customer',
-        element: <CustomerPage />,
+        element: <CustomerLayout />,
+        children: [
+          {
+            index: true,
+            element: <CustomerPage />,
+          },
+          {
+            path: 'pengaturan',
+            element: <CustomerSettings />,
+          },
+        ],
       },
     ],
   },

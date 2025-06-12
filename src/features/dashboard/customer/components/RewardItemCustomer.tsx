@@ -1,7 +1,7 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import { TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
-import type { RewardType } from '../mocks/reward';
+import type { RewardType } from '@/types/customer/reward';
 
 interface RewardItemCustomerProps {
   reward: RewardType;

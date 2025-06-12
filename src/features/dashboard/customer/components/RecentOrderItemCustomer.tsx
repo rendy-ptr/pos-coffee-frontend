@@ -1,5 +1,5 @@
 import { TEXT_COLORS } from '../constant/Style';
-import type { OrderType } from '../mocks/order';
+import type { OrderType } from '@/types/customer/order';
 
 interface RecentOrderItemProps {
   order: OrderType;

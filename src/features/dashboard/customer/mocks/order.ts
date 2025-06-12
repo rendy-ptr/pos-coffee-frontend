@@ -1,16 +1,6 @@
-export type OrderType = {
-  id: string;
-  date: string;
-  time: string;
-  items: string[];
-  total: string;
-  status: string;
-  points: number;
-};
+import type { OrdersItemType } from '@/types/customer/order';
 
-export type RecentOrdersType = OrderType[];
-
-export const recentOrders: RecentOrdersType = [
+export const recentOrders: OrdersItemType = [
   {
     id: 'ORD-001',
     date: '2024-01-15',
