@@ -8,7 +8,7 @@ import {
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { customerData } from '../mocks/customer';
 
-const CardCustomer = () => {
+const CardCustomerSection = () => {
   const { User } = lucideIcons;
   return (
     <div className="order-1 lg:order-1 lg:col-span-1">
@@ -56,4 +56,4 @@ const CardCustomer = () => {
     </div>
   );
 };
-export default CardCustomer;
+export default CardCustomerSection;
