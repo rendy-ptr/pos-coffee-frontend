@@ -7,6 +7,8 @@ import LoginPage from '@/pages/public/Login';
 import CustomerLayout from '@/layouts/dashboard/customer/CustomerLayout';
 import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
+import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
+import KasirDashboardContainer from '@/features/dashboard/kasir/container';
 
 const router = createBrowserRouter([
   {
@@ -44,6 +46,16 @@ const router = createBrowserRouter([
           {
             path: 'pengaturan',
             element: <CustomerSettings />,
+          },
+        ],
+      },
+      {
+        path: 'kasir',
+        element: <KasirLayout />,
+        children: [
+          {
+            index: true,
+            element: <KasirDashboardContainer />,
           },
         ],
       },
