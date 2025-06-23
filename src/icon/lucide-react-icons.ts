@@ -28,6 +28,11 @@ import {
   Upload,
   Trash2,
   Home,
+  ShoppingCart,
+  Minus,
+  Plus,
+  CreditCard,
+  Calculator,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -60,4 +65,9 @@ export const lucideIcons = {
   Upload,
   Trash2,
   Home,
+  ShoppingCart,
+  Minus,
+  Plus,
+  CreditCard,
+  Calculator,
 } as const;

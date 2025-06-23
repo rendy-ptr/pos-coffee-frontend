@@ -1,4 +1,6 @@
-export const menuItems = [
+import type { MenuItem } from '@/types/kasir/menuitem';
+
+export const menuItems: MenuItem[] = [
   {
     id: 1,
     name: 'Espresso',
