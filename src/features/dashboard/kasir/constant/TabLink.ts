@@ -1,15 +1,15 @@
 export const TAB_LINK = [
   {
-    label: 'Keranjang',
-    value: 'keranjang',
+    label: 'Transaksi',
+    value: 'transaksi',
   },
   {
-    label: 'Riwayat Pesanan',
-    value: 'riwayat-pesanan',
+    label: 'Riwayat Transaksi',
+    value: 'riwayat-transaksi',
   },
   {
-    label: 'Menu',
-    value: 'menu',
+    label: 'Daftar Menu',
+    value: 'daftar-menu',
   },
   {
     label: 'Laporan',

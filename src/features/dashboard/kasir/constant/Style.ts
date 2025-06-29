@@ -1,6 +1,6 @@
 const CARD_STYLES = 'border border-[#e6d9c9] bg-white shadow-md';
 const CARD_ITEM_STYLES =
-  'rounded-lg border border-[#e6d9c9] bg-white p-2 shadow-md transition-shadow hover:shadow-lg md:p-3';
+  'rounded-lg border border-[#e6d9c9] bg-white p-2 shadow-md transition-shadow hover:shadow-lg';
 const TEXT_COLORS = {
   primary: 'text-[#6f4e37]',
   secondary: 'text-[#8c7158]',

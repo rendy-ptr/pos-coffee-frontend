@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import React, { useState } from 'react';
 import { CARD_STYLES, TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
@@ -10,12 +9,12 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import type { MenuItem } from '@/types/kasir/menuitem';
 type CartItem = MenuItem & { quantity: number };
 
-type MenuItemContentProps = {
+type MenuTransaksiContentProps = {
   cart: CartItem[];
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
 };
 
-const MenuItemContent = ({ cart, setCart }: MenuItemContentProps) => {
+const MenuTransaksiContent = ({ cart, setCart }: MenuTransaksiContentProps) => {
   const { Search } = lucideIcons;
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -83,9 +82,6 @@ const MenuItemContent = ({ cart, setCart }: MenuItemContentProps) => {
                   <span className={`text-xs md:text-sm ${TEXT_COLORS.bold}`}>
                     {formatCurrency(item.price)}
                   </span>
-                  <Badge variant="outline" className="text-xs">
-                    Tersisa {item.stock} pcs
-                  </Badge>
                 </div>
 
                 <div className="mt-2 flex justify-end">
@@ -105,4 +101,4 @@ const MenuItemContent = ({ cart, setCart }: MenuItemContentProps) => {
     </div>
   );
 };
-export default MenuItemContent;
+export default MenuTransaksiContent;
