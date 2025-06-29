@@ -4,7 +4,7 @@ export const TAB_LINK = [
     value: 'keranjang',
   },
   {
-    label: 'Riwayat',
+    label: 'Riwayat Pesanan',
     value: 'riwayat-pesanan',
   },
   {

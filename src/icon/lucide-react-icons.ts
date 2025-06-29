@@ -33,6 +33,7 @@ import {
   Plus,
   CreditCard,
   Calculator,
+  DollarSign,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -70,4 +71,5 @@ export const lucideIcons = {
   Plus,
   CreditCard,
   Calculator,
+  DollarSign,
 } as const;
