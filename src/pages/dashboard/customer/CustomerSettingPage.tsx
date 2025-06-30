@@ -14,13 +14,17 @@ import {
   BUTTON_STYLES,
 } from '@/features/dashboard/customer/constant/Style';
 import { useState } from 'react';
+import { lucideIcons } from '@/icon/lucide-react-icons';
 
 const CustomerSettings = () => {
+  const { EyeIcon, EyeOffIcon } = lucideIcons;
   const [activeTab, setActiveTab] = useState('profile');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   return (
     <div className="mx-auto max-w-2xl py-6">
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        {/* Tabs Navigation */}
         <TabsList className="mb-4 grid h-auto w-full grid-cols-3 gap-1 rounded-xl bg-[#eaddd0] p-1">
           {[
             { value: 'profile', label: 'Ubah Profil' },
@@ -45,7 +49,6 @@ const CustomerSettings = () => {
               <CardDescription>Perbarui informasi dasar Anda</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              {/* Foto Profil */}
               <div className="space-y-2">
                 <label
                   htmlFor="profile-photo"
@@ -56,7 +59,6 @@ const CustomerSettings = () => {
                 <Input id="profile-photo" type="file" accept="image/*" />
               </div>
 
-              {/* Nama */}
               <div className="space-y-2">
                 <label
                   htmlFor="full-name"
@@ -67,7 +69,6 @@ const CustomerSettings = () => {
                 <Input id="full-name" placeholder="Nama Anda" />
               </div>
 
-              {/* Email */}
               <div className="space-y-2">
                 <label
                   htmlFor="email"
@@ -82,7 +83,6 @@ const CustomerSettings = () => {
                 />
               </div>
 
-              {/* Nomor HP */}
               <div className="space-y-2">
                 <label
                   htmlFor="phone"
@@ -102,7 +102,7 @@ const CustomerSettings = () => {
           </Card>
         </TabsContent>
 
-        {/* Tab 2: Ubah Kata Sandi */}
+        {/* Tab 2: Ganti Kata Sandi */}
         <TabsContent value="password">
           <Card className={CARD_STYLES}>
             <CardHeader>
@@ -114,6 +114,7 @@ const CustomerSettings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
+              {/* Current Password */}
               <div className="space-y-2">
                 <label
                   htmlFor="current-password"
@@ -121,13 +122,28 @@ const CustomerSettings = () => {
                 >
                   Kata Sandi Saat Ini
                 </label>
-                <Input
-                  id="current-password"
-                  type="password"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <Input
+                    id="current-password"
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(prev => !prev)}
+                    className="absolute top-2 right-2 text-[#6f4e37]"
+                  >
+                    {showCurrentPassword ? (
+                      <EyeOffIcon size={20} />
+                    ) : (
+                      <EyeIcon size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
 
+              {/* New Password */}
               <div className="space-y-2">
                 <label
                   htmlFor="new-password"
@@ -135,13 +151,28 @@ const CustomerSettings = () => {
                 >
                   Kata Sandi Baru
                 </label>
-                <Input
-                  id="new-password"
-                  type="password"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <Input
+                    id="new-password"
+                    type={showNewPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(prev => !prev)}
+                    className="absolute top-2 right-2 text-[#6f4e37]"
+                  >
+                    {showNewPassword ? (
+                      <EyeOffIcon size={20} />
+                    ) : (
+                      <EyeIcon size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
 
+              {/* Confirm New Password */}
               <div className="space-y-2">
                 <label
                   htmlFor="confirm-password"
@@ -149,11 +180,25 @@ const CustomerSettings = () => {
                 >
                   Konfirmasi Kata Sandi Baru
                 </label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="••••••••"
-                />
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="••••••••"
+                    className="pr-10"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(prev => !prev)}
+                    className="absolute top-2 right-2 text-[#6f4e37]"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOffIcon size={20} />
+                    ) : (
+                      <EyeIcon size={20} />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="pt-2">
@@ -165,7 +210,7 @@ const CustomerSettings = () => {
           </Card>
         </TabsContent>
 
-        {/* Tab 3: Minta Penghapusan Akun */}
+        {/* Tab 3: Hapus Akun */}
         <TabsContent value="delete">
           <Card className={CARD_STYLES}>
             <CardHeader>

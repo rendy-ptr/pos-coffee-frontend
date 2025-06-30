@@ -8,7 +8,7 @@ export const menuItems: MenuItem[] = [
     category: 'Kopi',
     image:
       'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=200&auto=format&fit=crop',
-    stock: 50,
+    stock: 0,
   },
   {
     id: 2,

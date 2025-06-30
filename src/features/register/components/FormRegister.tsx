@@ -90,7 +90,7 @@ const FormRegister = () => {
             />
             <button
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
+              onClick={() => setShowPassword(prev => !prev)}
               className="absolute top-1/2 right-3 -translate-y-1/2 transform cursor-pointer text-[#8c7158] hover:text-[#6f4e37]"
             >
               {showPassword ? (

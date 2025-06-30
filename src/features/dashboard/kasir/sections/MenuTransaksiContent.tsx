@@ -90,7 +90,7 @@ const MenuTransaksiContent = ({ cart, setCart }: MenuTransaksiContentProps) => {
                     onClick={() => addToCart(item)}
                     className={`${BUTTON_STYLES} px-3 py-1 text-xs ${item.stock === 0 ? 'cursor-not-allowed opacity-50' : ''}`}
                   >
-                    Tambah
+                    {item.stock === 0 ? 'Stok Habis' : 'Tambah ke Keranjang'}
                   </button>
                 </div>
               </div>

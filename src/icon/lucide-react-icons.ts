@@ -34,6 +34,8 @@ import {
   CreditCard,
   Calculator,
   DollarSign,
+  EyeIcon,
+  EyeOffIcon,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -72,4 +74,6 @@ export const lucideIcons = {
   CreditCard,
   Calculator,
   DollarSign,
+  EyeIcon,
+  EyeOffIcon,
 } as const;
