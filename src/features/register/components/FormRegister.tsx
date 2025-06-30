@@ -10,6 +10,13 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '@/utils/apiClient';
 import type { RegisterFormData } from '../schema/FormRegisterSchema';
 import type { SubmitHandler } from 'react-hook-form';
+import { AxiosError } from 'axios';
+
+interface RegisterResponse {
+  success: boolean;
+  message: string;
+  redirectUrl: string;
+}
 
 const FormRegister = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +27,7 @@ const FormRegister = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -28,20 +36,35 @@ const FormRegister = () => {
     setIsSubmitting(true);
     setErrorMessage(null);
     try {
-      const response = await apiClient.post('/auth/register', data);
-      console.log('Registration successful:', response.data);
-      navigate('/auth/login', {
-        state: { message: 'Registration successful! Please log in.' },
-      });
+      const response = await apiClient.post<RegisterResponse>(
+        '/auth/register',
+        data
+      );
+      if (response.data.success) {
+        console.log('Registration successful:', response.data);
+        // Redirect ke URL dari respons JSON
+        navigate(
+          response.data.redirectUrl.replace(
+            import.meta.env.VITE_FRONTEND_URL,
+            ''
+          ),
+          {
+            state: { message: response.data.message },
+          }
+        );
+      }
     } catch (error) {
-      const errorMsg =
-        error instanceof Error
-          ? error.message || 'Registration failed'
-          : 'Registration failed';
+      let errorMsg = 'Registration failed';
+      if (error instanceof AxiosError && error.response) {
+        errorMsg = error.response.data.message || errorMsg;
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
       console.error('Registration error:', errorMsg);
       setErrorMessage(errorMsg);
     } finally {
       setIsSubmitting(false);
+      reset();
     }
   };
   return (
