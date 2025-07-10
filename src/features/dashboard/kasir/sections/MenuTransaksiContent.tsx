@@ -1,43 +1,30 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+// LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import React, { useState } from 'react';
 import { CARD_STYLES, TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
 import { menuItems } from '../mocks/MenuItem';
+
+// HOOKS
+import { useState } from 'react';
+import { useCartStore } from '@/store/cartStore';
+
+// THIRD-PARTY
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+
+// FUNCTIONS
 import { formatCurrency } from '@/utils/formatCurrency';
 
-import type { MenuItem } from '@/types/kasir/menuitem';
-type CartItem = MenuItem & { quantity: number };
+// TYPES
 
-type MenuTransaksiContentProps = {
-  cart: CartItem[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-};
-
-const MenuTransaksiContent = ({ cart, setCart }: MenuTransaksiContentProps) => {
+const MenuTransaksiContent = () => {
   const { Search } = lucideIcons;
   const [searchQuery, setSearchQuery] = useState('');
+  const { addToCart } = useCartStore();
 
   const filteredMenuItems = menuItems.filter(item =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const addToCart = (item: MenuItem) => {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
-    if (existingItem) {
-      if (existingItem.quantity < item.stock) {
-        setCart(
-          cart.map(cartItem =>
-            cartItem.id === item.id
-              ? { ...cartItem, quantity: cartItem.quantity + 1 }
-              : cartItem
-          )
-        );
-      }
-    } else {
-      setCart([...cart, { ...item, quantity: 1 }]);
-    }
-  };
   return (
     <div className="order-2 lg:order-1 lg:col-span-2">
       <Card className={CARD_STYLES}>

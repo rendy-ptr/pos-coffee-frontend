@@ -1,4 +1,4 @@
-export type VoucherType = {
+export interface IVoucher {
   id: number;
   name: string;
   description: string;
@@ -8,6 +8,5 @@ export type VoucherType = {
   minPurchase: number;
   maxDiscount: number;
   terms: string;
-};
-
-export type VoucherItemCustomer = VoucherType[];
+}
+export type IVoucherItems = IVoucher[];

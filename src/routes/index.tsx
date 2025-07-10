@@ -8,7 +8,8 @@ import CustomerLayout from '@/layouts/dashboard/customer/CustomerLayout';
 import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
-import KasirDashboardContainer from '@/features/dashboard/kasir/container';
+import KasirPage from '@/pages/dashboard/kasir/KasirPage';
+import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
   {
@@ -55,7 +56,11 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <KasirDashboardContainer />,
+            element: <KasirPage />,
+          },
+          {
+            path: 'checkout',
+            element: <KasirDetailCheckout />,
           },
         ],
       },

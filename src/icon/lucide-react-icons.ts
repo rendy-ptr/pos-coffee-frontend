@@ -36,6 +36,7 @@ import {
   DollarSign,
   EyeIcon,
   EyeOffIcon,
+  Tag,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -76,4 +77,5 @@ export const lucideIcons = {
   DollarSign,
   EyeIcon,
   EyeOffIcon,
+  Tag,
 } as const;

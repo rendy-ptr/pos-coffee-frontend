@@ -11,4 +11,8 @@ export const TAB_LINK = [
     label: 'Daftar Menu',
     value: 'daftar-menu',
   },
+  {
+    label: 'Kelola Meja',
+    value: 'kelola-meja',
+  },
 ];

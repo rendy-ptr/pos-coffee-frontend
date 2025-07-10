@@ -1,37 +1,33 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+// LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { formatCurrency } from '@/utils/formatCurrency';
 import { BUTTON_STYLES, CARD_STYLES, TEXT_COLORS } from '../constant/Style';
 
-import type React from 'react';
-import type { MenuItem } from '@/types/kasir/menuitem';
-type CartItem = MenuItem & { quantity: number };
+// HOOKS
+import { useCartStore } from '@/store/cartStore';
+import { useNavigate } from 'react-router-dom';
 
-type CartItemContentProps = {
-  cart: CartItem[];
-  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
-};
+// THIRD-PARTY
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-const CartItemContent = ({ cart, setCart }: CartItemContentProps) => {
-  const { ShoppingCart, Minus, Plus, Trash2, CreditCard, Calculator } =
-    lucideIcons;
-  const getTotalAmount = () => {
-    return cart.reduce((total, item) => total + item.price * item.quantity, 0);
-  };
-  const updateQuantity = (id: number, newQuantity: number) => {
-    const targetItem = cart.find(item => item.id === id);
-    if (!targetItem) return;
+// FUNCTIONS
+import { formatCurrency } from '@/utils/formatCurrency';
+import { getTotalAmount } from '@/utils/totalAmount';
 
-    if (newQuantity === 0) {
-      setCart(cart.filter(item => item.id !== id));
-    } else if (newQuantity <= targetItem.stock) {
-      setCart(
-        cart.map(item =>
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
-    }
+// TYPES
+import type { IMenuItem } from '@/types/kasir/menuitem';
+interface ICartItem extends IMenuItem {
+  quantity: number;
+}
+
+const CartItemContent = () => {
+  const { cart, updateQuantity, resetCart } = useCartStore();
+  const { ShoppingCart, Minus, Plus, Trash2, ShoppingBag } = lucideIcons;
+  const navigate = useNavigate();
+  const handleCheckout = () => {
+    navigate('/dashboard/kasir/checkout', {
+      state: { cart, total: getTotalAmount(cart) },
+    });
   };
   return (
     <div className="order-1 lg:order-2 lg:col-span-1">
@@ -44,7 +40,7 @@ const CartItemContent = ({ cart, setCart }: CartItemContentProps) => {
             </div>
             {cart.length > 0 && (
               <button
-                onClick={() => setCart([])}
+                onClick={resetCart}
                 className={`${BUTTON_STYLES} px-2 py-1 text-xs`}
               >
                 Reset Pesanan
@@ -61,7 +57,7 @@ const CartItemContent = ({ cart, setCart }: CartItemContentProps) => {
                 Keranjang kosong
               </p>
             ) : (
-              cart.map(item => (
+              cart.map((item: ICartItem) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between rounded border border-[#e6d9c9] p-2"
@@ -117,20 +113,16 @@ const CartItemContent = ({ cart, setCart }: CartItemContentProps) => {
                   Total:
                 </span>
                 <span className={`text-lg font-bold ${TEXT_COLORS.primary}`}>
-                  {formatCurrency(getTotalAmount())}
+                  {formatCurrency(getTotalAmount(cart))}
                 </span>
               </div>
               <div className="space-y-2">
-                <Button className={`w-full text-sm ${BUTTON_STYLES}`}>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Bayar Tunai
-                </Button>
                 <Button
-                  variant="outline"
-                  className="w-full cursor-pointer text-sm"
+                  className={`w-full text-sm ${BUTTON_STYLES}`}
+                  onClick={handleCheckout}
                 >
-                  <Calculator className="mr-2 h-4 w-4" />
-                  Bayar Non-Tunai
+                  <ShoppingBag className="mr-2 h-4 w-4" />
+                  Checkout Pesanan
                 </Button>
               </div>
             </div>

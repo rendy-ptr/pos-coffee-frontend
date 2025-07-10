@@ -1,6 +1,6 @@
-import type { MenuItem } from '@/types/kasir/menuitem';
+import type { IMenuItem } from '@/types/kasir/menuitem';
 
-export const menuItems: MenuItem[] = [
+export const menuItems: IMenuItem[] = [
   {
     id: 1,
     name: 'Espresso',
@@ -8,7 +8,7 @@ export const menuItems: MenuItem[] = [
     category: 'Kopi',
     image:
       'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=200&auto=format&fit=crop',
-    stock: 0,
+    stock: 1,
   },
   {
     id: 2,

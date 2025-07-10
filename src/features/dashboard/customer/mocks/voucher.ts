@@ -1,12 +1,12 @@
-import type { VoucherItemCustomer } from '@/types/customer/voucher';
+import type { IVoucherItems } from '@/types/customer/voucher';
 
-export const availableVouchers: VoucherItemCustomer = [
+export const availableVouchers: IVoucherItems = [
   {
     id: 1,
     name: 'Diskon 10%',
     description: 'Dapatkan diskon 10% untuk pembelian berikutnya',
     code: 'DISKON10',
-    expirationDate: '2024-12-31',
+    expirationDate: '2025-12-31',
     available: true,
     minPurchase: 100000,
     maxDiscount: 50000,
