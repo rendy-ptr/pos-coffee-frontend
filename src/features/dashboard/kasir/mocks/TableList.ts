@@ -47,10 +47,4 @@ export const TableList = [
     status: 'reserved',
     capacity: 6,
   },
-  {
-    id: '9',
-    name: 'Table 9',
-    status: 'available',
-    capacity: 2,
-  },
 ];
