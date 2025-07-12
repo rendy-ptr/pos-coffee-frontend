@@ -23,7 +23,6 @@ dist-ssr
 .env.production
 !.env.example
 
-.oc-config.json
 
 # Editor directories and files
 .vscode/*
