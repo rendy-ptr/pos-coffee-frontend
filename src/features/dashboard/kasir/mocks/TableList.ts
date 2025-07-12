@@ -29,4 +29,34 @@ export const TableList = [
     status: 'available',
     capacity: 8,
   },
+  {
+    id: '6',
+    name: 'Table 6',
+    status: 'occupied',
+    capacity: 2,
+  },
+  {
+    id: '7',
+    name: 'Table 7',
+    status: 'available',
+    capacity: 4,
+  },
+  {
+    id: '8',
+    name: 'Table 8',
+    status: 'reserved',
+    capacity: 6,
+  },
+  {
+    id: '9',
+    name: 'Table 9',
+    status: 'available',
+    capacity: 2,
+  },
+  {
+    id: '10',
+    name: 'Table 10',
+    status: 'occupied',
+    capacity: 4,
+  },
 ];
