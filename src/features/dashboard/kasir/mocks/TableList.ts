@@ -53,10 +53,4 @@ export const TableList = [
     status: 'available',
     capacity: 2,
   },
-  {
-    id: '10',
-    name: 'Table 10',
-    status: 'occupied',
-    capacity: 4,
-  },
 ];
