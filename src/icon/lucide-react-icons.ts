@@ -37,6 +37,10 @@ import {
   EyeIcon,
   EyeOffIcon,
   Tag,
+  CheckCircle,
+  Utensils,
+  HelpCircle,
+  TimerReset,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -78,4 +82,8 @@ export const lucideIcons = {
   EyeIcon,
   EyeOffIcon,
   Tag,
+  CheckCircle,
+  Utensils,
+  HelpCircle,
+  TimerReset,
 } as const;

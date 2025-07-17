@@ -5,6 +5,7 @@ import CartItemContent from '../sections/CartItemContent';
 import RiwayatPesananContent from '../sections/RiwayatPesananContent';
 import StatistikPesananContent from '../sections/StatistikPesananContent';
 import ManagementMenuContent from '../sections/ManagementMenuContent';
+import TableManager from '../sections/TableManager';
 
 // HOOKS
 import { useState } from 'react';
@@ -43,6 +44,7 @@ const KasirDashboardContainer = () => {
       </TabsContent>
       <TabsContent value="kelola-meja">
         {/* Konten untuk Kelola Meja */}
+        <TableManager />
       </TabsContent>
     </Tabs>
   );
