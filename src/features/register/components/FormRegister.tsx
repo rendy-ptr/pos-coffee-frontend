@@ -11,8 +11,9 @@ import apiClient from '@/utils/apiClient';
 import type { RegisterFormData } from '../schema/FormRegisterSchema';
 import type { SubmitHandler } from 'react-hook-form';
 import { AxiosError } from 'axios';
+import { useToast } from '@/components/shared/ToastProvider';
 
-interface RegisterResponse {
+interface IRegisterResponse {
   success: boolean;
   message: string;
   redirectUrl: string;
@@ -23,6 +24,7 @@ const FormRegister = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { EyeOff, Eye } = lucideIcons;
+  const { addToast } = useToast();
   const navigate = useNavigate();
   const {
     register,
@@ -36,32 +38,30 @@ const FormRegister = () => {
     setIsSubmitting(true);
     setErrorMessage(null);
     try {
-      const response = await apiClient.post<RegisterResponse>(
+      const response = await apiClient.post<IRegisterResponse>(
         '/auth/register',
         data
       );
+      console.log('API Response:', response.data);
       if (response.data.success) {
-        console.log('Registration successful:', response.data);
-        // Redirect ke URL dari respons JSON
-        navigate(
-          response.data.redirectUrl.replace(
-            import.meta.env.VITE_FRONTEND_URL,
-            ''
-          ),
-          {
-            state: { message: response.data.message },
-          }
+        const redirectUrl = response.data.redirectUrl.replace(
+          import.meta.env.VITE_FRONTEND_URL,
+          ''
         );
+        addToast(response.data.message, 'success', 5000);
+        navigate(redirectUrl);
       }
     } catch (error) {
-      let errorMsg = 'Registration failed';
-      if (error instanceof AxiosError && error.response) {
-        errorMsg = error.response.data.message || errorMsg;
+      let errorMsg = 'An unexpected error occurred';
+      if (error instanceof AxiosError && error.response?.data) {
+        errorMsg =
+          (error.response.data as { message?: string }).message || errorMsg;
       } else if (error instanceof Error) {
         errorMsg = error.message;
       }
       console.error('Registration error:', errorMsg);
       setErrorMessage(errorMsg);
+      addToast(errorMsg, 'error', 5000);
     } finally {
       setIsSubmitting(false);
       reset();

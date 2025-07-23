@@ -3,30 +3,67 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import apiClient from '@/utils/apiClient';
+import { AxiosError } from 'axios';
+import { useToast } from '@/components/shared/ToastProvider';
 
 import type { SubmitHandler } from 'react-hook-form';
+import type { LoginFormData } from '../schema/FormLoginSchema';
+
+interface ILoginResponse {
+  success: boolean;
+  message: string;
+  redirectUrl: string;
+}
 
 const FormLogin = () => {
-  type LoginFormData = {
-    email: string;
-    password: string;
-  };
-
   const { Eye, EyeOff } = lucideIcons;
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<LoginFormData>();
+  const navigate = useNavigate();
+  const { addToast } = useToast();
 
-  const onSubmit: SubmitHandler<LoginFormData> = data => {
-    console.log('Form submitted:', data);
-    // Here you can handle the form submission, e.g., send data to an API
-    reset(); // Reset the form after submission
+  const onSubmit: SubmitHandler<LoginFormData> = async data => {
+    setIsSubmitting(true);
+    setErrorMessage(null);
+    try {
+      const response = await apiClient.post<ILoginResponse>(
+        '/auth/login',
+        data
+      );
+      console.log('API Response:', response.data);
+      if (response.data.success) {
+        const redirectUrl = response.data.redirectUrl.replace(
+          import.meta.env.VITE_FRONTEND_URL,
+          ''
+        );
+        addToast(response.data.message, 'success', 5000);
+        navigate(redirectUrl);
+      }
+    } catch (error) {
+      let errorMsg = 'An unexpected error occurred';
+      if (error instanceof AxiosError && error.response?.data) {
+        errorMsg =
+          (error.response.data as { message?: string }).message || errorMsg;
+      } else if (error instanceof Error) {
+        errorMsg = error.message;
+      }
+      console.error('Login error:', errorMsg);
+      setErrorMessage(errorMsg);
+      addToast(errorMsg, 'error', 5000);
+    } finally {
+      setIsSubmitting(false);
+      reset();
+    }
   };
 
   return (
@@ -103,12 +140,15 @@ const FormLogin = () => {
           </Link>
         </div>
       </div>
-
+      {errorMessage && (
+        <div className="mb-4 text-sm text-red-500">{errorMessage}</div>
+      )}
       <Button
         type="submit"
+        disabled={isSubmitting}
         className="w-full bg-[#6f4e37] py-3 text-lg font-medium text-white hover:bg-[#5d4130]"
       >
-        Masuk
+        {isSubmitting ? 'Submitting...' : 'Masuk'}
       </Button>
     </form>
   );
