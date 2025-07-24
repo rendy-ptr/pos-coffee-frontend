@@ -1,22 +1,39 @@
+// LOCAL-IMPORTS
+import { lucideIcons } from '@/icon/lucide-react-icons';
+import { registerSchema } from '../schema/FormRegisterSchema';
+import { API_PATHS } from '@/constants/apiPaths';
+
+// HOOKS
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/components/shared/ToastProvider';
+
+// THIRD-PARTY
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useState } from 'react';
-import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema } from '../schema/FormRegisterSchema';
-import { useNavigate } from 'react-router-dom';
+
+// FUNCTIONS
 import apiClient from '@/utils/apiClient';
+
+// TYPES
 import type { RegisterFormData } from '../schema/FormRegisterSchema';
 import type { SubmitHandler } from 'react-hook-form';
 import { AxiosError } from 'axios';
-import { useToast } from '@/components/shared/ToastProvider';
 
 interface IRegisterResponse {
   success: boolean;
   message: string;
-  redirectUrl: string;
+  data: {
+    id: string;
+    name: string;
+    redirectUrl: string;
+  };
+}
+interface IApiErrorResponse {
+  message: string;
 }
 
 const FormRegister = () => {
@@ -39,12 +56,12 @@ const FormRegister = () => {
     setErrorMessage(null);
     try {
       const response = await apiClient.post<IRegisterResponse>(
-        '/auth/register',
+        API_PATHS.AUTH_REGISTER,
         data
       );
       console.log('API Response:', response.data);
       if (response.data.success) {
-        const redirectUrl = response.data.redirectUrl.replace(
+        const redirectUrl = response.data.data.redirectUrl.replace(
           import.meta.env.VITE_FRONTEND_URL,
           ''
         );
@@ -55,7 +72,7 @@ const FormRegister = () => {
       let errorMsg = 'An unexpected error occurred';
       if (error instanceof AxiosError && error.response?.data) {
         errorMsg =
-          (error.response.data as { message?: string }).message || errorMsg;
+          (error.response.data as IApiErrorResponse).message || errorMsg;
       } else if (error instanceof Error) {
         errorMsg = error.message;
       }

@@ -1,21 +1,38 @@
+// LOCAL-IMPORTS
+import { lucideIcons } from '@/icon/lucide-react-icons';
+import { API_PATHS } from '@/constants/apiPaths';
+
+// HOOKS
 import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useToast } from '@/components/shared/ToastProvider';
+
+// THIRD-PARTY
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { lucideIcons } from '@/icon/lucide-react-icons';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import apiClient from '@/utils/apiClient';
-import { AxiosError } from 'axios';
-import { useToast } from '@/components/shared/ToastProvider';
 
+// FUNCTIONS
+import apiClient from '@/utils/apiClient';
+
+// TYPES
+import { AxiosError } from 'axios';
 import type { SubmitHandler } from 'react-hook-form';
 import type { LoginFormData } from '../schema/FormLoginSchema';
 
 interface ILoginResponse {
   success: boolean;
   message: string;
-  redirectUrl: string;
+  data: {
+    id: string;
+    name: string;
+    role: string;
+    redirectUrl: string;
+  };
+}
+interface IApiErrorResponse {
+  message: string;
 }
 
 const FormLogin = () => {
@@ -37,12 +54,12 @@ const FormLogin = () => {
     setErrorMessage(null);
     try {
       const response = await apiClient.post<ILoginResponse>(
-        '/auth/login',
+        API_PATHS.AUTH_LOGIN,
         data
       );
       console.log('API Response:', response.data);
       if (response.data.success) {
-        const redirectUrl = response.data.redirectUrl.replace(
+        const redirectUrl = response.data.data.redirectUrl.replace(
           import.meta.env.VITE_FRONTEND_URL,
           ''
         );
@@ -53,7 +70,7 @@ const FormLogin = () => {
       let errorMsg = 'An unexpected error occurred';
       if (error instanceof AxiosError && error.response?.data) {
         errorMsg =
-          (error.response.data as { message?: string }).message || errorMsg;
+          (error.response.data as IApiErrorResponse).message || errorMsg;
       } else if (error instanceof Error) {
         errorMsg = error.message;
       }

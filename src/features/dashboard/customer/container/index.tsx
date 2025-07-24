@@ -1,13 +1,22 @@
+// LOCAL-IMPORTS
 import CardCustomerSection from '../sections/CardCustomer';
-import { Tabs, TabsContent } from '@/components/ui/tabs';
 import SummaryCardSection from '../sections/SummaryCard';
-import { useState } from 'react';
 import OverviewCardContentSection from '../sections/OverviewCardContent';
 import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
 import VoucherCardContentSection from '../sections/VoucherCardContent';
+
+// HOOKS
+import { useState } from 'react';
+
+// THIRD-PARTY
+import { Tabs, TabsContent } from '@/components/ui/tabs';
+
+// FUNCTIONS
+
+// TYPES
 
 const CustomerDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('overview');
