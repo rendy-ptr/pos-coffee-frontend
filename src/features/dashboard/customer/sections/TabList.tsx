@@ -3,7 +3,7 @@ import { TAB_LINK } from '../constant/TabLink';
 
 const TabListSection = () => {
   return (
-    <TabsList className="mb-4 grid h-auto w-full grid-cols-5 gap-1 rounded-xl bg-[#eaddd0] p-1">
+    <TabsList className="mb-4 grid h-auto w-full grid-cols-6 gap-1 rounded-xl bg-[#eaddd0] p-1">
       {TAB_LINK.map(tab => (
         <TabsTrigger
           key={tab.value}

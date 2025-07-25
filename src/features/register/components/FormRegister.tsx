@@ -27,8 +27,6 @@ interface IRegisterResponse {
   success: boolean;
   message: string;
   data: {
-    id: string;
-    name: string;
     redirectUrl: string;
   };
 }

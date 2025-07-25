@@ -8,7 +8,11 @@ import {
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { customerData } from '../mocks/customer';
 
-const CardCustomerSection = () => {
+interface CardCustomerSectionProps {
+  name: string;
+}
+
+const CardCustomerSection = ({ name }: CardCustomerSectionProps) => {
   const { User } = lucideIcons;
   return (
     <div className="order-1 lg:order-1 lg:col-span-1">
@@ -18,7 +22,7 @@ const CardCustomerSection = () => {
             <User className="h-8 w-8 text-white md:h-10 md:w-10" />
           </div>
           <CardTitle className="text-lg text-[#6f4e37] md:text-xl">
-            {customerData.name}
+            {name}
           </CardTitle>
           <CardDescription className="text-sm">
             Member sejak {customerData.memberSince}

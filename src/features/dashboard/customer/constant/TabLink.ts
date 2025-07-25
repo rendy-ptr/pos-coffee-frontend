@@ -4,4 +4,5 @@ export const TAB_LINK = [
   { value: 'favorites', label: 'Favorit' },
   { value: 'rewards', label: 'Reward' },
   { value: 'vouchers', label: 'Voucher' },
+  { value: 'promotions', label: 'Promosi' },
 ];
