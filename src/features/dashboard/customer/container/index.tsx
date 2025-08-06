@@ -6,7 +6,6 @@ import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
-import VoucherCardContentSection from '../sections/VoucherCardContent';
 
 // HOOKS
 import { useEffect, useState } from 'react';
@@ -14,7 +13,6 @@ import { useNavigate } from 'react-router-dom';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import AllVoucherContent from '../sections/AllVoucherContent';
 
 // FUNCTIONS
 
@@ -30,7 +28,7 @@ interface UserData {
 }
 
 const CustomerDashboardContainer = () => {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('ringkasan');
   const [user, setUser] = useState<UserData | null>(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -74,24 +72,21 @@ const CustomerDashboardContainer = () => {
       <div className="order-2 lg:order-2 lg:col-span-3">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabListSection />
-          <TabsContent value="overview" className="space-y-4 md:space-y-6">
+          <TabsContent value="ringkasan" className="space-y-4 md:space-y-6">
             <SummaryCardSection />
             <OverviewCardContentSection />
           </TabsContent>
-          <TabsContent value="orders" className="space-y-4 md:space-y-6">
+          <TabsContent
+            value="riwayat-pesanan"
+            className="space-y-4 md:space-y-6"
+          >
             <OrderHistoryContentSection />
           </TabsContent>
-          <TabsContent value="favorites" className="space-y-4 md:space-y-6">
+          <TabsContent value="menu-favorit" className="space-y-4 md:space-y-6">
             <FavoriteCardContentSection />
           </TabsContent>
-          <TabsContent value="rewards" className="space-y-4 md:space-y-6">
+          <TabsContent value="hadiah" className="space-y-4 md:space-y-6">
             <RewardCardContentSection />
-          </TabsContent>
-          <TabsContent value="vouchers" className="space-y-4 md:space-y-6">
-            <VoucherCardContentSection />
-          </TabsContent>
-          <TabsContent value="promotions" className="space-y-4 md:space-y-6">
-            <AllVoucherContent />
           </TabsContent>
         </Tabs>
       </div>
