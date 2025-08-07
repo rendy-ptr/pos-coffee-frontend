@@ -6,66 +6,61 @@ import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
+import { DashboardLoadingSkeleton } from '../components/DashboardLoadingSkeleton';
 
 // HOOKS
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { useToast } from '@/components/shared/ToastProvider';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
 // FUNCTIONS
+import { fetchCustomerDashboard } from '../services/api';
 
 // TYPES
-interface UserData {
-  id: number;
-  email: string;
-  name: string;
-  role: string;
-  profile: {
-    loyaltyPoints: number;
-  };
-}
 
 const CustomerDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
-  const [user, setUser] = useState<UserData | null>(null);
-  const [error, setError] = useState('');
+  const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const navigate = useNavigate();
+  const { addToast } = useToast();
+
+  const {
+    data: userResponse,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['customerDashboard'],
+    queryFn: fetchCustomerDashboard,
+  });
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:3000/api/dashboard/customer',
-          {
-            credentials: 'include',
-          }
-        );
-        const data = await response.json();
-        if (data.success) {
-          setUser(data.data);
-        } else {
-          setError(data.message || 'Gagal memuat dashboard');
-          navigate('/auth/login');
-        }
-      } catch (err) {
-        setError('Terjadi kesalahan server');
-        console.error('Error dashboard:', err);
-        navigate('/auth/login');
-      }
-    };
-    fetchDashboard();
-  }, [navigate]);
+    if (error) {
+      navigate('/auth/login');
+    }
+  }, [error, navigate]);
 
-  if (!user) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
+  useEffect(() => {
+    if (userResponse && userResponse.message && !hasShownWelcome) {
+      addToast(userResponse.message, 'success', 5000);
+      setHasShownWelcome(true);
+    }
+  }, [userResponse, hasShownWelcome, addToast]);
+
+  if (isLoading || !userResponse) return <DashboardLoadingSkeleton />;
+  if (error) return <div className="text-red-500">{error.message}</div>;
 
   return (
     <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-4">
       {/* Sidebar Kiri */}
       <div className="order-1 lg:order-1 lg:col-span-1">
-        <CardCustomerSection name={user.name} />
+        <CardCustomerSection
+          name={userResponse.data.name}
+          loyaltyPoints={userResponse.data.loyaltyPoints}
+        />
       </div>
 
       {/* Konten Kanan */}

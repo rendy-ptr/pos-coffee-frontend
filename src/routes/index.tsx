@@ -9,7 +9,7 @@ import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
 import KasirPage from '@/pages/dashboard/kasir/KasirPage';
-import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
+// import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
   {
@@ -58,10 +58,10 @@ const router = createBrowserRouter([
             index: true,
             element: <KasirPage />,
           },
-          {
-            path: 'checkout',
-            element: <KasirDetailCheckout />,
-          },
+          // {
+          //   path: 'checkout',
+          //   element: <KasirDetailCheckout />,
+          // },
         ],
       },
     ],

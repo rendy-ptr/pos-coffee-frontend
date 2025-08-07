@@ -2,11 +2,34 @@ import { Button } from '@/components/ui/button';
 import { useLocation, Link } from 'react-router-dom';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Badge } from '@/components/ui/badge';
+import { logout } from '../services/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/components/shared/ToastProvider';
+import { useNavigate } from 'react-router-dom';
 
 const HeaderCustomer = () => {
   const { Coffee, Bell, Settings, LogOut, Home } = lucideIcons;
   const location = useLocation();
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+  const navigate = useNavigate();
   const isSettingsPage = location.pathname === '/dashboard/customer/pengaturan';
+
+  const handleLogout = async () => {
+    try {
+      const response = await logout();
+      queryClient.clear();
+      addToast(response.message, 'success', 5000);
+      navigate(response.data.redirectUrl);
+    } catch (error) {
+      addToast(
+        error instanceof Error ? error.message : 'Terjadi kesalahan',
+        'error',
+        5000
+      );
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white">
       <div className="px-4 py-3">
@@ -50,7 +73,12 @@ const HeaderCustomer = () => {
                 </Button>
               </Link>
             )}
-            <Button variant="outline" size="sm" className="cursor-pointer">
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer"
+              onClick={handleLogout}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Keluar
             </Button>
