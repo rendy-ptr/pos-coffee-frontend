@@ -22,10 +22,10 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { fetchCustomerDashboard } from '../services/api';
 
 // TYPES
+import type { ICustomerDashboardResponse } from '../types/CustomerDashboardResponse';
 
 const CustomerDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
-  const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const navigate = useNavigate();
   const { addToast } = useToast();
   const { setCustomerData } = useCustomerStore();
@@ -34,32 +34,51 @@ const CustomerDashboardContainer = () => {
     data: userResponse,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<ICustomerDashboardResponse>({
     queryKey: ['customerDashboard'],
     queryFn: fetchCustomerDashboard,
   });
 
+  // Tangani error dan navigasi ke login
   useEffect(() => {
-    if (userResponse && userResponse.data) {
+    if (error) {
+      addToast(
+        error.message || 'Terjadi kesalahan saat memuat data.',
+        'error',
+        3000
+      );
+      navigate('/auth/login');
+    }
+  }, [error, navigate, addToast]);
+
+  // Simpan data pelanggan ke store
+  useEffect(() => {
+    if (userResponse?.data) {
       setCustomerData(userResponse.data);
     }
   }, [userResponse, setCustomerData]);
 
+  // Tampilkan toast selamat datang sekali saja per pengguna
   useEffect(() => {
-    if (error) {
-      navigate('/auth/login');
+    if (userResponse?.data && userResponse.message) {
+      const welcomeKey = `welcome_shown_${userResponse.data.id}`;
+      const hasShownWelcome = localStorage.getItem(welcomeKey);
+      if (!hasShownWelcome) {
+        addToast(userResponse.message, 'success', 5000);
+        localStorage.setItem(welcomeKey, 'true');
+      }
     }
-  }, [error, navigate]);
+  }, [userResponse, addToast]);
 
-  useEffect(() => {
-    if (userResponse && userResponse.message && !hasShownWelcome) {
-      addToast(userResponse.message, 'success', 5000);
-      setHasShownWelcome(true);
-    }
-  }, [userResponse, hasShownWelcome, addToast]);
+  // Tampilkan skeleton saat loading
+  if (isLoading) return <DashboardLoadingSkeleton />;
 
-  if (isLoading || !userResponse) return <DashboardLoadingSkeleton />;
-  if (error) return <div className="text-red-500">{error.message}</div>;
+  // Tampilkan pesan error jika data tidak tersedia
+  if (!userResponse?.data) {
+    addToast('Data pelanggan tidak tersedia.', 'error', 3000);
+    navigate('/auth/login');
+    return null;
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-4">

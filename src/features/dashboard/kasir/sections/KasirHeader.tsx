@@ -6,17 +6,25 @@ import { logout } from '../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useNavigate } from 'react-router-dom';
+import { useKasirStore } from '@/store/kasirStore';
 const KasirHeader = () => {
   const { Coffee, Menu } = lucideIcons;
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const { kasirData, clearKasirData } = useKasirStore();
+
+  if (!kasirData) return null;
 
   const handleLogout = async () => {
     try {
       const response = await logout();
       queryClient.clear();
+      if (kasirData?.id) {
+        localStorage.removeItem(`welcome_shown_${kasirData.id}`);
+      }
+      clearKasirData();
       addToast(response.message, 'success', 5000);
       navigate(response.data.redirectUrl);
     } catch (error) {
@@ -39,14 +47,14 @@ const KasirHeader = () => {
                 Aroma Kopi
               </span>
               <span className="hidden text-xs text-[#8c7158] sm:block">
-                Kasir
+                {kasirData.role.toLowerCase()}
               </span>
             </div>
             <Badge
               variant="secondary"
               className="bg-blue-100 text-xs text-blue-800"
             >
-              Shift: 08:00-16:00
+              Shift: {kasirData.shiftStart} - {kasirData.shiftEnd}
             </Badge>
           </div>
           <div className="flex items-center gap-2">
@@ -60,7 +68,7 @@ const KasirHeader = () => {
             </Button>
             <div className="hidden items-center gap-2 md:flex">
               <div className="text-xs text-[#8c7158]">
-                Kasir: <span className="font-medium">Maria Sari</span>
+                Kasir: <span className="font-medium">{kasirData.name}</span>
               </div>
               <Button
                 className="cursor-pointer"
@@ -79,7 +87,7 @@ const KasirHeader = () => {
           <div className="mt-3 border-t border-[#e6d9c9] pt-3 md:hidden">
             <div className="flex flex-col gap-2">
               <div className="text-xs text-[#8c7158]">
-                Kasir: <span className="font-medium">Maria Sari</span>
+                Kasir: <span className="font-medium">{kasirData.name}</span>
               </div>
               <Button
                 variant="outline"

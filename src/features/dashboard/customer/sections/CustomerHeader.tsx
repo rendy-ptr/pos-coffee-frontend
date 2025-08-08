@@ -14,7 +14,7 @@ const HeaderCustomer = () => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const { customerData } = useCustomerStore();
+  const { customerData, clearCustomerData } = useCustomerStore();
   const isSettingsPage = location.pathname === '/dashboard/customer/pengaturan';
 
   if (!customerData) return null;
@@ -23,6 +23,10 @@ const HeaderCustomer = () => {
     try {
       const response = await logout();
       queryClient.clear();
+      if (customerData?.id) {
+        localStorage.removeItem(`welcome_shown_${customerData.id}`);
+      }
+      clearCustomerData();
       addToast(response.message, 'success', 5000);
       navigate(response.data.redirectUrl);
     } catch (error) {

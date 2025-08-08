@@ -39,7 +39,7 @@ const FormLogin = () => {
   const { Eye, EyeOff } = lucideIcons;
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [_, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -157,13 +157,10 @@ const FormLogin = () => {
           </Link>
         </div>
       </div>
-      {errorMessage && (
-        <div className="mb-4 text-sm text-red-500">{errorMessage}</div>
-      )}
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-[#6f4e37] py-3 text-lg font-medium text-white hover:bg-[#5d4130]"
+        className="w-full cursor-pointer bg-[#6f4e37] py-3 text-lg font-medium text-white transition-colors duration-200 hover:bg-[#5d4130]"
       >
         {isSubmitting ? 'Submitting...' : 'Masuk'}
       </Button>
