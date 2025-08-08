@@ -2,9 +2,32 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useState } from 'react';
+import { logout } from '../services/api';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/components/shared/ToastProvider';
+import { useNavigate } from 'react-router-dom';
 const KasirHeader = () => {
   const { Coffee, Menu } = lucideIcons;
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const queryClient = useQueryClient();
+  const { addToast } = useToast();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await logout();
+      queryClient.clear();
+      addToast(response.message, 'success', 5000);
+      navigate(response.data.redirectUrl);
+    } catch (error) {
+      addToast(
+        error instanceof Error ? error.message : 'Terjadi kesalahan',
+        'error',
+        5000
+      );
+    }
+  };
+
   return (
     <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white">
       <div className="px-4 py-3">
@@ -39,7 +62,12 @@ const KasirHeader = () => {
               <div className="text-xs text-[#8c7158]">
                 Kasir: <span className="font-medium">Maria Sari</span>
               </div>
-              <Button variant="outline" size="sm">
+              <Button
+                className="cursor-pointer"
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+              >
                 Keluar Shift
               </Button>
             </div>
@@ -53,7 +81,12 @@ const KasirHeader = () => {
               <div className="text-xs text-[#8c7158]">
                 Kasir: <span className="font-medium">Maria Sari</span>
               </div>
-              <Button variant="outline" size="sm" className="justify-start">
+              <Button
+                variant="outline"
+                size="sm"
+                className="justify-start"
+                onClick={handleLogout}
+              >
                 Keluar Shift
               </Button>
             </div>

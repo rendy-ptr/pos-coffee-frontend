@@ -13,6 +13,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
+import { useCustomerStore } from '@/store/customerStore';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -27,6 +28,7 @@ const CustomerDashboardContainer = () => {
   const [hasShownWelcome, setHasShownWelcome] = useState(false);
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { setCustomerData } = useCustomerStore();
 
   const {
     data: userResponse,
@@ -36,6 +38,12 @@ const CustomerDashboardContainer = () => {
     queryKey: ['customerDashboard'],
     queryFn: fetchCustomerDashboard,
   });
+
+  useEffect(() => {
+    if (userResponse && userResponse.data) {
+      setCustomerData(userResponse.data);
+    }
+  }, [userResponse, setCustomerData]);
 
   useEffect(() => {
     if (error) {
@@ -57,10 +65,7 @@ const CustomerDashboardContainer = () => {
     <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-4">
       {/* Sidebar Kiri */}
       <div className="order-1 lg:order-1 lg:col-span-1">
-        <CardCustomerSection
-          name={userResponse.data.name}
-          loyaltyPoints={userResponse.data.loyaltyPoints}
-        />
+        <CardCustomerSection />
       </div>
 
       {/* Konten Kanan */}

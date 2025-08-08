@@ -6,18 +6,13 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { customerData } from '../mocks/customer';
+import { useCustomerStore } from '@/store/customerStore';
+import { customerData as mocks } from '../mocks/customer';
 
-interface CardCustomerSectionProps {
-  name: string;
-  loyaltyPoints: number;
-}
-
-const CardCustomerSection = ({
-  name,
-  loyaltyPoints,
-}: CardCustomerSectionProps) => {
+const CardCustomerSection = () => {
   const { User } = lucideIcons;
+  const { customerData } = useCustomerStore();
+  if (!customerData) return null;
   return (
     <div className="order-1 lg:order-1 lg:col-span-1">
       <Card className="border border-[#e6d9c9] bg-white shadow-md">
@@ -26,17 +21,20 @@ const CardCustomerSection = ({
             <User className="h-8 w-8 text-white md:h-10 md:w-10" />
           </div>
           <CardTitle className="text-lg text-[#6f4e37] md:text-xl">
-            {name}
+            {customerData.name}
           </CardTitle>
           <CardDescription className="text-sm">
-            Member sejak {customerData.memberSince}
+            Member Sejak{' '}
+            {customerData.createdAt
+              ? new Date(customerData.createdAt).getFullYear()
+              : 'N/A'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4 md:block md:space-y-4">
             <div className="text-center">
               <div className="text-xl font-bold text-[#6f4e37] md:text-2xl">
-                {loyaltyPoints}
+                {customerData.loyaltyPoints}
               </div>
               <div className="text-xs text-[#8c7158] md:text-sm">
                 Poin Loyalty
@@ -44,7 +42,7 @@ const CardCustomerSection = ({
             </div>
             <div className="text-center">
               <div className="text-lg font-semibold text-[#6f4e37] md:text-lg">
-                {customerData.totalOrders}
+                {mocks.totalOrders}
               </div>
               <div className="text-xs text-[#8c7158] md:text-sm">
                 Total Pesanan
@@ -56,7 +54,7 @@ const CardCustomerSection = ({
               Reward Berikutnya:
             </div>
             <div className="text-xs font-medium text-[#6f4e37] md:text-sm">
-              {customerData.nextReward}
+              {mocks.nextReward}
             </div>
           </div>
         </CardContent>

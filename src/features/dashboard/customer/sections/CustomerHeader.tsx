@@ -6,6 +6,7 @@ import { logout } from '../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useNavigate } from 'react-router-dom';
+import { useCustomerStore } from '@/store/customerStore';
 
 const HeaderCustomer = () => {
   const { Coffee, Bell, Settings, LogOut, Home } = lucideIcons;
@@ -13,7 +14,10 @@ const HeaderCustomer = () => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const { customerData } = useCustomerStore();
   const isSettingsPage = location.pathname === '/dashboard/customer/pengaturan';
+
+  if (!customerData) return null;
 
   const handleLogout = async () => {
     try {
@@ -45,7 +49,7 @@ const HeaderCustomer = () => {
               variant="secondary"
               className="bg-[#e6d9c9] text-xs text-[#6f4e37]"
             >
-              Member
+              {customerData.role.toLowerCase()}
             </Badge>
           </div>
           <div className="flex items-center gap-2">

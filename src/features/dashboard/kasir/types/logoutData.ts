@@ -1,4 +1,4 @@
-export interface ICustomerLogoutData {
+export interface IKasirLogoutData {
   success: boolean;
   message: string;
   data: {

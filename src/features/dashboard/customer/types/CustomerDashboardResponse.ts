@@ -1,4 +1,4 @@
-export interface IUserDashboardResponse {
+export interface ICustomerDashboardResponse {
   success: boolean;
   message: string;
   data: {
@@ -9,5 +9,6 @@ export interface IUserDashboardResponse {
     loyaltyPoints: number;
     phoneNumber: string;
     profilePicture: string;
+    createdAt: string;
   };
 }
