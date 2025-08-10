@@ -1,11 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import RecentOrderItemCustomer from '../components/RecentOrderItemCustomer';
 import { recentOrders } from '../mocks/order';
-import { TEXT_COLORS, CARD_STYLES } from '../constant/Style';
+import { TEXT_COLORS, CARD_STYLES, SHADOW_CARD_STYLE } from '@/constants/Style';
 
 const OverviewCardContentSection = () => {
   return (
-    <Card className={CARD_STYLES}>
+    <Card className={`${CARD_STYLES} ${SHADOW_CARD_STYLE}`}>
       <CardHeader>
         <CardTitle className={TEXT_COLORS.primary}>Pesanan Terbaru</CardTitle>
       </CardHeader>

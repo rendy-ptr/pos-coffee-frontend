@@ -7,11 +7,11 @@ import {
 } from '@/components/ui/card';
 import FavoriteItemCustomer from '../components/FavoriteItemCustomer';
 import { favoriteItems } from '../mocks/favorite';
-import { TEXT_COLORS, CARD_STYLES } from '../constant/Style';
+import { TEXT_COLORS, CARD_STYLES, SHADOW_CARD_STYLE } from '@/constants/Style';
 
 const FavoriteCardContentSection = () => {
   return (
-    <Card className={CARD_STYLES}>
+    <Card className={`${CARD_STYLES} ${SHADOW_CARD_STYLE}`}>
       <CardHeader>
         <CardTitle className={TEXT_COLORS.primary}>Menu Favorit</CardTitle>
         <CardDescription>Menu yang paling sering Anda pesan</CardDescription>

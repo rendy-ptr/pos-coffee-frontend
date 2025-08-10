@@ -1,6 +1,10 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
-import { TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
+import {
+  TEXT_COLORS,
+  BUTTON_STYLES,
+  CHILDREN_SHADOW_CARD_STYLE,
+} from '@/constants/Style';
 import type { RewardType } from '@/types/customer/reward';
 
 interface RewardItemCustomerProps {
@@ -14,7 +18,9 @@ const RewardItemCustomer = ({
 }: RewardItemCustomerProps) => {
   const { Star } = lucideIcons;
   return (
-    <div className="rounded-lg border border-[#e6d9c9] p-3 md:p-4">
+    <div
+      className={`rounded-lg border border-[#e6d9c9] p-3 md:p-4 ${CHILDREN_SHADOW_CARD_STYLE}`}
+    >
       <div className="mb-2 flex items-center justify-between">
         <h3 className={`text-sm ${TEXT_COLORS.bold} md:text-base`}>
           {reward.name}

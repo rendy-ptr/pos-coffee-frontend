@@ -41,6 +41,7 @@ import {
   Utensils,
   HelpCircle,
   TimerReset,
+  TrendingUp,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -86,4 +87,5 @@ export const lucideIcons = {
   Utensils,
   HelpCircle,
   TimerReset,
+  TrendingUp,
 } as const;

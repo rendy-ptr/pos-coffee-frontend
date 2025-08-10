@@ -9,6 +9,8 @@ import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
 import KasirPage from '@/pages/dashboard/kasir/KasirPage';
+import AdminLayout from '@/layouts/dashboard/admin/AdminLayout';
+import AdminPage from '@/pages/dashboard/admin/AdminPage';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -62,6 +64,16 @@ const router = createBrowserRouter([
           //   path: 'checkout',
           //   element: <KasirDetailCheckout />,
           // },
+        ],
+      },
+      {
+        path: 'admin',
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <AdminPage />,
+          },
         ],
       },
     ],

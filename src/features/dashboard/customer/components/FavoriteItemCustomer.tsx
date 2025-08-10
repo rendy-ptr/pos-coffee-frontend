@@ -1,5 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
+import {
+  TEXT_COLORS,
+  BUTTON_STYLES,
+  CHILDREN_SHADOW_CARD_STYLE,
+} from '@/constants/Style';
 import type { FavoriteType } from '@/types/customer/favorite';
 
 interface FavoriteItemCustomerProps {
@@ -8,7 +12,9 @@ interface FavoriteItemCustomerProps {
 
 const FavoriteItemCustomer = ({ item }: FavoriteItemCustomerProps) => {
   return (
-    <div className="overflow-hidden rounded-lg border border-[#e6d9c9]">
+    <div
+      className={`overflow-hidden rounded-lg border border-[#e6d9c9] ${CHILDREN_SHADOW_CARD_STYLE}`}
+    >
       <img
         src={item.image || '/placeholder.svg'}
         alt={item.name}

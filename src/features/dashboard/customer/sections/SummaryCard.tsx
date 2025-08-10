@@ -1,5 +1,5 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import MetricCard from '../components/MetricCardCustomer';
+import MetricCard from '@/components/shared/MetricCard';
 import { customerData as mocks } from '../mocks/customer';
 import { useCustomerStore } from '@/store/customerStore';
 

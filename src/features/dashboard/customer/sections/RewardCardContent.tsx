@@ -8,11 +8,11 @@ import {
 import RewardItemCustomer from '../components/RewardItemCustomer';
 import { availableRewards } from '../mocks/reward';
 import { customerData } from '../mocks/customer';
-import { TEXT_COLORS, CARD_STYLES } from '../constant/Style';
+import { TEXT_COLORS, CARD_STYLES, SHADOW_CARD_STYLE } from '@/constants/Style';
 
 const RewardCardContentSection = () => {
   return (
-    <Card className={CARD_STYLES}>
+    <Card className={`${CARD_STYLES} ${SHADOW_CARD_STYLE}`}>
       <CardHeader>
         <CardTitle className={TEXT_COLORS.primary}>Tukar Poin Reward</CardTitle>
         <CardDescription>

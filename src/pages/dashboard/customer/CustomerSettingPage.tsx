@@ -8,11 +8,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  TEXT_COLORS,
-  CARD_STYLES,
-  BUTTON_STYLES,
-} from '@/features/dashboard/customer/constant/Style';
+import { TEXT_COLORS, CARD_STYLES, BUTTON_STYLES } from '@/constants/Style';
 import { useState } from 'react';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 

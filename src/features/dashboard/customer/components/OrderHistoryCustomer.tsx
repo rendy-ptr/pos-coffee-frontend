@@ -1,4 +1,4 @@
-import { TEXT_COLORS } from '../constant/Style';
+import { TEXT_COLORS, CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
 import { Badge } from '@/components/ui/badge';
 import type { OrderType } from '@/types/customer/order';
 
@@ -7,7 +7,9 @@ interface RecentOrderItemProps {
 }
 const OrderHistoryItemCustomer = ({ order }: RecentOrderItemProps) => {
   return (
-    <div className="rounded-lg border border-[#e6d9c9] p-3 md:p-4">
+    <div
+      className={`rounded-lg border border-[#e6d9c9] p-3 md:p-4 ${CHILDREN_SHADOW_CARD_STYLE}`}
+    >
       <div className="mb-2 flex items-center justify-between">
         <div className={`font-medium ${TEXT_COLORS.primary}`}>#{order.id}</div>
         <Badge
