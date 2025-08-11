@@ -42,6 +42,9 @@ import {
   HelpCircle,
   TimerReset,
   TrendingUp,
+  UserPlus,
+  Edit,
+  UtensilsCrossed,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -88,4 +91,7 @@ export const lucideIcons = {
   HelpCircle,
   TimerReset,
   TrendingUp,
+  UserPlus,
+  Edit,
+  UtensilsCrossed,
 } as const;

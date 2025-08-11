@@ -1,14 +1,14 @@
 // LOCAL-IMPORTS
 import TabListSection from '../sections/TabList';
 import SummaryCardSection from '../sections/SummaryCard';
+import RecentActivityCard from '../sections/RecentActivityCard';
+import ManagementMenuSection from '../sections/ManagementMenu';
 
 // HOOKS
 import { useState } from 'react';
 
 // THIRD-PARTY
-
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import RecentActivityCard from '../sections/RecentActivityCard';
 
 // FUNCTIONS
 
@@ -26,6 +26,9 @@ const AdminDashboardContainer = () => {
         <SummaryCardSection />
         {/* Recent Activity */}
         <RecentActivityCard />
+      </TabsContent>
+      <TabsContent value="menu" className="space-y-4 md:space-y-6">
+        <ManagementMenuSection />
       </TabsContent>
     </Tabs>
   );

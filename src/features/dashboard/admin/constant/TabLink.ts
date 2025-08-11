@@ -4,12 +4,12 @@ export const TAB_LINK = [
     label: 'Overview',
   },
   {
-    value: 'pesanan',
-    label: 'Pesanan',
-  },
-  {
     value: 'menu',
     label: 'Menu',
+  },
+  {
+    value: 'pesanan',
+    label: 'Pesanan',
   },
   {
     value: 'customer',
