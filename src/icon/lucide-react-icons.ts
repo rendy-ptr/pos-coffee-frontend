@@ -45,6 +45,9 @@ import {
   UserPlus,
   Edit,
   UtensilsCrossed,
+  UserCheck,
+  UserX,
+  AlertCircle,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -94,4 +97,7 @@ export const lucideIcons = {
   UserPlus,
   Edit,
   UtensilsCrossed,
+  UserCheck,
+  UserX,
+  AlertCircle,
 } as const;

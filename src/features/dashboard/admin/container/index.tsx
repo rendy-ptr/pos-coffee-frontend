@@ -9,6 +9,7 @@ import { useState } from 'react';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import ManagementKasirSection from '../sections/ManagementKasir';
 
 // FUNCTIONS
 
@@ -29,6 +30,9 @@ const AdminDashboardContainer = () => {
       </TabsContent>
       <TabsContent value="menu" className="space-y-4 md:space-y-6">
         <ManagementMenuSection />
+      </TabsContent>
+      <TabsContent value="kasir" className="space-y-4 md:space-y-6">
+        <ManagementKasirSection />
       </TabsContent>
     </Tabs>
   );

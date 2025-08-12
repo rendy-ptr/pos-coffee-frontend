@@ -8,16 +8,16 @@ export const TAB_LINK = [
     label: 'Menu',
   },
   {
+    value: 'kasir',
+    label: 'Kasir',
+  },
+  {
     value: 'pesanan',
     label: 'Pesanan',
   },
   {
     value: 'customer',
     label: 'Customer',
-  },
-  {
-    value: 'kasir',
-    label: 'Kasir',
   },
   {
     value: 'laporan',

@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-
 import { CARD_STYLES, SHADOW_CARD_STYLE } from '@/constants/Style';
 import ManagementMenuItem from '../components/ManagementMenuItem';
 
@@ -56,21 +55,32 @@ const menuItems = [
 const ManagementMenuSection = () => {
   const { UtensilsCrossed } = lucideIcons;
   return (
-    <Card className={`${CARD_STYLES} ${SHADOW_CARD_STYLE}`}>
-      <CardHeader>
-        <div className="flex flex-col justify-between gap-3 md:flex-row md:items-center">
-          <div>
-            <CardTitle className="text-[#6f4e37]">Manajemen Menu</CardTitle>
-            <CardDescription>Kelola menu, harga, dan stok</CardDescription>
+    <Card
+      className={`${CARD_STYLES} ${SHADOW_CARD_STYLE} border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] p-0`}
+    >
+      <CardHeader className="rounded-t-xl border-b border-[#e6d9c9]/20 px-6 py-4 transition-all duration-300">
+        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+          <div className="flex items-center gap-3">
+            <div className="rounded-full bg-[#6f4e37]/20 p-2">
+              <UtensilsCrossed className="h-5 w-5 text-[#6f4e37]" />
+            </div>
+            <div>
+              <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
+                Manajemen Menu
+              </CardTitle>
+              <CardDescription className="mt-1 text-sm font-medium text-[#8c7158]/80">
+                Kelola menu, harga, dan stok dengan mudah
+              </CardDescription>
+            </div>
           </div>
-          <Button className="cursor-pointer bg-[#6f4e37] text-sm text-white hover:bg-[#5d4130]">
-            <UtensilsCrossed className="mr-2 h-4 w-4" />
+          <Button className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg">
+            <UtensilsCrossed className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
             Tambah Menu
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3 md:space-y-4">
+      <CardContent className="p-6">
+        <div className="space-y-4 md:space-y-6">
           {menuItems.map(item => (
             <ManagementMenuItem key={item.id} item={item} />
           ))}

@@ -1,11 +1,8 @@
-import {
-  CARD_STYLES,
-  TEXT_COLORS,
-  SHADOW_CARD_STYLE,
-  CHILDREN_SHADOW_CARD_STYLE,
-} from '@/constants/Style';
-import { Badge } from '@/components/ui/badge';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { lucideIcons } from '@/icon/lucide-react-icons';
+import RecentOrderItem from '../components/RecentOrderItem';
+import KasirItem from '../components/KasirItem';
+const { CreditCard, Users } = lucideIcons;
 
 const recentOrders = [
   {
@@ -35,7 +32,7 @@ const recentOrders = [
     time: '14:00',
     cashier: 'Maria',
   },
-];
+] as const;
 
 const staffMembers = [
   {
@@ -65,104 +62,83 @@ const staffMembers = [
     todaySales: 0,
     orders: 0,
   },
-];
-
+] as const;
 const RecentActivityCard = () => {
   return (
-    <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
-      <div className={`${CARD_STYLES} rounded-lg ${SHADOW_CARD_STYLE}`}>
-        <div className="p-6">
-          <h3 className={`mb-4 text-lg font-semibold ${TEXT_COLORS.primary}`}>
-            Pesanan Terbaru
-          </h3>
-        </div>
-        <div className="px-6 pb-6">
-          <div className="space-y-3 md:space-y-4">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* Recent Orders Card */}
+      <Card className="main-card-group relative overflow-hidden rounded-xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white via-[#fefefe] to-[#faf9f7] p-0 shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#8b5e3c]/20">
+        {/* Sophisticated background pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#e6d9c9]/10 via-transparent to-[#d2bba3]/10 opacity-30" />
+
+        {/* Top border accent */}
+        <div className="main-card-group-hover:opacity-100 absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-[#6f4e37] via-[#8b5e3c] to-[#a66a4c] opacity-70 transition-opacity duration-500" />
+
+        <CardHeader className="relative rounded-t-xl border-b border-[#e6d9c9]/20 px-6 py-6 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="group/icon main-card-group-hover:scale-110 main-card-group-hover:shadow-lg rounded-full bg-gradient-to-br from-[#6f4e37]/15 to-[#8b5e3c]/15 p-3 transition-all duration-300">
+              <CreditCard className="main-card-group-hover:rotate-6 h-6 w-6 text-[#6f4e37] transition-transform duration-300" />
+            </div>
+            <div>
+              <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                Pesanan Terbaru
+              </CardTitle>
+              <p className="mt-1 text-sm font-medium text-[#8c7158]/80">
+                Aktivitas transaksi real-time
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="relative p-6">
+          <div className="space-y-5">
             {recentOrders.map(order => (
-              <div
-                key={order.id}
-                className={`flex flex-col justify-between space-y-2 rounded-lg border border-[#e6d9c9] p-3 ${CHILDREN_SHADOW_CARD_STYLE} md:flex-row md:items-center md:space-y-0`}
-              >
-                <div>
-                  <div
-                    className={`text-sm font-medium md:text-base ${TEXT_COLORS.primary}`}
-                  >
-                    #{order.id}
-                  </div>
-                  <div
-                    className={`text-xs md:text-sm ${TEXT_COLORS.secondary}`}
-                  >
-                    {order.customer} • {order.time}
-                  </div>
-                  <div className={`text-xs ${TEXT_COLORS.secondary}`}>
-                    Kasir: {order.cashier}
-                  </div>
-                </div>
-                <div className="flex justify-between md:block md:text-right">
-                  <div className={TEXT_COLORS.bold}>
-                    {formatCurrency(order.total)}
-                  </div>
-                  <Badge
-                    variant={
-                      order.status === 'Selesai' ? 'secondary' : 'default'
-                    }
-                    className={`text-xs ${
-                      order.status === 'Selesai'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}
-                  >
-                    {order.status}
-                  </Badge>
-                </div>
-              </div>
+              <RecentOrderItem key={order.id} order={order} />
             ))}
           </div>
-        </div>
-      </div>
+        </CardContent>
 
-      <div className={`${CARD_STYLES} rounded-lg ${SHADOW_CARD_STYLE}`}>
-        <div className="p-6">
-          <h3 className={`mb-4 text-lg font-semibold ${TEXT_COLORS.primary}`}>
-            Performance Staff
-          </h3>
-        </div>
-        <div className="px-6 pb-6">
-          <div className="space-y-3 md:space-y-4">
+        {/* Subtle main card hover effect */}
+        <div className="main-card-group-hover:opacity-100 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#6f4e37]/3 via-transparent to-[#8b5e3c]/3 opacity-0 transition-opacity duration-500" />
+      </Card>
+
+      {/* Staff Performance Card */}
+      <Card className="main-card-group-2 relative overflow-hidden rounded-xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white via-[#fefefe] to-[#faf9f7] p-0 shadow-lg transition-all duration-500 hover:-translate-y-1 hover:shadow-xl hover:shadow-[#8b5e3c]/20">
+        {/* Sophisticated background pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#e6d9c9]/10 via-transparent to-[#d2bba3]/10 opacity-30" />
+
+        {/* Top border accent */}
+        <div className="main-card-group-2-hover:opacity-100 absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-[#8b5e3c] via-[#6f4e37] to-[#c17a5d] opacity-70 transition-opacity duration-500" />
+
+        <CardHeader className="relative rounded-t-xl border-b border-[#e6d9c9]/20 px-6 py-6 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            <div className="group/icon main-card-group-2-hover:scale-110 main-card-group-2-hover:shadow-lg rounded-full bg-gradient-to-br from-[#6f4e37]/15 to-[#8b5e3c]/15 p-3 transition-all duration-300">
+              <Users className="main-card-group-2-hover:rotate-6 h-6 w-6 text-[#6f4e37] transition-transform duration-300" />
+            </div>
+            <div>
+              <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                Performance Staff
+              </CardTitle>
+              <p className="mt-1 text-sm font-medium text-[#8c7158]/80">
+                Kinerja tim hari ini
+              </p>
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="relative p-6">
+          <div className="space-y-5">
             {staffMembers
-              .filter(staff => staff.status === 'Aktif')
-              .map(staff => (
-                <div
-                  key={staff.id}
-                  className={`flex flex-col justify-between space-y-2 rounded-lg border border-[#e6d9c9] p-3 ${CHILDREN_SHADOW_CARD_STYLE} md:flex-row md:items-center md:space-y-0`}
-                >
-                  <div>
-                    <div
-                      className={`text-sm font-medium md:text-base ${TEXT_COLORS.primary}`}
-                    >
-                      {staff.name}
-                    </div>
-                    <div
-                      className={`text-xs md:text-sm ${TEXT_COLORS.secondary}`}
-                    >
-                      {staff.role} • {staff.shift}
-                    </div>
-                  </div>
-                  <div className="flex justify-between md:block md:text-right">
-                    <div className={TEXT_COLORS.bold}>
-                      {formatCurrency(staff.todaySales)}
-                    </div>
-                    <div
-                      className={`text-xs md:text-sm ${TEXT_COLORS.secondary}`}
-                    >
-                      {staff.orders} pesanan
-                    </div>
-                  </div>
-                </div>
+              .filter(kasir => kasir.status === 'Aktif')
+              .map(kasir => (
+                <KasirItem key={kasir.id} kasir={kasir} />
               ))}
           </div>
-        </div>
-      </div>
+        </CardContent>
+
+        {/* Subtle main card hover effect */}
+        <div className="main-card-group-2-hover:opacity-100 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-br from-[#6f4e37]/3 via-transparent to-[#8b5e3c]/3 opacity-0 transition-opacity duration-500" />
+      </Card>
     </div>
   );
 };
