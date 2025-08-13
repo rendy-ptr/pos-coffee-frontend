@@ -48,6 +48,8 @@ import {
   UserCheck,
   UserX,
   AlertCircle,
+  Filter,
+  ChevronDown,
 } from 'lucide-react';
 
 export const lucideIcons = {
@@ -100,4 +102,6 @@ export const lucideIcons = {
   UserCheck,
   UserX,
   AlertCircle,
+  Filter,
+  ChevronDown,
 } as const;

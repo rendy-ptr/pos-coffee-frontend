@@ -55,6 +55,7 @@ const CustomerDashboardContainer = () => {
   useEffect(() => {
     if (userResponse?.data) {
       setCustomerData(userResponse.data);
+      localStorage.setItem(`isOnline_${userResponse.data.id}`, 'true');
     }
   }, [userResponse, setCustomerData]);
 

@@ -31,7 +31,7 @@ const ManagementKasirSection = () => {
       {/* Enhanced Grid Layout */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 xl:grid-cols-3">
         <KasirCard
-          title="Kasir Aktif"
+          title="Kasir Dalam Masa Kerja"
           staffList={activeStaff}
           showAddButton={true}
           onAddClick={handleAddKasir}
@@ -41,7 +41,7 @@ const ManagementKasirSection = () => {
         />
 
         <KasirCard
-          title="Kasir Tidak Aktif"
+          title="Kasir Resign"
           staffList={inactiveStaff}
           icon={<UserX className="h-6 w-6 text-white" />}
           headerColor="from-[#8c7158] to-[#a08b7a]"
@@ -49,7 +49,7 @@ const ManagementKasirSection = () => {
 
         <div className="lg:col-span-2 xl:col-span-1">
           <KasirCard
-            title="Izin/Sakit/Cuti"
+            title="Kasir Tidak Hadir"
             staffList={onLeaveStaff}
             showAddButton={true}
             onAddClick={handleAddLeaveRequest}
