@@ -16,8 +16,8 @@ export const TAB_LINK = [
     label: 'Pesanan',
   },
   {
-    value: 'customer',
-    label: 'Customer',
+    value: 'reward',
+    label: 'Reward',
   },
   {
     value: 'laporan',

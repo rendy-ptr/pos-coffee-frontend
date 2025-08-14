@@ -10,7 +10,7 @@ export const staffMembers = [
     orders: 25,
     clockIn: '07:58',
     lastActivity: '14:25',
-    performance: 92, // percentage
+    performance: 92,
   },
   {
     id: 2,

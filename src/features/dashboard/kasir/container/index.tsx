@@ -40,6 +40,7 @@ const KasirDashboardContainer = () => {
   useEffect(() => {
     if (kasirResponse && kasirResponse.data) {
       setKasirData(kasirResponse.data);
+      localStorage.setItem(`isOnline_${kasirResponse.data.id}`, 'true');
     }
   }, [kasirResponse, setKasirData]);
 

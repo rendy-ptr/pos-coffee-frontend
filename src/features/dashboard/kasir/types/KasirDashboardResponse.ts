@@ -2,7 +2,7 @@ export interface IKasirDashboardResponse {
   success: boolean;
   message: string;
   data: {
-    id: number;
+    id: string;
     email: string;
     name: string;
     role: string;

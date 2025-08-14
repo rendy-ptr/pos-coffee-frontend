@@ -1,8 +1,8 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import type React from 'react';
-import CustomerAvatar from './CustomerAvatar';
+import KasirAvatar from './KasirAvatar';
 
-interface Customer {
+interface Kasir {
   id: string;
   name: string;
   role: string;
@@ -11,28 +11,28 @@ interface Customer {
 
 interface MobileMenuProps {
   show: boolean;
-  customer: Customer;
+  kasir: Kasir;
   onMenuItemClick: (action: 'Profile' | 'Settings' | 'Keluar') => void;
 }
 
 const MobileMenu: React.FC<MobileMenuProps> = ({
   show,
-  customer,
+  kasir,
   onMenuItemClick,
 }) => {
   const { User, Settings, LogOut } = lucideIcons;
-  const isOnline = localStorage.getItem(`isOnline_${customer.id}`) === 'true';
+  const isOnline = localStorage.getItem(`isOnline_${kasir.id}`) === 'true';
 
   if (!show) return null;
 
   return (
     <div className="mt-4 border-t border-[#e6d9c9] pt-4 md:hidden">
       <div className="mb-3 flex items-center gap-3 rounded-lg bg-gradient-to-r from-[#6f4e37]/5 to-[#8c7158]/5 px-3 py-3">
-        <CustomerAvatar customer={customer} size="lg" />
+        <KasirAvatar kasir={kasir} size="lg" />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center gap-2">
             <p className="truncate text-sm font-semibold text-gray-900">
-              {customer.name}
+              {kasir.name}
             </p>
             {isOnline && (
               <div className="flex items-center gap-1">
@@ -43,9 +43,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </div>
             )}
           </div>
-          <p className="truncate text-xs text-[#8c7158]">{customer.role}</p>
-          {customer.email && (
-            <p className="truncate text-xs text-gray-500">{customer.email}</p>
+          <p className="truncate text-xs text-[#8c7158]">{kasir.role}</p>
+          {kasir.email && (
+            <p className="truncate text-xs text-gray-500">{kasir.email}</p>
           )}
         </div>
       </div>

@@ -24,7 +24,7 @@ const SummaryCardSection = () => {
       iconColor: 'text-[#8c7158]',
     },
     {
-      title: 'Total Customer',
+      title: 'Total Customer Member',
       value: DASHBOARD_MOCKS.totalCustomers,
       subtext: '+12 member baru',
       Icon: Users,

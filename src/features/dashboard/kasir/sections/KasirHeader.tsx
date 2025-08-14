@@ -1,28 +1,53 @@
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { logout } from '../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useNavigate } from 'react-router-dom';
 import { useKasirStore } from '@/store/kasirStore';
+import KasirAvatar from '../components/header/KasirAvatar';
+import ProfileDropdown from '../components/header/ProfileDropdown';
+import MobileMenu from '../components/header/MobileMenu';
+
+type MenuAction = 'Profile' | 'Settings' | 'Keluar';
+
 const KasirHeader = () => {
-  const { Coffee, Menu } = lucideIcons;
+  const { Coffee, Menu, ChevronDown } = lucideIcons;
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const { kasirData, clearKasirData } = useKasirStore();
+  const [showProfileDropdown, setShowProfileDropdown] =
+    useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  if (!kasirData) return null;
+  const handleClickOutside = useCallback((event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setShowProfileDropdown(false);
+    }
+  }, []);
 
-  const handleLogout = async () => {
+  const handleProfileClick = useCallback((): void => {
+    setShowProfileDropdown(prev => !prev);
+  }, []);
+
+  const handleMobileMenuToggle = useCallback((): void => {
+    setShowMobileMenu(prev => !prev);
+  }, []);
+
+  const handleLogout = useCallback(async () => {
     try {
       const response = await logout();
       queryClient.clear();
       if (kasirData?.id) {
         localStorage.removeItem(`welcome_shown_${kasirData.id}`);
+        localStorage.removeItem(`isOnline_${kasirData.id}`);
       }
       clearKasirData();
       addToast(response.message, 'success', 5000);
@@ -34,74 +59,104 @@ const KasirHeader = () => {
         5000
       );
     }
-  };
+  }, [addToast, clearKasirData, kasirData?.id, navigate, queryClient]);
+
+  const handleMenuItemClick = useCallback(
+    (action: MenuAction): void => {
+      setShowProfileDropdown(false);
+      setShowMobileMenu(false);
+      switch (action) {
+        case 'Profile':
+          navigate('/profile');
+          break;
+        case 'Settings':
+          navigate('/settings');
+          break;
+        case 'Keluar':
+          handleLogout();
+          break;
+      }
+    },
+    [handleLogout, navigate]
+  );
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [handleClickOutside]);
+
+  if (!kasirData) return null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white">
-      <div className="px-4 py-3">
+    <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white/95 shadow-sm backdrop-blur-sm">
+      <div className="px-4 py-3 lg:px-6">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Coffee className="h-6 w-6 text-[#6f4e37]" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#6f4e37] to-[#8c7158] shadow-md">
+              <Coffee className="h-5 w-5 text-white" />
+            </div>
             <div className="flex flex-col">
-              <span className="text-lg font-bold text-[#6f4e37]">
+              <span className="text-lg font-bold tracking-tight text-[#6f4e37]">
                 Aroma Kopi
               </span>
-              <span className="hidden text-xs text-[#8c7158] sm:block">
-                {kasirData.role.toLowerCase()}
+              <span className="hidden text-xs font-medium text-[#8c7158] sm:block">
+                Kasir Management System
               </span>
             </div>
             <Badge
               variant="secondary"
-              className="bg-blue-100 text-xs text-blue-800"
+              className="border border-red-200 bg-gradient-to-r from-red-50 to-red-100 text-xs font-semibold text-red-800 shadow-sm"
             >
-              Shift: {kasirData.shiftStart} - {kasirData.shiftEnd}
+              kasir Panel
             </Badge>
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
-              className="p-2 md:hidden"
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 hover:bg-[#6f4e37]/10 md:hidden"
+              onClick={handleMobileMenuToggle}
             >
-              <Menu className="h-4 w-4" />
+              <Menu className="h-5 w-5 text-[#6f4e37]" />
             </Button>
-            <div className="hidden items-center gap-2 md:flex">
-              <div className="text-xs text-[#8c7158]">
-                Kasir: <span className="font-medium">{kasirData.name}</span>
-              </div>
+            <div className="relative hidden md:block" ref={dropdownRef}>
               <Button
-                className="cursor-pointer"
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={handleLogout}
+                onClick={handleProfileClick}
+                className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-5"
               >
-                Keluar Shift
+                <KasirAvatar kasir={kasirData} size="sm" />
+                <div className="hidden flex-col items-start lg:flex">
+                  <span className="text-sm leading-tight font-semibold text-gray-900">
+                    {kasirData.name}
+                  </span>
+                  <span className="text-xs leading-tight text-[#8c7158]">
+                    {kasirData.role}
+                  </span>
+                </div>
+                <ChevronDown
+                  className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
+                    showProfileDropdown ? 'rotate-180' : ''
+                  }`}
+                />
               </Button>
+              <ProfileDropdown
+                show={showProfileDropdown}
+                kasir={kasirData}
+                onMenuItemClick={handleMenuItemClick}
+              />
             </div>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {showMobileMenu && (
-          <div className="mt-3 border-t border-[#e6d9c9] pt-3 md:hidden">
-            <div className="flex flex-col gap-2">
-              <div className="text-xs text-[#8c7158]">
-                Kasir: <span className="font-medium">{kasirData.name}</span>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className="justify-start"
-                onClick={handleLogout}
-              >
-                Keluar Shift
-              </Button>
-            </div>
-          </div>
-        )}
+        <MobileMenu
+          show={showMobileMenu}
+          kasir={kasirData}
+          onMenuItemClick={handleMenuItemClick}
+        />
       </div>
     </header>
   );
 };
+
 export default KasirHeader;

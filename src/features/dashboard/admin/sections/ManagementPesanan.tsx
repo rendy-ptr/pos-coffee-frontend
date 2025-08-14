@@ -244,37 +244,39 @@ const ManagementPesanan = () => {
               </div>
 
               <div className="flex justify-end lg:justify-start">
-                <button
-                  onClick={() => setIsFilterOpen(!isFilterOpen)}
-                  className="flex items-center gap-2 rounded-lg border border-[#e6d9c9]/50 bg-white/80 px-4 py-2 text-sm font-medium text-[#6f4e37] backdrop-blur-sm transition-all duration-300 hover:border-[#6f4e37]/30 hover:bg-[#6f4e37]/5 focus:ring-2 focus:ring-[#6f4e37]/30 focus:outline-none"
-                >
-                  <Filter className="h-4 w-4" />
-                  <span>{selectedFilterLabel}</span>
-                  <ChevronDown
-                    className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`}
-                  />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="flex items-center gap-2 rounded-lg border border-[#e6d9c9]/50 bg-white/80 px-4 py-2 text-sm font-medium text-[#6f4e37] backdrop-blur-sm transition-all duration-300 hover:border-[#6f4e37]/30 hover:bg-[#6f4e37]/5 focus:ring-2 focus:ring-[#6f4e37]/30 focus:outline-none"
+                  >
+                    <Filter className="h-4 w-4" />
+                    <span>{selectedFilterLabel}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
 
-                {isFilterOpen && (
-                  <div className="absolute top-full right-0 z-50 mt-2 w-48 overflow-hidden rounded-lg border border-[#e6d9c9]/50 bg-white shadow-xl backdrop-blur-sm">
-                    {filterOptions.map(option => (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setSelectedFilter(option.value);
-                          setIsFilterOpen(false);
-                        }}
-                        className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-[#6f4e37]/5 ${
-                          selectedFilter === option.value
-                            ? 'bg-[#6f4e37]/10 text-[#6f4e37]'
-                            : 'text-[#8c7158]'
-                        }`}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                  {isFilterOpen && (
+                    <div className="absolute top-full left-0 z-50 mt-2 w-full min-w-[160px] overflow-hidden rounded-lg border border-[#e6d9c9]/50 bg-white shadow-xl backdrop-blur-sm">
+                      {filterOptions.map(option => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setSelectedFilter(option.value);
+                            setIsFilterOpen(false);
+                          }}
+                          className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-[#6f4e37]/5 ${
+                            selectedFilter === option.value
+                              ? 'bg-[#6f4e37]/10 text-[#6f4e37]'
+                              : 'text-[#8c7158]'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

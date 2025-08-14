@@ -6,7 +6,7 @@ import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
-import { DashboardLoadingSkeleton } from '../components/DashboardLoadingSkeleton';
+import CoffeeLoadingAnimation from '../components/CoffeeLoadingAnimation';
 
 // HOOKS
 import { useState, useEffect } from 'react';
@@ -72,7 +72,7 @@ const CustomerDashboardContainer = () => {
   }, [userResponse, addToast]);
 
   // Tampilkan skeleton saat loading
-  if (isLoading) return <DashboardLoadingSkeleton />;
+  if (isLoading) return <CoffeeLoadingAnimation />;
 
   // Tampilkan pesan error jika data tidak tersedia
   if (!userResponse?.data) {

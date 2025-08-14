@@ -1,322 +1,246 @@
-import {
-  CHILDREN_SHADOW_CARD_STYLE,
-  TEXT_COLORS,
-  CARD_STYLES,
-  SHADOW_CARD_STYLE,
-} from '@/constants/Style';
-import { formatCurrency } from '@/utils/formatCurrency';
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { getStatusConfig } from '@/features/dashboard/admin/constant/StatusConfig';
-import type React from 'react';
+import { formatCurrency } from '@/utils/formatCurrency';
+import { CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
 
-interface StaffCardProps {
-  staff: {
+interface IManagementKasirItemProps {
+  kasir: {
     id: number;
     name: string;
     role: string;
     shift: string;
-    status: string;
-    avatar?: string;
-    todaySales?: number;
-    orders?: number;
-    clockIn?: string | null;
-    lastActivity?: string | null;
-    leaveType?: string;
-    leaveReason?: string;
-    leaveDate?: string;
-    expectedReturn?: string;
-    performance?: number;
+    status: 'active' | 'nonactive';
+    avatar: string;
+    todaySales: number;
+    todayOrders: number;
+    allOrders: number;
   };
 }
 
-const StaffCard = ({ staff }: StaffCardProps) => {
-  const { Clock, TrendingUp, Calendar } = lucideIcons;
+const getStatusConfig = (status: string) => {
+  const configs = {
+    active: {
+      bgColor: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
+      textColor: 'text-white',
+      text: 'Aktif',
+      dot: 'bg-emerald-500',
+      ringColor: 'ring-emerald-500/20',
+    },
+    nonactive: {
+      bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
+      textColor: 'text-white',
+      text: 'Tidak Aktif',
+      dot: 'bg-gray-400',
+      ringColor: 'ring-gray-400/20',
+    },
+  };
 
-  const statusConfig = getStatusConfig(staff.status);
-  const isOnLeave = ['sick', 'leave', 'permit'].includes(staff.status);
-  const isActive = staff.status === 'active';
+  return configs[status as keyof typeof configs] || configs.active;
+};
+
+const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
+  const { Edit, Trash2, Clock, DollarSign, ShoppingCart } = lucideIcons;
+  const statusConfig = getStatusConfig(kasir.status);
 
   return (
-    <div className="group relative">
-      {/* Hover glow effect */}
-      <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-[#6f4e37]/20 to-[#8b5e3c]/20 opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-100"></div>
-
-      <div
-        className={`relative ${CARD_STYLES} rounded-xl p-5 ${CHILDREN_SHADOW_CARD_STYLE} transition-all duration-300 group-hover:border-[#6f4e37]/40 hover:shadow-xl`}
-      >
-        {/* Header with Avatar and Status */}
-        <div className="mb-4 flex items-start gap-4">
-          <div className="relative">
-            {/* Avatar with ring */}
+    <div
+      className={`group rounded-xl border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-3 shadow-sm transition-all duration-300 hover:border-[#6f4e37]/20 hover:shadow-lg sm:p-4 md:p-5 lg:p-6 ${CHILDREN_SHADOW_CARD_STYLE}`}
+    >
+      {/* Mobile Layout */}
+      <div className="block lg:hidden">
+        {/* Header with Avatar and Basic Info */}
+        <div className="mb-4 flex items-start gap-3 sm:gap-4">
+          <div className="relative flex-shrink-0">
+            <img
+              src={
+                kasir.avatar ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
+              }
+              alt={kasir.name}
+              className="h-16 w-16 rounded-xl object-cover shadow-md ring-2 ring-[#e6d9c9]/30 sm:h-20 sm:w-20 md:h-24 md:w-24"
+              onError={e => {
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`;
+              }}
+            />
+            {/* Status Badge */}
             <div
-              className={`h-14 w-14 rounded-full ring-4 ${statusConfig.ringColor} overflow-hidden`}
+              className={`absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-medium shadow-sm ${statusConfig.bgColor} ${statusConfig.textColor}`}
             >
-              <img
-                src={staff.avatar}
-                alt={staff.name}
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                onError={e => {
-                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(staff.name)}&background=6f4e37&color=fff&size=128`;
-                }}
-              />
+              <div
+                className={`mr-1 inline-block h-2 w-2 rounded-full ${statusConfig.dot}`}
+              ></div>
+              {statusConfig.text}
             </div>
-
-            {/* Status indicator dot */}
-            <div
-              className={`absolute -right-0.5 -bottom-0.5 h-5 w-5 ${statusConfig.dot} rounded-full border-2 border-white shadow-sm`}
-            ></div>
           </div>
 
           <div className="min-w-0 flex-1">
-            <div className="mb-1 flex items-center justify-between">
-              <h4
-                className={`text-lg font-bold ${TEXT_COLORS.primary} truncate transition-colors group-hover:text-[#8b5e3c]`}
+            <h3 className="mb-1 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-base font-bold text-transparent sm:text-lg md:text-xl">
+              {kasir.name}
+            </h3>
+            <p className="mb-1 text-xs font-medium text-[#8c7158] sm:text-sm md:text-base">
+              {kasir.role}
+            </p>
+            <div className="mb-2 flex items-center text-xs text-[#8c7158] sm:text-sm">
+              <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+              {kasir.shift}
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-[#6f4e37]/20 px-3 text-xs text-[#6f4e37] transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white sm:px-4 sm:text-sm"
+                aria-label="Edit kasir"
               >
-                {staff.name}
-              </h4>
+                <Edit className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-red-200 px-3 text-xs text-red-600 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white sm:px-4 sm:text-sm"
+                aria-label="Delete kasir"
+              >
+                <Trash2 className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+                Hapus
+              </Button>
+            </div>
+          </div>
+        </div>
 
+        {/* Mobile Stats Grid */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="rounded-lg border border-[#6f4e37]/10 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-2 sm:p-3">
+            <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
+              <DollarSign className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+              Penjualan Hari Ini
+            </div>
+            <div className="text-xs font-bold text-[#6f4e37] sm:text-sm">
+              {formatCurrency(kasir.todaySales ?? 0)}
+            </div>
+          </div>
+          <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-2 sm:p-3">
+            <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
+              <ShoppingCart className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+              Order Hari Ini
+            </div>
+            <div className="text-xs font-semibold text-blue-600 sm:text-sm">
+              {kasir.todayOrders?.toLocaleString() ?? 0}
+            </div>
+          </div>
+          <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-2 sm:p-3">
+            <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
+              <ShoppingCart className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
+              Total Order
+            </div>
+            <div className="text-xs font-semibold text-purple-600 sm:text-sm">
+              {kasir.allOrders?.toLocaleString() ?? 0}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Layout */}
+      <div className="hidden lg:block">
+        <div className="grid grid-cols-12 items-center gap-4 lg:gap-6 xl:gap-8">
+          {/* Kasir Info */}
+          <div className="col-span-12 flex items-center gap-4 lg:col-span-4 xl:col-span-4">
+            <div className="relative flex-shrink-0">
+              <img
+                src={
+                  kasir.avatar ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
+                }
+                alt={kasir.name}
+                className="h-20 w-20 rounded-xl object-cover shadow-md ring-2 ring-[#e6d9c9]/30 xl:h-24 xl:w-24"
+                onError={e => {
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`;
+                }}
+              />
               {/* Status Badge */}
               <div
-                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${statusConfig.bgColor} ${statusConfig.textColor} shadow-sm`}
+                className={`absolute -top-2 -right-2 rounded-full px-2 py-1 text-xs font-medium shadow-sm ${statusConfig.bgColor} ${statusConfig.textColor} xl:text-sm`}
               >
+                <div
+                  className={`mr-1 inline-block h-2 w-2 rounded-full ${statusConfig.dot}`}
+                ></div>
                 {statusConfig.text}
               </div>
             </div>
 
-            <div
-              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.secondary} mb-2`}
-            >
-              <span className="font-medium">{staff.role}</span>
-              <span className="h-1 w-1 rounded-full bg-[#8c7158]"></span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {staff.shift}
-              </span>
-            </div>
-
-            {/* Clock in info for active users */}
-            {isActive && staff.clockIn && (
-              <div
-                className={`flex items-center gap-4 text-xs ${TEXT_COLORS.secondary}`}
-              >
-                <span>
-                  Masuk:{' '}
-                  <span className="font-medium text-[#6f4e37]">
-                    {staff.clockIn}
-                  </span>
-                </span>
-                <span>
-                  Terakhir:{' '}
-                  <span className="font-medium">{staff.lastActivity}</span>
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Content based on status */}
-        {isOnLeave ? (
-          // Leave Information
-          <div className="rounded-lg border border-[#e6d9c9] bg-gradient-to-br from-[#e6d9c9]/30 to-[#d2bba3]/20 p-4">
-            <div className="flex items-start gap-3">
-              <div
-                className={`p-2 ${statusConfig.bgColor} rounded-lg shadow-sm`}
-              >
-                <Calendar className="h-4 w-4 text-white" />
-              </div>
-              <div className="flex-1">
-                <div
-                  className={`text-sm font-semibold ${TEXT_COLORS.primary} mb-1`}
-                >
-                  {staff.leaveReason}
-                </div>
-                <div className={`text-xs ${TEXT_COLORS.secondary}`}>
-                  Kembali:{' '}
-                  <span className={`font-medium ${TEXT_COLORS.primary}`}>
-                    {staff.expectedReturn
-                      ? new Date(staff.expectedReturn).toLocaleDateString(
-                          'id-ID',
-                          {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          }
-                        )
-                      : 'N/A'}
-                  </span>
-                </div>
+            <div className="min-w-0 flex-1">
+              <h3 className="mb-1 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-lg font-bold text-transparent xl:text-xl">
+                {kasir.name}
+              </h3>
+              <p className="mb-1 text-sm font-medium text-[#8c7158] xl:text-base">
+                {kasir.role}
+              </p>
+              <div className="flex items-center text-sm text-[#8c7158] xl:text-base">
+                <Clock className="mr-1 h-4 w-4" />
+                {kasir.shift}
               </div>
             </div>
           </div>
-        ) : (
-          // Performance Stats
-          <div className="space-y-4">
-            {/* Sales and Orders */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg border border-[#e6d9c9] bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/5 p-4">
-                <div
-                  className={`text-xs font-medium ${TEXT_COLORS.secondary} mb-1 tracking-wide uppercase`}
-                >
+
+          {/* Stats Grid */}
+          <div className="col-span-12 lg:col-span-6 xl:col-span-6">
+            <div className="grid grid-cols-3 gap-3 lg:gap-4 xl:gap-6">
+              <div className="rounded-lg border border-[#6f4e37]/10 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-3 xl:p-4">
+                <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
+                  <DollarSign className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
                   Penjualan Hari Ini
                 </div>
-                <div className={`text-xl font-bold ${TEXT_COLORS.primary}`}>
-                  {formatCurrency(staff.todaySales ?? 0)}
+                <div className="text-sm font-bold text-[#6f4e37] xl:text-base">
+                  {formatCurrency(kasir.todaySales ?? 0)}
                 </div>
               </div>
 
-              <div className="rounded-lg border border-[#e6d9c9] bg-gradient-to-br from-[#8c7158]/10 to-[#a08b7a]/5 p-4">
-                <div
-                  className={`text-xs font-medium ${TEXT_COLORS.secondary} mb-1 tracking-wide uppercase`}
-                >
-                  Total Pesanan
+              <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-3 xl:p-4">
+                <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
+                  <ShoppingCart className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
+                  Order Hari Ini
                 </div>
-                <div className={`text-xl font-bold ${TEXT_COLORS.primary}`}>
-                  {staff.orders ?? 0}
+                <div className="text-sm font-semibold text-blue-600 xl:text-base">
+                  {kasir.todayOrders?.toLocaleString() ?? 0}
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-3 xl:p-4">
+                <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
+                  <ShoppingCart className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
+                  Total Order
+                </div>
+                <div className="text-sm font-semibold text-purple-600 xl:text-base">
+                  {kasir.allOrders?.toLocaleString() ?? 0}
                 </div>
               </div>
             </div>
-
-            {/* Performance bar - only for active users */}
-            {isActive && (
-              <div className="rounded-lg border border-[#e6d9c9] bg-gradient-to-br from-[#d2bba3]/20 to-[#e6d9c9]/10 p-4">
-                <div className="mb-2 flex items-center justify-between">
-                  <div className="flex items-center gap-1">
-                    <TrendingUp className={`h-4 w-4 ${TEXT_COLORS.primary}`} />
-                    <span
-                      className={`text-xs font-medium ${TEXT_COLORS.secondary} tracking-wide uppercase`}
-                    >
-                      Performa
-                    </span>
-                  </div>
-                  <span className={`text-sm font-bold ${TEXT_COLORS.primary}`}>
-                    {staff.performance ?? 0}%
-                  </span>
-                </div>
-
-                {/* Progress bar */}
-                <div className="h-2 w-full rounded-full bg-[#e6d9c9]">
-                  <div
-                    className="h-2 rounded-full bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] shadow-sm transition-all duration-1000"
-                    style={{ width: `${staff.performance ?? 0}%` }}
-                  ></div>
-                </div>
-              </div>
-            )}
           </div>
-        )}
-      </div>
-    </div>
-  );
-};
 
-interface KasirCardProps {
-  title: string;
-  staffList: {
-    staff: {
-      id: number;
-      name: string;
-      role: string;
-      shift: string;
-      status: string;
-      avatar?: string;
-      todaySales?: number;
-      orders?: number;
-      clockIn?: string | null;
-      lastActivity?: string | null;
-      leaveType?: string;
-      leaveReason?: string;
-      leaveDate?: string;
-      expectedReturn?: string;
-      performance?: number;
-    };
-  }[];
-  showAddButton?: boolean;
-  onAddClick?: () => void;
-  icon?: React.ReactNode;
-  headerColor?: string;
-  addButtonText?: string;
-}
-
-const KasirCard = ({
-  title,
-  staffList,
-  showAddButton = false,
-  onAddClick,
-  icon,
-  headerColor = 'from-[#6f4e37] to-[#5d4130]',
-  addButtonText = 'Tambah',
-}: KasirCardProps) => {
-  const { UserPlus } = lucideIcons;
-
-  return (
-    <div className="group relative">
-      {/* Card glow effect */}
-      <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#6f4e37]/10 to-[#8b5e3c]/10 opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-100"></div>
-
-      <div
-        className={`relative ${CARD_STYLES} rounded-2xl ${SHADOW_CARD_STYLE} overflow-hidden transition-all duration-300 group-hover:border-[#6f4e37]/30 hover:shadow-2xl`}
-      >
-        {/* Enhanced Header */}
-        <div className={`bg-gradient-to-r ${headerColor} p-6`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {icon && (
-                <div className="rounded-xl bg-white/20 p-3 backdrop-blur-sm">
-                  {icon}
-                </div>
-              )}
-              <div>
-                <h3 className="mb-1 text-xl font-bold text-white">{title}</h3>
-                <div className="flex items-center gap-2">
-                  <div className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-sm font-semibold text-white backdrop-blur-sm">
-                    {staffList.length} Orang
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {showAddButton && (
-              <Button
-                onClick={onAddClick}
-                className="border-white/30 bg-white/20 text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:bg-white/30 hover:shadow-xl"
-                variant="outline"
-                size="sm"
-              >
-                <UserPlus className="mr-2 h-4 w-4" />
-                {addButtonText}
-              </Button>
-            )}
+          {/* Actions */}
+          <div className="col-span-12 flex items-center justify-center gap-3 lg:col-span-2 lg:justify-end xl:col-span-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-[#6f4e37]/20 px-4 text-xs text-[#6f4e37] shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white hover:shadow-md xl:px-6 xl:text-sm"
+              aria-label="Edit kasir"
+            >
+              <Edit className="h-4 w-4 xl:mr-2" />
+              <span className="hidden xl:inline">Edit</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-red-200 px-4 text-xs text-red-600 shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-md xl:px-6 xl:text-sm"
+              aria-label="Delete kasir"
+            >
+              <Trash2 className="h-4 w-4 xl:mr-2" />
+              <span className="hidden xl:inline">Hapus</span>
+            </Button>
           </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          {staffList.length > 0 ? (
-            <div className="space-y-4">
-              {staffList.map(({ staff }) => (
-                <StaffCard key={staff.id} staff={staff} />
-              ))}
-            </div>
-          ) : (
-            <div className="py-12 text-center">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#e6d9c9]/50 to-[#d2bba3]/30">
-                <UserPlus className={`h-8 w-8 ${TEXT_COLORS.secondary}`} />
-              </div>
-              <div
-                className={`text-lg font-semibold ${TEXT_COLORS.primary} mb-2`}
-              >
-                Belum Ada Data
-              </div>
-              <div className={`text-sm ${TEXT_COLORS.secondary}`}>
-                {addButtonText} untuk memulai
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default KasirCard;
+export default ManagementKasirItem;

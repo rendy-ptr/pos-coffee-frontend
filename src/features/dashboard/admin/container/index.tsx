@@ -3,13 +3,14 @@ import TabListSection from '../sections/TabList';
 import SummaryCardSection from '../sections/SummaryCard';
 import RecentActivityCard from '../sections/RecentActivityCard';
 import ManagementMenuSection from '../sections/ManagementMenu';
+import ManagementKasirSection from '../sections/ManagementKasir';
+// import M from '../sections/m';
 
 // HOOKS
 import { useState } from 'react';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import ManagementKasirSection from '../sections/ManagementKasir';
 import ManagementPesanan from '../sections/ManagementPesanan';
 
 // FUNCTIONS
@@ -18,7 +19,6 @@ import ManagementPesanan from '../sections/ManagementPesanan';
 
 const AdminDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  //   const [showMobileMenu, setShowMobileMenu] = useState(false);
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabListSection />
@@ -37,6 +37,9 @@ const AdminDashboardContainer = () => {
       </TabsContent>
       <TabsContent value="pesanan" className="space-y-4 md:space-y-6">
         <ManagementPesanan />
+      </TabsContent>
+      <TabsContent value="reward" className="space-y-4 md:space-y-6">
+        {/* <ManagementKasirSection /> */}
       </TabsContent>
     </Tabs>
   );
