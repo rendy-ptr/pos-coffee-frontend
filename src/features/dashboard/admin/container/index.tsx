@@ -4,14 +4,14 @@ import SummaryCardSection from '../sections/SummaryCard';
 import RecentActivityCard from '../sections/RecentActivityCard';
 import ManagementMenuSection from '../sections/ManagementMenu';
 import ManagementKasirSection from '../sections/ManagementKasir';
-// import M from '../sections/m';
+import ManagementPesanan from '../sections/ManagementPesanan';
+import ManagementReward from '../sections/ManagementReward';
 
 // HOOKS
 import { useState } from 'react';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import ManagementPesanan from '../sections/ManagementPesanan';
 
 // FUNCTIONS
 
@@ -39,7 +39,7 @@ const AdminDashboardContainer = () => {
         <ManagementPesanan />
       </TabsContent>
       <TabsContent value="reward" className="space-y-4 md:space-y-6">
-        {/* <ManagementKasirSection /> */}
+        <ManagementReward />
       </TabsContent>
     </Tabs>
   );

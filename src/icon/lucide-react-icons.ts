@@ -50,10 +50,24 @@ import {
   AlertCircle,
   Filter,
   ChevronDown,
+  TicketCheck,
+  RefreshCcw,
+  Tickets,
+  TicketPlus,
+  Zap,
+  Ticket,
+  AlertTriangle,
+  Hash,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
+  TicketPlus,
+  Hash,
+  Ticket,
+  AlertTriangle,
+  Zap,
+  TicketCheck,
   Clock,
   MapPin,
   Phone,
@@ -104,4 +118,6 @@ export const lucideIcons = {
   AlertCircle,
   Filter,
   ChevronDown,
+  RefreshCcw,
+  Tickets,
 } as const;

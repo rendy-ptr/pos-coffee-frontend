@@ -39,7 +39,7 @@ const getStatusConfig = (status: string) => {
 };
 
 const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
-  const { Edit, Trash2, Clock, DollarSign, ShoppingCart } = lucideIcons;
+  const { Edit, Trash2, Clock, RefreshCcw } = lucideIcons;
   const statusConfig = getStatusConfig(kasir.status);
 
   return (
@@ -103,6 +103,14 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                 <Trash2 className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                 Hapus
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+                aria-label="Delete kasir"
+              >
+                <RefreshCcw className="h-4 w-4" />
+              </Button>
             </div>
           </div>
         </div>
@@ -111,7 +119,6 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="rounded-lg border border-[#6f4e37]/10 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-2 sm:p-3">
             <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
-              <DollarSign className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
               Penjualan Hari Ini
             </div>
             <div className="text-xs font-bold text-[#6f4e37] sm:text-sm">
@@ -120,7 +127,6 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           </div>
           <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-2 sm:p-3">
             <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
-              <ShoppingCart className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
               Order Hari Ini
             </div>
             <div className="text-xs font-semibold text-blue-600 sm:text-sm">
@@ -129,7 +135,6 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           </div>
           <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-2 sm:p-3">
             <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] sm:text-sm">
-              <ShoppingCart className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
               Total Order
             </div>
             <div className="text-xs font-semibold text-purple-600 sm:text-sm">
@@ -182,11 +187,10 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           </div>
 
           {/* Stats Grid */}
-          <div className="col-span-12 lg:col-span-6 xl:col-span-6">
+          <div className="col-span-12 lg:col-span-5 xl:col-span-5">
             <div className="grid grid-cols-3 gap-3 lg:gap-4 xl:gap-6">
               <div className="rounded-lg border border-[#6f4e37]/10 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-3 xl:p-4">
-                <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
-                  <DollarSign className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
+                <div className="mb-1 flex items-center text-xs font-medium whitespace-nowrap text-[#8c7158] xl:text-sm">
                   Penjualan Hari Ini
                 </div>
                 <div className="text-sm font-bold text-[#6f4e37] xl:text-base">
@@ -196,7 +200,6 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
 
               <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-3 xl:p-4">
                 <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
-                  <ShoppingCart className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
                   Order Hari Ini
                 </div>
                 <div className="text-sm font-semibold text-blue-600 xl:text-base">
@@ -206,7 +209,6 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
 
               <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-3 xl:p-4">
                 <div className="mb-1 flex items-center text-xs font-medium text-[#8c7158] xl:text-sm">
-                  <ShoppingCart className="mr-1 h-3 w-3 xl:h-4 xl:w-4" />
                   Total Order
                 </div>
                 <div className="text-sm font-semibold text-purple-600 xl:text-base">
@@ -217,7 +219,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           </div>
 
           {/* Actions */}
-          <div className="col-span-12 flex items-center justify-center gap-3 lg:col-span-2 lg:justify-end xl:col-span-2">
+          <div className="gap-4:col-span-3 col-span-12 flex w-full items-center justify-between xl:col-span-3">
             <Button
               variant="outline"
               size="sm"
@@ -235,6 +237,14 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
             >
               <Trash2 className="h-4 w-4 xl:mr-2" />
               <span className="hidden xl:inline">Hapus</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+              aria-label="Delete kasir"
+            >
+              <RefreshCcw className="h-4 w-4" />
             </Button>
           </div>
         </div>
