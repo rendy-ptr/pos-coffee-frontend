@@ -1,53 +1,34 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useState, useRef, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import StaffAvatar from '../components/header/AdminAvatar';
 import ProfileDropdown from '../components/header/ProfileDropdown';
 import MobileMenu from '../components/header/MobileMenu';
-import type React from 'react';
+import { useAdminStore } from '@/store/adminStore';
+import { useToast } from '@/components/shared/ToastProvider';
+import { useNavigate } from 'react-router-dom';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { capitalize } from '@/utils/formatCapitalize';
+import { useLogout } from '../hooks/useLogout';
+import { useAuthStore } from '@/store/authStore';
+import { useQueryClient } from '@tanstack/react-query';
 
-// Types
-interface Staff {
-  name: string;
-  role?: string;
-  email?: string;
-  isOnline?: boolean;
-}
-
-interface HeaderAdminProps {
-  staff?: Staff;
-  onProfileClick?: () => void;
-  onSettingsClick?: () => void;
-  onLogout?: () => void;
-}
-
+// TYPES
 type MenuAction = 'Profile' | 'Settings' | 'Keluar';
 
-const DEFAULT_STAFF: Staff = {
-  name: 'Admin User',
-  role: 'Administrator',
-  email: 'admin@aromakopi.com',
-  isOnline: true,
-};
-
-const HeaderAdmin: React.FC<HeaderAdminProps> = ({
-  staff = DEFAULT_STAFF,
-  onProfileClick,
-  onSettingsClick,
-  onLogout,
-}) => {
+const HeaderAdmin = () => {
   const { Coffee, Menu, ChevronDown } = lucideIcons;
-
-  // States
+  const { addToast } = useToast();
+  const navigate = useNavigate();
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [showProfileDropdown, setShowProfileDropdown] =
     useState<boolean>(false);
-
-  // Refs
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { doLogout } = useLogout();
+  const { adminData } = useAdminStore();
+  const { setLoggingOut } = useAuthStore();
+  const queryClient = useQueryClient();
 
-  // Handlers
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
       dropdownRef.current &&
@@ -65,30 +46,52 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
     setShowMobileMenu(prev => !prev);
   }, []);
 
+  const handleLogout = useCallback(async () => {
+    try {
+      setLoggingOut(true);
+      const response = await doLogout();
+
+      console.log('Logout Response:', response.message);
+      addToast(response.message, 'success', 3000);
+
+      localStorage.removeItem('welcomeShown');
+      queryClient.removeQueries({ queryKey: ['auth'], exact: true });
+
+      navigate('/auth/login', { replace: true });
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Terjadi kesalahan';
+      addToast(errorMessage, 'error', 5000);
+    } finally {
+      setTimeout(() => setLoggingOut(false), 1000);
+    }
+  }, [doLogout, navigate, addToast, queryClient, setLoggingOut]);
+
   const handleMenuItemClick = useCallback(
     (action: MenuAction): void => {
       setShowProfileDropdown(false);
       setShowMobileMenu(false);
       switch (action) {
         case 'Profile':
-          onProfileClick?.();
+          navigate('/profile');
           break;
         case 'Settings':
-          onSettingsClick?.();
+          navigate('/settings');
           break;
         case 'Keluar':
-          onLogout?.();
+          handleLogout();
           break;
       }
     },
-    [onProfileClick, onSettingsClick, onLogout]
+    [handleLogout, navigate]
   );
 
-  // Effects
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [handleClickOutside]);
+
+  if (!adminData) return null;
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white/95 shadow-sm backdrop-blur-sm">
@@ -129,13 +132,13 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
                 onClick={handleProfileClick}
                 className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-5"
               >
-                <StaffAvatar staff={staff} size="sm" />
+                <StaffAvatar admin={adminData} size="sm" />
                 <div className="hidden flex-col items-start lg:flex">
                   <span className="text-sm leading-tight font-semibold text-gray-900">
-                    {staff.name}
+                    {adminData.name}
                   </span>
                   <span className="text-xs leading-tight text-[#8c7158]">
-                    {staff.role}
+                    {capitalize(adminData.role)}
                   </span>
                 </div>
                 <ChevronDown
@@ -146,7 +149,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
               </Button>
               <ProfileDropdown
                 show={showProfileDropdown}
-                staff={staff}
+                admin={adminData}
                 onMenuItemClick={handleMenuItemClick}
               />
             </div>
@@ -154,7 +157,7 @@ const HeaderAdmin: React.FC<HeaderAdminProps> = ({
         </div>
         <MobileMenu
           show={showMobileMenu}
-          staff={staff}
+          admin={adminData}
           onMenuItemClick={handleMenuItemClick}
         />
       </div>

@@ -57,6 +57,7 @@ import {
   Zap,
   Ticket,
   AlertTriangle,
+  RefreshCw,
   Hash,
 } from 'lucide-react';
 
@@ -65,6 +66,7 @@ export const lucideIcons = {
   TicketPlus,
   Hash,
   Ticket,
+  RefreshCw,
   AlertTriangle,
   Zap,
   TicketCheck,

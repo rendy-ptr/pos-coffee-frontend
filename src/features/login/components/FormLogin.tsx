@@ -1,12 +1,14 @@
 // LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { API_PATHS } from '@/constants/apiPaths';
+// import { API_PATHS } from '@/constants/apiPaths';
 
 // HOOKS
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useToast } from '@/components/shared/ToastProvider';
+import { useQueryClient } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/authStore';
 
 // THIRD-PARTY
 import { Label } from '@/components/ui/label';
@@ -14,23 +16,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 // FUNCTIONS
-import apiClient from '@/utils/apiClient';
+// import apiClient from '@/utils/apiClient';
 
 // TYPES
 import { AxiosError } from 'axios';
 import type { SubmitHandler } from 'react-hook-form';
 import type { LoginFormData } from '../schema/FormLoginSchema';
+import { login } from '@/services/authService';
 
-interface ILoginResponse {
-  success: boolean;
-  message: string;
-  data: {
-    id: string;
-    name: string;
-    role: string;
-    redirectUrl: string;
-  };
-}
 interface IApiErrorResponse {
   message: string;
 }
@@ -39,7 +32,6 @@ const FormLogin = () => {
   const { Eye, EyeOff } = lucideIcons;
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [_, setErrorMessage] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -48,23 +40,22 @@ const FormLogin = () => {
   } = useForm<LoginFormData>();
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const queryClient = useQueryClient();
+  const { setLoggingOut } = useAuthStore();
+
+  useEffect(() => {
+    setLoggingOut(false);
+  }, [setLoggingOut]);
 
   const onSubmit: SubmitHandler<LoginFormData> = async data => {
     setIsSubmitting(true);
-    setErrorMessage(null);
     try {
-      const response = await apiClient.post<ILoginResponse>(
-        API_PATHS.AUTH_LOGIN,
-        data
-      );
+      const response = await login(data);
       console.log('API Response:', response.data);
-      if (response.data.success) {
-        const redirectUrl = response.data.data.redirectUrl.replace(
-          import.meta.env.VITE_FRONTEND_URL,
-          ''
-        );
-        addToast(response.data.message, 'success', 5000);
-        navigate(redirectUrl);
+      if (response.success) {
+        addToast(response.message, 'success', 5000);
+        await queryClient.invalidateQueries({ queryKey: ['auth'] });
+        navigate(response.data.redirectUrl, { replace: true });
       }
     } catch (error) {
       let errorMsg = 'An unexpected error occurred';
@@ -74,8 +65,6 @@ const FormLogin = () => {
       } else if (error instanceof Error) {
         errorMsg = error.message;
       }
-      console.error('Login error:', errorMsg);
-      setErrorMessage(errorMsg);
       addToast(errorMsg, 'error', 5000);
     } finally {
       setIsSubmitting(false);

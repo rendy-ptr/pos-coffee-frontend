@@ -1,12 +1,12 @@
 import type React from 'react';
 
-interface Staff {
+interface Admin {
   name: string;
   isOnline?: boolean;
 }
 
-interface StaffAvatarProps {
-  staff: Staff;
+interface AdminAvatarProps {
+  admin: Admin;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -18,7 +18,7 @@ const COLORS = {
   background: '#ffffff',
 } as const;
 
-const StaffAvatar: React.FC<StaffAvatarProps> = ({ staff, size = 'md' }) => {
+const StaffAvatar = ({ admin, size = 'md' }: AdminAvatarProps) => {
   const getAvatarUrl = (name: string): string => {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6f4e37&color=fff&size=128&bold=true`;
   };
@@ -53,19 +53,21 @@ const StaffAvatar: React.FC<StaffAvatarProps> = ({ staff, size = 'md' }) => {
     lg: 'bottom-0.5 right-0.5',
   };
 
+  const isOnline = true;
+
   return (
     <div className="relative">
       <div
         className={`${sizeClasses[size]} overflow-hidden rounded-full ring-2 ring-[${COLORS.primary}]/10 shadow-sm`}
       >
         <img
-          src={getAvatarUrl(staff.name)}
-          alt={`${staff.name} avatar`}
+          src={getAvatarUrl(admin.name)}
+          alt={`${admin.name} avatar`}
           className="h-full w-full object-cover"
           onError={e => handleImageError(e, size)}
         />
       </div>
-      {staff.isOnline && (
+      {isOnline && (
         <div className={`absolute ${positionClasses[size]} z-10`}>
           <div className="relative">
             <div

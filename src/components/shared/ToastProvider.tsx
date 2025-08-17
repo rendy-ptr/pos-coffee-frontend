@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toastController } from '@/utils/toastController';
 
 interface Toast {
   id: string;
@@ -17,9 +18,7 @@ const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const useToast = () => {
   const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
+  if (!context) throw new Error('useToast must be used within a ToastProvider');
   return context;
 };
 
@@ -58,8 +57,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
         delete newStartTimes[id];
         return newStartTimes;
       });
-    }, 400); // Tunggu animasi keluar selesai (0.4s)
+    }, 400);
   };
+
+  // 🔹 sinkronkan dengan toastController
+  useEffect(() => {
+    toastController.setHandler(addToast);
+  }, []);
 
   useEffect(() => {
     if (toasts.length > 0) {
@@ -73,25 +77,13 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
               newProgress[toast.id] = (remaining / toast.duration) * 100;
 
               if (elapsed >= toast.duration) {
-                setToasts(prevToasts =>
-                  prevToasts.map(t =>
-                    t.id === toast.id ? { ...t, isExiting: true } : t
-                  )
-                );
-                setTimeout(() => {
-                  setToasts(prevToasts =>
-                    prevToasts.filter(t => t.id !== toast.id)
-                  );
-                  delete newProgress[toast.id];
-                  delete startTimes[toast.id];
-                }, 400); // Tunggu animasi keluar selesai (0.4s)
+                removeToast(toast.id);
               }
             }
           });
           return newProgress;
         });
-      }, 16); // Update setiap ~16ms untuk animasi mulus (60fps)
-
+      }, 16);
       return () => clearInterval(interval);
     }
   }, [toasts, startTimes]);

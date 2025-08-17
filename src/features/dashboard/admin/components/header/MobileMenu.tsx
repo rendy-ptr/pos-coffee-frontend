@@ -1,26 +1,21 @@
-// src/components/header/MobileMenu.tsx
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type React from 'react';
 import StaffAvatar from './AdminAvatar';
+import { capitalize } from '@/utils/formatCapitalize';
 
-interface Staff {
+interface Admin {
   name: string;
-  role?: string;
-  email?: string;
+  role: string;
+  email: string;
   isOnline?: boolean;
 }
 
 interface MobileMenuProps {
   show: boolean;
-  staff: Staff;
+  admin: Admin;
   onMenuItemClick: (action: 'Profile' | 'Settings' | 'Keluar') => void;
 }
 
-const MobileMenu: React.FC<MobileMenuProps> = ({
-  show,
-  staff,
-  onMenuItemClick,
-}) => {
+const MobileMenu = ({ show, admin, onMenuItemClick }: MobileMenuProps) => {
   const { User, Settings, LogOut } = lucideIcons;
 
   if (!show) return null;
@@ -28,13 +23,13 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
   return (
     <div className="mt-4 border-t border-[#e6d9c9] pt-4 md:hidden">
       <div className="mb-3 flex items-center gap-3 rounded-lg bg-gradient-to-r from-[#6f4e37]/5 to-[#8c7158]/5 px-3 py-3">
-        <StaffAvatar staff={staff} size="lg" />
+        <StaffAvatar admin={admin} size="lg" />
         <div className="min-w-0 flex-1">
           <div className="mb-1 flex items-center gap-2">
             <p className="truncate text-sm font-semibold text-gray-900">
-              {staff.name}
+              {admin.name}
             </p>
-            {staff.isOnline && (
+            {admin.isOnline && (
               <div className="flex items-center gap-1">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-green-500"></div>
                 <span className="text-xs font-medium text-green-600">
@@ -43,9 +38,11 @@ const MobileMenu: React.FC<MobileMenuProps> = ({
               </div>
             )}
           </div>
-          <p className="truncate text-xs text-[#8c7158]">{staff.role}</p>
-          {staff.email && (
-            <p className="truncate text-xs text-gray-500">{staff.email}</p>
+          <p className="truncate text-xs text-[#8c7158]">
+            {capitalize(admin.role)}
+          </p>
+          {admin.email && (
+            <p className="truncate text-xs text-gray-500">{admin.email}</p>
           )}
         </div>
       </div>

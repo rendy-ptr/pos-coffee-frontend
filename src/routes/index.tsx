@@ -11,6 +11,7 @@ import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
 import KasirPage from '@/pages/dashboard/kasir/KasirPage';
 import AdminLayout from '@/layouts/dashboard/admin/AdminLayout';
 import AdminPage from '@/pages/dashboard/admin/AdminPage';
+import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -40,25 +41,35 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'customer',
-        element: <CustomerLayout />,
+        element: <ProtectedRoute allowedRoles={['CUSTOMER']} />,
         children: [
           {
-            index: true,
-            element: <CustomerPage />,
-          },
-          {
-            path: 'pengaturan',
-            element: <CustomerSettings />,
+            element: <CustomerLayout />,
+            children: [
+              {
+                index: true,
+                element: <CustomerPage />,
+              },
+              {
+                path: 'pengaturan',
+                element: <CustomerSettings />,
+              },
+            ],
           },
         ],
       },
       {
         path: 'kasir',
-        element: <KasirLayout />,
+        element: <ProtectedRoute allowedRoles={['KASIR']} />,
         children: [
           {
-            index: true,
-            element: <KasirPage />,
+            element: <KasirLayout />,
+            children: [
+              {
+                index: true,
+                element: <KasirPage />,
+              },
+            ],
           },
           // {
           //   path: 'checkout',
@@ -68,11 +79,16 @@ const router = createBrowserRouter([
       },
       {
         path: 'admin',
-        element: <AdminLayout />,
+        element: <ProtectedRoute allowedRoles={['ADMIN']} />,
         children: [
           {
-            index: true,
-            element: <AdminPage />,
+            element: <AdminLayout />,
+            children: [
+              {
+                index: true,
+                element: <AdminPage />,
+              },
+            ],
           },
         ],
       },

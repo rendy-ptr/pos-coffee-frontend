@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 
 const CoffeeLoadingAnimation = () => {
-  const [loadingText, setLoadingText] = useState('Brewing your data');
+  const [loadingText, setLoadingText] = useState('Checking Metadata');
   const [dots, setDots] = useState('');
 
   useEffect(() => {
     const textInterval = setInterval(() => {
       const texts = [
+        'Checking Metadata',
         'Brewing your data',
-        'Grinding fresh results',
         'Steaming information',
         'Pouring insights',
       ];
@@ -26,7 +26,7 @@ const CoffeeLoadingAnimation = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-amber-50 to-orange-100">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
         {/* Coffee Cup Animation */}
         <div className="relative mb-8">

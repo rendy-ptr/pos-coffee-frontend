@@ -1,11 +1,13 @@
-import type { ICustomerDashboardResponse } from '../types/CustomerDashboardResponse';
-import type { ICustomerLogoutData } from '../types/logoutData';
+import type {
+  IAdminDashboardResponse,
+  IAdminLogoutData,
+} from '../types/AdminDashboardTypes';
 import apiClient from '@/utils/apiClient';
 import axios from 'axios';
 
-export const logout = async (): Promise<ICustomerLogoutData> => {
-  const response = await apiClient.post('/auth/logout');
-  const data: ICustomerLogoutData = response.data;
+export const logout = async (): Promise<IAdminLogoutData> => {
+  const res = await apiClient.post('/auth/logout');
+  const data: IAdminLogoutData = res.data;
 
   if (!data.success) {
     throw new Error(data.message);
@@ -14,20 +16,18 @@ export const logout = async (): Promise<ICustomerLogoutData> => {
   return data;
 };
 
-export const fetchCustomerDashboard = async (
+export const fetchAdminDashboard = async (
   signal?: AbortSignal
-): Promise<ICustomerDashboardResponse> => {
+): Promise<IAdminDashboardResponse> => {
   try {
-    const response = await apiClient.get<ICustomerDashboardResponse>(
-      '/dashboard/customer',
+    const res = await apiClient.get<IAdminDashboardResponse>(
+      '/dashboard/admin',
       { signal }
     );
-    const data: ICustomerDashboardResponse = response.data;
-
+    const data = res.data;
     if (!data.success) {
       throw new Error(data.message || 'Gagal memuat dashboard');
     }
-
     return data;
   } catch (err) {
     if (axios.isAxiosError(err)) {

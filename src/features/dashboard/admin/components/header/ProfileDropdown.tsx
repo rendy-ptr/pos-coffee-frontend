@@ -1,26 +1,26 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type React from 'react';
 import StaffAvatar from './AdminAvatar';
+import { capitalize } from '@/utils/formatCapitalize';
 
-interface Staff {
+interface Admin {
   name: string;
-  role?: string;
-  email?: string;
-  isOnline?: boolean;
+  role: string;
+  email: string;
 }
 
 interface ProfileDropdownProps {
   show: boolean;
-  staff: Staff;
+  admin: Admin;
   onMenuItemClick: (action: 'Profile' | 'Settings' | 'Keluar') => void;
 }
 
-const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
+const ProfileDropdown = ({
   show,
-  staff,
+  admin,
   onMenuItemClick,
-}) => {
+}: ProfileDropdownProps) => {
   const { User, Settings, LogOut } = lucideIcons;
+  const isOnline = true;
 
   if (!show) return null;
 
@@ -28,13 +28,13 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
     <div className="absolute right-0 z-50 mt-2 w-64 overflow-hidden rounded-xl border border-[#e6d9c9] bg-white shadow-lg">
       <div className="border-b border-[#e6d9c9] bg-gradient-to-r from-[#6f4e37]/5 to-[#8c7158]/5 px-4 py-3">
         <div className="flex items-center gap-3">
-          <StaffAvatar staff={staff} size="md" />
+          <StaffAvatar admin={admin} size="md" />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <p className="truncate text-sm font-semibold text-gray-900">
-                {staff.name}
+                {admin.name}
               </p>
-              {staff.isOnline && (
+              {isOnline && (
                 <div className="flex items-center gap-1">
                   <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>
                   <span className="text-xs font-medium text-green-600">
@@ -43,9 +43,11 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 </div>
               )}
             </div>
-            <p className="truncate text-xs text-[#8c7158]">{staff.role}</p>
-            {staff.email && (
-              <p className="truncate text-xs text-gray-500">{staff.email}</p>
+            <p className="truncate text-xs text-[#8c7158]">
+              {capitalize(admin.role)}
+            </p>
+            {admin.email && (
+              <p className="truncate text-xs text-gray-500">{admin.email}</p>
             )}
           </div>
         </div>

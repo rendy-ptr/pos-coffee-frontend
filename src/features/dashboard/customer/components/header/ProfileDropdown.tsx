@@ -1,6 +1,6 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type React from 'react';
 import CustomerAvatar from './CustomerAvatar';
+import { capitalize } from '@/utils/formatCapitalize';
 
 interface Customer {
   id: string;
@@ -15,13 +15,13 @@ interface ProfileDropdownProps {
   onMenuItemClick: (action: 'Profile' | 'Settings' | 'Keluar') => void;
 }
 
-const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
+const ProfileDropdown = ({
   show,
   customer,
   onMenuItemClick,
-}) => {
+}: ProfileDropdownProps) => {
   const { User, Settings, LogOut } = lucideIcons;
-  const isOnline = localStorage.getItem(`isOnline_${customer.id}`) === 'true';
+  const isOnline = true;
 
   if (!show) return null;
 
@@ -44,7 +44,9 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                 </div>
               )}
             </div>
-            <p className="truncate text-xs text-[#8c7158]">{customer.role}</p>
+            <p className="truncate text-xs text-[#8c7158]">
+              {capitalize(customer.role)}
+            </p>
             {customer.email && (
               <p className="truncate text-xs text-gray-500">{customer.email}</p>
             )}

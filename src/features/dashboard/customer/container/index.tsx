@@ -6,79 +6,49 @@ import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
-import CoffeeLoadingAnimation from '../components/CoffeeLoadingAnimation';
+import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 
 // HOOKS
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useCustomerStore } from '@/store/customerStore';
+import { useCustomerDashboard } from '../hooks/useCustomerDashboard';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
 // FUNCTIONS
-import { fetchCustomerDashboard } from '../services/api';
 
 // TYPES
-import type { ICustomerDashboardResponse } from '../types/CustomerDashboardResponse';
 
 const CustomerDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
-  const navigate = useNavigate();
-  const { addToast } = useToast();
-  const { setCustomerData } = useCustomerStore();
-
   const {
-    data: userResponse,
+    data: queryData,
     isLoading,
+    isError,
     error,
-  } = useQuery<ICustomerDashboardResponse>({
-    queryKey: ['customerDashboard'],
-    queryFn: fetchCustomerDashboard,
-  });
+  } = useCustomerDashboard(true);
+  const { customerData } = useCustomerStore();
+  const { addToast } = useToast();
 
-  // Tangani error dan navigasi ke login
+  const data = queryData?.data || customerData;
+
   useEffect(() => {
-    if (error) {
-      addToast(
-        error.message || 'Terjadi kesalahan saat memuat data.',
-        'error',
-        3000
-      );
-      navigate('/auth/login');
-    }
-  }, [error, navigate, addToast]);
+    const alreadyShown = localStorage.getItem('welcomeShown');
 
-  // Simpan data pelanggan ke store
-  useEffect(() => {
-    if (userResponse?.data) {
-      setCustomerData(userResponse.data);
-      localStorage.setItem(`isOnline_${userResponse.data.id}`, 'true');
+    if (data?.name && !alreadyShown) {
+      addToast(`Selamat datang, ${data.name}!`, 'info', 5000);
+      localStorage.setItem('welcomeShown', 'true');
     }
-  }, [userResponse, setCustomerData]);
+  }, [data, addToast]);
 
-  // Tampilkan toast selamat datang sekali saja per pengguna
-  useEffect(() => {
-    if (userResponse?.data && userResponse.message) {
-      const welcomeKey = `welcome_shown_${userResponse.data.id}`;
-      const hasShownWelcome = localStorage.getItem(welcomeKey);
-      if (!hasShownWelcome) {
-        addToast(userResponse.message, 'success', 5000);
-        localStorage.setItem(welcomeKey, 'true');
-      }
-    }
-  }, [userResponse, addToast]);
-
-  // Tampilkan skeleton saat loading
   if (isLoading) return <CoffeeLoadingAnimation />;
 
-  // Tampilkan pesan error jika data tidak tersedia
-  if (!userResponse?.data) {
-    addToast('Data pelanggan tidak tersedia.', 'error', 3000);
-    navigate('/auth/login');
-    return null;
+  if (isError) {
+    const message =
+      error instanceof Error ? error.message : 'Terjadi kesalahan';
+    addToast(message, 'error', 3000);
   }
 
   return (

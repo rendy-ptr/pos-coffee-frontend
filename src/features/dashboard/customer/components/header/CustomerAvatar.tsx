@@ -56,7 +56,7 @@ const CustomerAvatar: React.FC<CustomerAvatarProps> = ({
     lg: 'bottom-0.5 right-0.5',
   };
 
-  const isOnline = localStorage.getItem(`isOnline_${customer.id}`) === 'true';
+  const isOnline = true;
 
   return (
     <div className="relative">

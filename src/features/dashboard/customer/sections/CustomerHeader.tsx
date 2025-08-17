@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Badge } from '@/components/ui/badge';
-import { logout } from '../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useNavigate } from 'react-router-dom';
@@ -10,19 +9,24 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import CustomerAvatar from '../components/header/CustomerAvatar';
 import ProfileDropdown from '../components/header/ProfileDropdown';
 import MobileMenu from '../components/header/MobileMenu';
+import { useLogout } from '../hooks/useLogout';
+import { useAuthStore } from '@/store/authStore';
+import { capitalize } from '@/utils/formatCapitalize';
 
 type MenuAction = 'Profile' | 'Settings' | 'Keluar';
 
 const HeaderCustomer = () => {
   const { Coffee, Menu, ChevronDown } = lucideIcons;
-  const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const { customerData, clearCustomerData } = useCustomerStore();
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
   const [showProfileDropdown, setShowProfileDropdown] =
     useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { doLogout } = useLogout();
+  const { customerData } = useCustomerStore();
+  const { setLoggingOut } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const handleClickOutside = useCallback((event: MouseEvent) => {
     if (
@@ -43,23 +47,24 @@ const HeaderCustomer = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      const response = await logout();
-      queryClient.clear();
-      if (customerData?.id) {
-        localStorage.removeItem(`welcome_shown_${customerData.id}`);
-        localStorage.removeItem(`isOnline_${customerData.id}`);
-      }
-      clearCustomerData();
-      addToast(response.message, 'success', 5000);
-      navigate(response.data.redirectUrl);
+      setLoggingOut(true);
+      const response = await doLogout();
+
+      console.log('Logout Response:', response.message);
+      addToast(response.message, 'success', 3000);
+
+      localStorage.removeItem('welcomeShown');
+      queryClient.removeQueries({ queryKey: ['auth'], exact: true });
+
+      navigate('/auth/login', { replace: true });
     } catch (error) {
-      addToast(
-        error instanceof Error ? error.message : 'Terjadi kesalahan',
-        'error',
-        5000
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Terjadi kesalahan';
+      addToast(errorMessage, 'error', 5000);
+    } finally {
+      setTimeout(() => setLoggingOut(false), 1000);
     }
-  }, [addToast, clearCustomerData, customerData?.id, navigate, queryClient]);
+  }, [doLogout, navigate, addToast, queryClient, setLoggingOut]);
 
   const handleMenuItemClick = useCallback(
     (action: MenuAction): void => {
@@ -132,7 +137,7 @@ const HeaderCustomer = () => {
                     {customerData.name}
                   </span>
                   <span className="text-xs leading-tight text-[#8c7158]">
-                    {customerData.role}
+                    {capitalize(customerData.role)}
                   </span>
                 </div>
                 <ChevronDown
