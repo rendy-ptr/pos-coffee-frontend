@@ -14,7 +14,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useQueryClient } from '@tanstack/react-query';
 
 // TYPES
-type MenuAction = 'Profile' | 'Settings' | 'Keluar';
+type MenuAction = 'Dashboard' | 'Profile' | 'Settings' | 'Keluar' | 'Kategori';
 
 const HeaderAdmin = () => {
   const { Coffee, Menu, ChevronDown } = lucideIcons;
@@ -72,6 +72,9 @@ const HeaderAdmin = () => {
       setShowProfileDropdown(false);
       setShowMobileMenu(false);
       switch (action) {
+        case 'Dashboard':
+          navigate('/dashboard/admin');
+          break;
         case 'Profile':
           navigate('/profile');
           break;
@@ -80,6 +83,9 @@ const HeaderAdmin = () => {
           break;
         case 'Keluar':
           handleLogout();
+          break;
+        case 'Kategori':
+          navigate('kategori');
           break;
       }
     },

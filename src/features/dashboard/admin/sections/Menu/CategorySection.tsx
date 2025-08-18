@@ -1,87 +1,49 @@
-import { useState, useMemo } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { lucideIcons } from '@/icon/lucide-react-icons';
-import ManagementMenuItem from '../components/ManagementMenuItem';
 import { Button } from '@/components/ui/button';
-const {
-  UtensilsCrossed,
-  Search,
-  Filter,
-  ChevronDown,
-  CheckCircle,
-  Coffee,
-  AlertCircle,
-} = lucideIcons;
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { lucideIcons } from '@/icon/lucide-react-icons';
+import { PackagePlus } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import ManagementCategoryItem from '../../components/Menu/ManagementCategoryItem';
+import AddCategoryModal from '../../components/Menu/AddCategoryModal';
+
+// ICONS
+const { Package, Search, Filter, ChevronDown, CheckCircle, AlertCircle } =
+  lucideIcons;
+
+// MOCKS
+const kategori = [
+  { id: 1, name: 'Minuman', icon: 'Coffee', isActive: true },
+  { id: 2, name: 'Makanan', icon: 'Utensils', isActive: true },
+  { id: 3, name: 'Snack', icon: 'Popcorn', isActive: false },
+  { id: 4, name: 'Dessert', icon: 'IceCreamBowl', isActive: true },
+];
 
 const filterOptions = [
   { value: 'Semua', label: 'Semua' },
-  { value: 'Kopi', label: 'Kopi' },
+  { value: 'Minuman', label: 'Minuman' },
   { value: 'Makanan', label: 'Makanan' },
+  { value: 'Snack', label: 'Snack' },
+  { value: 'Dessert', label: 'Dessert' },
 ];
 
-const menuItems = [
-  {
-    id: 1,
-    name: 'Espresso',
-    category: 'Kopi',
-    price: 25000,
-    cost: 8000,
-    stock: 50,
-    sold: 45,
-    profit: 17000,
-    status: 'Aktif',
-    image:
-      'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?q=80&w=200&auto=format&fit=crop',
-  },
-  {
-    id: 2,
-    name: 'Cappuccino',
-    category: 'Kopi',
-    price: 35000,
-    cost: 12000,
-    stock: 45,
-    sold: 38,
-    profit: 23000,
-    status: 'Aktif',
-    image:
-      'https://images.unsplash.com/photo-1572442388796-11668a67e53d?q=80&w=200&auto=format&fit=crop',
-  },
-  {
-    id: 3,
-    name: 'Croissant Butter',
-    category: 'Makanan',
-    price: 25000,
-    cost: 10000,
-    stock: 20,
-    sold: 15,
-    profit: 15000,
-    status: 'Aktif',
-    image:
-      'https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=200&auto=format&fit=crop',
-  },
-];
-
-const ManagementMenuSection = () => {
-  const filterMenuAktif = menuItems.filter(
-    item => item.status === 'Aktif'
-  ).length;
-  const filterMenuTidakAktif = menuItems.filter(
-    item => item.status !== 'Aktif'
-  ).length;
-
+const CategorySection = () => {
   const [selectedFilter, setSelectedFilter] = useState('Semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const filterKategoriAktif = kategori.filter(k => k.isActive).length;
+  const filterKategoriTidakAktif = kategori.filter(k => !k.isActive).length;
+  const filterKategori = kategori.length;
 
   const filteredItems = useMemo(() => {
-    return menuItems
+    return kategori
       .filter(item => {
         // Filter berdasarkan kategori
         if (selectedFilter === 'Semua') return true;
-        return item.category === selectedFilter;
+        return item.name === selectedFilter;
       })
       .filter(item =>
-        // Filter berdasarkan pencarian nama
         searchTerm
           ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
           : true
@@ -104,14 +66,14 @@ const ManagementMenuSection = () => {
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-4">
               <div className="rounded-full bg-gradient-to-br from-[#6f4e37]/15 to-[#8b5e3c]/15 p-3">
-                <UtensilsCrossed className="h-6 w-6 text-[#6f4e37]" />
+                <Package className="h-6 w-6 text-[#6f4e37]" />
               </div>
               <div>
                 <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
-                  Manajemen Menu
+                  Manajemen Kategori Menu
                 </CardTitle>
                 <p className="mt-1 text-sm font-medium text-[#8c7158]/80">
-                  Kelola menu, harga, dan stok dengan mudah
+                  Kelola kategori menu dengan mudah
                 </p>
               </div>
             </div>
@@ -163,9 +125,12 @@ const ManagementMenuSection = () => {
                   )}
                 </div>
               </div>
-              <Button className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg">
-                <UtensilsCrossed className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                Tambah Menu
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+              >
+                <PackagePlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                Tambah Kategori
               </Button>
             </div>
           </div>
@@ -177,13 +142,13 @@ const ManagementMenuSection = () => {
         <Card className="relative overflow-hidden rounded-lg border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-gradient-to-br from-[#6f4e37]/15 to-[#8b5e3c]/15 p-2">
-              <Coffee className="h-5 w-5 text-[#6f4e37]" />
+              <Package className="h-5 w-5 text-[#6f4e37]" />
             </div>
             <div>
               <p className="text-2xl font-bold text-[#6f4e37]">
-                {menuItems.length}
+                {filterKategori}
               </p>
-              <p className="text-sm text-[#8c7158]/70">Total Menu</p>
+              <p className="text-sm text-[#8c7158]/70">Total Kategori</p>
             </div>
           </div>
         </Card>
@@ -195,9 +160,9 @@ const ManagementMenuSection = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-green-600">
-                {filterMenuAktif}
+                {filterKategoriAktif}
               </p>
-              <p className="text-sm text-[#8c7158]/70">Menu Aktif</p>
+              <p className="text-sm text-[#8c7158]/70">Kategori Aktif</p>
             </div>
           </div>
         </Card>
@@ -209,9 +174,9 @@ const ManagementMenuSection = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-orange-600">
-                {filterMenuTidakAktif}
+                {filterKategoriTidakAktif}
               </p>
-              <p className="text-sm text-[#8c7158]/70">Menu Tidak Aktif</p>
+              <p className="text-sm text-[#8c7158]/70">Kategori Tidak Aktif</p>
             </div>
           </div>
         </Card>
@@ -223,7 +188,7 @@ const ManagementMenuSection = () => {
           <div className="space-y-4 md:space-y-6">
             {filteredItems.length > 0 ? (
               filteredItems.map(item => (
-                <ManagementMenuItem key={item.id} item={item} />
+                <ManagementCategoryItem key={item.id} item={item} />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">
@@ -231,19 +196,26 @@ const ManagementMenuSection = () => {
                   <Search className="h-8 w-8 text-[#8c7158]/50" />
                 </div>
                 <p className="mb-2 text-lg font-semibold text-[#6f4e37]">
-                  Tidak ada menu ditemukan
+                  Tidak ada kategori ditemukan
                 </p>
                 <p className="max-w-md text-center text-sm text-[#8c7158]/70">
                   Coba ubah filter atau kata kunci pencarian untuk menemukan
-                  menu yang Anda cari.
+                  kategori yang Anda cari.
                 </p>
               </div>
             )}
           </div>
         </CardContent>
       </Card>
+      <AddCategoryModal
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSave={data => {
+          console.log('Kategori baru:', data);
+        }}
+      />
     </div>
   );
 };
 
-export default ManagementMenuSection;
+export default CategorySection;

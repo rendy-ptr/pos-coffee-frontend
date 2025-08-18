@@ -29,6 +29,7 @@ apiClient.interceptors.response.use(
 
       switch (errorCode) {
         case 'TOKEN_EXPIRED':
+          localStorage.removeItem('welcomeShown');
           toastController.addToast('Sesi habis, silakan login ulang', 'error');
           if (history.location.pathname !== '/auth/login') {
             history.push('/auth/login');
@@ -37,6 +38,7 @@ apiClient.interceptors.response.use(
 
         case 'INVALID_TOKEN':
         case 'NO_TOKEN':
+          localStorage.removeItem('welcomeShown');
           toastController.addToast(
             'Unauthorized, silakan login ulang',
             'error'

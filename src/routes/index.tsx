@@ -10,8 +10,9 @@ import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
 import KasirPage from '@/pages/dashboard/kasir/KasirPage';
 import AdminLayout from '@/layouts/dashboard/admin/AdminLayout';
-import AdminPage from '@/pages/dashboard/admin/AdminPage';
+import AdminRootPage from '@/pages/dashboard/admin/AdminRootPage';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
+import AdminCategoryPage from '@/pages/dashboard/admin/AdminCategoryPage';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -86,7 +87,11 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <AdminPage />,
+                element: <AdminRootPage />,
+              },
+              {
+                path: 'kategori',
+                element: <AdminCategoryPage />,
               },
             ],
           },
