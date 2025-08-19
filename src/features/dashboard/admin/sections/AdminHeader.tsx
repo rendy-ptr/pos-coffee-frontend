@@ -56,6 +56,7 @@ const HeaderAdmin = () => {
 
       localStorage.removeItem('welcomeShown');
       queryClient.removeQueries({ queryKey: ['auth'], exact: true });
+      queryClient.clear();
 
       navigate('/auth/login', { replace: true });
     } catch (error) {
@@ -97,7 +98,25 @@ const HeaderAdmin = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [handleClickOutside]);
 
-  if (!adminData) return null;
+  if (!adminData) {
+    return (
+      <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white/95 shadow-sm backdrop-blur-sm">
+        <div className="px-4 py-3 lg:px-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 animate-pulse rounded-xl bg-gray-200" />
+              <div className="flex flex-col gap-1">
+                <div className="h-3 w-24 animate-pulse rounded bg-gray-200" />
+                <div className="h-2 w-32 animate-pulse rounded bg-gray-100" />
+              </div>
+              <div className="ml-2 h-5 w-20 animate-pulse rounded bg-gray-100" />
+            </div>
+            <div className="h-8 w-8 animate-pulse rounded-full bg-gray-200" />
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-[#e6d9c9] bg-white/95 shadow-sm backdrop-blur-sm">

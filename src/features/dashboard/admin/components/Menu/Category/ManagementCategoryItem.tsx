@@ -1,13 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import type { Category } from '../../../types/category';
+import EditCategoryModal from './EditCategoryModal';
+import { useState } from 'react';
+import DeleteCategoryModal from './DeleteCategoryModal';
 
 interface IManagementCategoryItemProps {
-  item: {
-    id: number;
-    name: string;
-    icon: string;
-    isActive: boolean;
-  };
+  item: Category;
 }
 
 const getStatusConfig = (isActive: boolean) => {
@@ -31,7 +30,10 @@ const getStatusConfig = (isActive: boolean) => {
 };
 
 const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { Edit, Trash2 } = lucideIcons;
+
   type LucideIconKeys = keyof typeof lucideIcons;
   const IconComponent =
     lucideIcons[item.icon as LucideIconKeys] || lucideIcons.HelpCircle;
@@ -66,6 +68,7 @@ const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
               variant="outline"
               size="sm"
               className="border-[#6f4e37]/20 text-[#6f4e37] hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white"
+              onClick={() => setIsEditOpen(true)}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -73,6 +76,7 @@ const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
               variant="outline"
               size="sm"
               className="border-red-200 text-red-600 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
+              onClick={() => setIsDeleteOpen(true)}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -109,19 +113,31 @@ const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
               variant="outline"
               size="sm"
               className="border-[#6f4e37]/20 px-4 text-sm text-[#6f4e37] hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white"
+              onClick={() => setIsEditOpen(true)}
             >
               <Edit className="mr-1 h-4 w-4" /> Edit
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="border-red-200 px-4 text-sm text-red-600 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
+              className="border-red-200 text-red-600 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
+              onClick={() => setIsDeleteOpen(true)}
             >
-              <Trash2 className="mr-1 h-4 w-4" /> Hapus
+              <Trash2 className="h-4 w-4" />
             </Button>
           </div>
         </div>
       </div>
+      <EditCategoryModal
+        open={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        category={item}
+      />
+      <DeleteCategoryModal
+        open={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        category={item}
+      />
     </div>
   );
 };

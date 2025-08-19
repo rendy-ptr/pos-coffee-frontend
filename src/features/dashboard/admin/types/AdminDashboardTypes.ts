@@ -15,3 +15,10 @@ export interface IAdminLogoutData {
   success: boolean;
   message: string;
 }
+
+export interface ICreateCategory {
+  name: string;
+  description?: string;
+  icon: string;
+  isActive: boolean;
+}

@@ -10,7 +10,16 @@ export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { isLoading, isAuthenticated, role } = useAuth();
 
   if (isLoading) {
-    return <CoffeeLoadingAnimation />;
+    return (
+      <CoffeeLoadingAnimation
+        title="Authentication"
+        messages={[
+          'Validating session',
+          'Checking credentials',
+          'Securing your data',
+        ]}
+      />
+    );
   }
 
   if (!isAuthenticated) {

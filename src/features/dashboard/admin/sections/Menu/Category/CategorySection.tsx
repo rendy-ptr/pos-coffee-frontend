@@ -3,56 +3,47 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { PackagePlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import ManagementCategoryItem from '../../components/Menu/ManagementCategoryItem';
-import AddCategoryModal from '../../components/Menu/AddCategoryModal';
+import ManagementCategoryItem from '../../../components/Menu/Category/ManagementCategoryItem';
+import AddCategoryModal from '../../../components/Menu/Category/AddCategoryModal';
+import { useCategories } from '../../../hooks/categoryHooks';
+import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 
 // ICONS
-const { Package, Search, Filter, ChevronDown, CheckCircle, AlertCircle } =
-  lucideIcons;
-
-// MOCKS
-const kategori = [
-  { id: 1, name: 'Minuman', icon: 'Coffee', isActive: true },
-  { id: 2, name: 'Makanan', icon: 'Utensils', isActive: true },
-  { id: 3, name: 'Snack', icon: 'Popcorn', isActive: false },
-  { id: 4, name: 'Dessert', icon: 'IceCreamBowl', isActive: true },
-];
-
-const filterOptions = [
-  { value: 'Semua', label: 'Semua' },
-  { value: 'Minuman', label: 'Minuman' },
-  { value: 'Makanan', label: 'Makanan' },
-  { value: 'Snack', label: 'Snack' },
-  { value: 'Dessert', label: 'Dessert' },
-];
+const { Package, Search, CheckCircle, AlertCircle } = lucideIcons;
 
 const CategorySection = () => {
-  const [selectedFilter, setSelectedFilter] = useState('Semua');
+  const { data: categories = [], isLoading, error } = useCategories();
   const [searchTerm, setSearchTerm] = useState('');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const filterKategoriAktif = kategori.filter(k => k.isActive).length;
-  const filterKategoriTidakAktif = kategori.filter(k => !k.isActive).length;
-  const filterKategori = kategori.length;
+  const filterKategoriAktif = categories.filter(k => k.isActive).length;
+  const filterKategoriTidakAktif = categories.filter(k => !k.isActive).length;
+  const filterKategori = categories.length;
 
-  const filteredItems = useMemo(() => {
-    return kategori
-      .filter(item => {
-        // Filter berdasarkan kategori
-        if (selectedFilter === 'Semua') return true;
-        return item.name === selectedFilter;
-      })
-      .filter(item =>
-        searchTerm
-          ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
-          : true
-      );
-  }, [selectedFilter, searchTerm]);
+  const searchItems = useMemo(() => {
+    return categories.filter(item =>
+      searchTerm
+        ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        : true
+    );
+  }, [categories, searchTerm]);
 
-  const selectedFilterLabel =
-    filterOptions.find(option => option.value === selectedFilter)?.label ||
-    'Pilih Filter';
+  if (isLoading) {
+    return (
+      <CoffeeLoadingAnimation
+        title="Loading Kategori"
+        messages={[
+          'Mengambil data kategori',
+          'Memproses informasi',
+          'Mempersiapkan tampilan',
+        ]}
+      />
+    );
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">Gagal memuat kategori</p>;
+  }
 
   return (
     <div className="space-y-6">
@@ -83,48 +74,13 @@ const CategorySection = () => {
                 <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[#8c7158]/60" />
                 <input
                   type="text"
-                  placeholder="Cari pesanan..."
+                  placeholder="Cari kategori..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   className="w-full rounded-lg border border-[#e6d9c9]/50 bg-white/80 py-2 pr-4 pl-9 text-sm backdrop-blur-sm transition-all duration-300 focus:border-[#6f4e37]/50 focus:ring-2 focus:ring-[#6f4e37]/30 focus:outline-none"
                 />
               </div>
 
-              <div className="flex justify-end lg:justify-start">
-                <div className="relative">
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="flex items-center gap-2 rounded-lg border border-[#e6d9c9]/50 bg-white/80 px-4 py-2 text-sm font-medium text-[#6f4e37] backdrop-blur-sm transition-all duration-300 hover:border-[#6f4e37]/30 hover:bg-[#6f4e37]/5 focus:ring-2 focus:ring-[#6f4e37]/30 focus:outline-none"
-                  >
-                    <Filter className="h-4 w-4" />
-                    <span>{selectedFilterLabel}</span>
-                    <ChevronDown
-                      className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`}
-                    />
-                  </button>
-
-                  {isFilterOpen && (
-                    <div className="absolute top-full left-0 z-50 mt-2 w-full min-w-[160px] overflow-hidden rounded-lg border border-[#e6d9c9]/50 bg-white shadow-xl backdrop-blur-sm">
-                      {filterOptions.map(option => (
-                        <button
-                          key={option.value}
-                          onClick={() => {
-                            setSelectedFilter(option.value);
-                            setIsFilterOpen(false);
-                          }}
-                          className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-[#6f4e37]/5 ${
-                            selectedFilter === option.value
-                              ? 'bg-[#6f4e37]/10 text-[#6f4e37]'
-                              : 'text-[#8c7158]'
-                          }`}
-                        >
-                          {option.label}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
               <Button
                 onClick={() => setIsDialogOpen(true)}
                 className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
@@ -137,8 +93,8 @@ const CategorySection = () => {
         </CardHeader>
       </div>
 
-      {/* Card Statistik */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Total */}
         <Card className="relative overflow-hidden rounded-lg border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-gradient-to-br from-[#6f4e37]/15 to-[#8b5e3c]/15 p-2">
@@ -153,6 +109,7 @@ const CategorySection = () => {
           </div>
         </Card>
 
+        {/* Aktif */}
         <Card className="relative overflow-hidden rounded-lg border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-gradient-to-br from-green-500/15 to-green-600/15 p-2">
@@ -167,6 +124,7 @@ const CategorySection = () => {
           </div>
         </Card>
 
+        {/* Tidak Aktif */}
         <Card className="relative overflow-hidden rounded-lg border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-gradient-to-br from-orange-500/15 to-orange-600/15 p-2">
@@ -182,12 +140,11 @@ const CategorySection = () => {
         </Card>
       </div>
 
-      {/* Card Daftar Pesanan */}
       <Card className="relative overflow-hidden rounded-xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white via-[#fefefe] to-[#faf9f7] shadow-lg">
         <CardContent className="p-6">
           <div className="space-y-4 md:space-y-6">
-            {filteredItems.length > 0 ? (
-              filteredItems.map(item => (
+            {searchItems.length > 0 ? (
+              searchItems.map(item => (
                 <ManagementCategoryItem key={item.id} item={item} />
               ))
             ) : (
@@ -199,7 +156,7 @@ const CategorySection = () => {
                   Tidak ada kategori ditemukan
                 </p>
                 <p className="max-w-md text-center text-sm text-[#8c7158]/70">
-                  Coba ubah filter atau kata kunci pencarian untuk menemukan
+                  Coba tambahkan atau kata kunci pencarian untuk menemukan
                   kategori yang Anda cari.
                 </p>
               </div>
@@ -207,12 +164,10 @@ const CategorySection = () => {
           </div>
         </CardContent>
       </Card>
+
       <AddCategoryModal
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
-        onSave={data => {
-          console.log('Kategori baru:', data);
-        }}
       />
     </div>
   );

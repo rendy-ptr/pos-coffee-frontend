@@ -11,8 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Controller, useForm } from 'react-hook-form';
-import { iconOptions } from '../../constant/iconOptions';
+import { iconOptions } from '../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { useUpdateCategory } from '../../../hooks/categoryHooks';
+import { useToast } from '@/components/shared/ToastProvider';
+import type { Category } from '../../../types/category';
+import { useEffect } from 'react';
 
 type CategoryFormValues = {
   name: string;
@@ -21,22 +25,61 @@ type CategoryFormValues = {
   isActive: boolean;
 };
 
-interface AddCategoryModalProps {
+interface EditCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (data: CategoryFormValues) => void;
+  category: Category | null;
 }
 
-const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
-  const { register, handleSubmit, reset, watch, control } =
-    useForm<CategoryFormValues>();
+const EditCategoryModal = ({
+  open,
+  onClose,
+  category,
+}: EditCategoryModalProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    control,
+    formState: { errors },
+  } = useForm<CategoryFormValues>({
+    defaultValues: {
+      name: '',
+      description: '',
+      icon: '',
+      isActive: true,
+    },
+  });
+
+  useEffect(() => {
+    if (category) {
+      reset({
+        name: category.name,
+        description: category.description ?? '',
+        icon: category.icon,
+        isActive: category.isActive,
+      });
+    }
+  }, [category, reset]);
 
   const selectedIcon = watch('icon');
+  const { doUpdateCategory, isPending } = useUpdateCategory();
+  const { addToast } = useToast();
 
-  const submitForm = (data: CategoryFormValues) => {
-    onSave(data);
-    reset();
-    onClose();
+  const submitForm = async (data: CategoryFormValues) => {
+    if (!category) return;
+    try {
+      await doUpdateCategory({ id: category.id, payload: data });
+      console.log('Form Data:', data);
+      addToast('Kategori berhasil diperbarui', 'success', 3000);
+      reset();
+      onClose();
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        addToast(err.message || 'Gagal memperbarui kategori', 'error', 3000);
+      }
+    }
   };
 
   return (
@@ -44,25 +87,32 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
       <DialogContent className="max-w-lg rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] shadow-xl">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-xl font-bold text-transparent">
-            Tambah Kategori Baru
+            Edit Kategori
           </DialogTitle>
           <DialogDescription>
-            Lengkapi form berikut untuk menambahkan kategori baru.
+            Ubah data kategori sesuai kebutuhan.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(submitForm)} className="space-y-5">
           {/* Nama */}
-          <div className="space-y-2">
+          <div className="space-y-1">
             <Label htmlFor="name" className="text-[#6f4e37]">
-              Nama Kategori
+              Nama Kategori <span className="text-red-500">*</span>
             </Label>
             <Input
               id="name"
-              {...register('name', { required: true })}
+              {...register('name', { required: 'Nama kategori wajib diisi' })}
               placeholder="Contoh: Minuman"
-              className="border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30"
+              className={`border ${
+                errors.name
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-300'
+                  : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e3]/30'
+              }`}
             />
+            {errors.name && (
+              <p className="text-sm text-red-500">{errors.name.message}</p>
+            )}
           </div>
 
           {/* Deskripsi */}
@@ -79,9 +129,15 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
           </div>
 
           {/* Icon */}
-          <div className="space-y-2">
-            <Label className="text-[#6f4e37]">Pilih Icon</Label>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="space-y-1">
+            <Label className="text-[#6f4e37]">
+              Pilih Icon <span className="text-red-500">*</span>
+            </Label>
+            <div
+              className={`grid grid-cols-2 gap-3 sm:grid-cols-4 ${
+                errors.icon ? 'rounded-lg border border-red-500 p-2' : ''
+              }`}
+            >
               {iconOptions.map(opt => {
                 const Icon = opt.icon;
                 return (
@@ -96,7 +152,9 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
                     <input
                       type="radio"
                       value={opt.value}
-                      {...register('icon')}
+                      {...register('icon', {
+                        required: 'Icon wajib dipilih',
+                      })}
                       className="hidden"
                     />
                     <Icon className="h-6 w-6" />
@@ -105,6 +163,9 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
                 );
               })}
             </div>
+            {errors.icon && (
+              <p className="text-sm text-red-500">{errors.icon.message}</p>
+            )}
           </div>
 
           {/* Status */}
@@ -119,7 +180,6 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
                   onValueChange={val => field.onChange(val === 'true')}
                   className="grid grid-cols-2 gap-4"
                 >
-                  {/* Aktif */}
                   <label
                     htmlFor="aktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
@@ -136,7 +196,6 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
                     Aktif
                   </label>
 
-                  {/* Tidak Aktif */}
                   <label
                     htmlFor="nonaktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
@@ -169,9 +228,10 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
             </Button>
             <Button
               type="submit"
+              disabled={isPending}
               className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] text-white shadow-md hover:from-[#5d4130] hover:to-[#7a5033]"
             >
-              Simpan
+              {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
             </Button>
           </DialogFooter>
         </form>
@@ -180,4 +240,4 @@ const AddCategoryModal = ({ open, onClose, onSave }: AddCategoryModalProps) => {
   );
 };
 
-export default AddCategoryModal;
+export default EditCategoryModal;

@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 
-const CoffeeLoadingAnimation = () => {
-  const [loadingText, setLoadingText] = useState('Checking Metadata');
+interface CoffeeLoadingAnimationProps {
+  messages?: string[];
+  interval?: number;
+  title?: string;
+}
+
+const CoffeeLoadingAnimation = ({
+  messages = [],
+  interval = 2000,
+  title = 'Loading',
+}: CoffeeLoadingAnimationProps) => {
+  const [loadingText, setLoadingText] = useState(messages[0]);
   const [dots, setDots] = useState('');
 
   useEffect(() => {
     const textInterval = setInterval(() => {
-      const texts = [
-        'Checking Metadata',
-        'Brewing your data',
-        'Steaming information',
-        'Pouring insights',
-      ];
-      setLoadingText(texts[Math.floor(Math.random() * texts.length)]);
-    }, 2000);
+      setLoadingText(messages[Math.floor(Math.random() * messages.length)]);
+    }, interval);
 
     const dotsInterval = setInterval(() => {
       setDots(prev => (prev.length >= 3 ? '' : prev + '.'));
@@ -23,7 +27,7 @@ const CoffeeLoadingAnimation = () => {
       clearInterval(textInterval);
       clearInterval(dotsInterval);
     };
-  }, []);
+  }, [messages, interval]);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
@@ -89,7 +93,7 @@ const CoffeeLoadingAnimation = () => {
         {/* Loading Text */}
         <div className="mb-6">
           <h2 className="mb-2 text-2xl font-bold text-amber-900">
-            {loadingText}
+            {title}: {loadingText}
             {dots}
           </h2>
         </div>

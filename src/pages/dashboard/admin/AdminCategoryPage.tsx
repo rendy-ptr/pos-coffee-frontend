@@ -1,4 +1,4 @@
-import CategoryFormData from '@/features/dashboard/admin/sections/Menu/CategorySection';
+import CategoryFormData from '@/features/dashboard/admin/sections/Menu/Category/CategorySection';
 
 const AdminCategoryPage = () => {
   return <CategoryFormData />;

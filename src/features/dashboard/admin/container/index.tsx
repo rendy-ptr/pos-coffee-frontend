@@ -10,39 +10,21 @@ import ManagementPesanan from '../sections/ManagementPesanan';
 import ManagementReward from '../sections/ManagementReward';
 
 import { useToast } from '@/components/shared/ToastProvider';
-import { useAdminDashboard } from '../hooks/useAdminDashboard';
 import { useAdminStore } from '@/store/adminStore';
-import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 
 const AdminDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const {
-    data: queryData,
-    isLoading,
-    isError,
-    error,
-  } = useAdminDashboard(true);
   const { adminData } = useAdminStore();
   const { addToast } = useToast();
-
-  const data = queryData?.data || adminData;
 
   useEffect(() => {
     const alreadyShown = localStorage.getItem('welcomeShown');
 
-    if (data?.name && !alreadyShown) {
-      addToast(`Selamat datang, ${data.name}!`, 'info', 5000);
+    if (adminData?.name && !alreadyShown) {
+      addToast(`Selamat datang, ${adminData.name}!`, 'info', 5000);
       localStorage.setItem('welcomeShown', 'true');
     }
-  }, [data, addToast]);
-
-  if (isLoading) return <CoffeeLoadingAnimation />;
-
-  if (isError) {
-    const message =
-      error instanceof Error ? error.message : 'Terjadi kesalahan';
-    addToast(message, 'error', 3000);
-  }
+  }, [adminData, addToast]);
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
