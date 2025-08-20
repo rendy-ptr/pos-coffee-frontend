@@ -3,30 +3,63 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { PackagePlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import ManagementCategoryItem from '../../../components/Menu/Category/ManagementCategoryItem';
-import AddCategoryModal from '../../../components/Menu/Category/AddCategoryModal';
+import ManagementCategoryItem from '../../../components/MenuBar/Category/ManagementCategoryItem';
+import AddCategoryModal from '../../../components/MenuBar/Category/AddCategoryModal';
 import { useCategories } from '../../../hooks/categoryHooks';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
+import { COLOR } from '@/constants/Style';
+
+// CONSTANTS
+const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
 // ICONS
-const { Package, Search, CheckCircle, AlertCircle } = lucideIcons;
+const { Package, Search, CheckCircle, AlertCircle, Filter, ChevronDown } =
+  lucideIcons;
 
 const CategorySection = () => {
   const { data: categories = [], isLoading, error } = useCategories();
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('semua');
+
+  const filterOptions = useMemo(() => {
+    const uniqueStatus = [...new Set(categories.map(item => item.isActive))];
+    const options = [
+      { value: 'semua', label: 'Semua Kategori' },
+      ...uniqueStatus.map(status => ({
+        value: status.toString(),
+        label: status ? 'Kategori Aktif' : 'Kategori Tidak Aktif',
+      })),
+    ];
+    return options;
+  }, [categories]);
+
+  const selectedFilterLabel = useMemo(() => {
+    const selected = filterOptions.find(
+      option => option.value === selectedFilter
+    );
+    return selected ? selected.label : 'Semua Kategori';
+  }, [selectedFilter, filterOptions]);
 
   const filterKategoriAktif = categories.filter(k => k.isActive).length;
   const filterKategoriTidakAktif = categories.filter(k => !k.isActive).length;
   const filterKategori = categories.length;
 
-  const searchItems = useMemo(() => {
-    return categories.filter(item =>
-      searchTerm
+  const filteredItems = useMemo(() => {
+    return categories.filter(item => {
+      const matchesSearch = searchTerm
         ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
-        : true
-    );
-  }, [categories, searchTerm]);
+        : true;
+
+      const matchesFilter =
+        selectedFilter === 'semua'
+          ? true
+          : item.isActive === (selectedFilter === 'true');
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [categories, searchTerm, selectedFilter]);
 
   if (isLoading) {
     return (
@@ -60,10 +93,10 @@ const CategorySection = () => {
                 <Package className="h-6 w-6 text-[#6f4e37]" />
               </div>
               <div>
-                <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-2xl font-bold tracking-tight text-transparent">
+                <CardTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-lg font-bold tracking-tight text-transparent lg:text-2xl">
                   Manajemen Kategori Menu
                 </CardTitle>
-                <p className="mt-1 text-sm font-medium text-[#8c7158]/80">
+                <p className="mt-1 text-xs font-medium text-[#8c7158]/80 lg:text-sm">
                   Kelola kategori menu dengan mudah
                 </p>
               </div>
@@ -81,13 +114,48 @@ const CategorySection = () => {
                 />
               </div>
 
-              <Button
-                onClick={() => setIsDialogOpen(true)}
-                className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
-              >
-                <PackagePlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                Tambah Kategori
-              </Button>
+              <div className="flex justify-end gap-2 lg:justify-start">
+                <div className="relative">
+                  <button
+                    onClick={() => setIsFilterOpen(!isFilterOpen)}
+                    className="flex items-center gap-2 rounded-lg border border-[#e6d9c9]/50 bg-white/80 px-4 py-2 text-sm font-medium text-[#6f4e37] backdrop-blur-sm transition-all duration-300 hover:border-[#6f4e37]/30 hover:bg-[#6f4e37]/5 focus:ring-2 focus:ring-[#6f4e37]/30 focus:outline-none"
+                  >
+                    <Filter className="h-4 w-4" />
+                    <span>{selectedFilterLabel}</span>
+                    <ChevronDown
+                      className={`h-4 w-4 transition-transform duration-200 ${isFilterOpen ? 'rotate-180' : ''}`}
+                    />
+                  </button>
+
+                  {isFilterOpen && (
+                    <div className="absolute top-full left-0 z-50 mt-2 w-full min-w-[160px] overflow-hidden rounded-lg border border-[#e6d9c9]/50 bg-white shadow-xl backdrop-blur-sm">
+                      {filterOptions.map(option => (
+                        <button
+                          key={option.value}
+                          onClick={() => {
+                            setSelectedFilter(option.value);
+                            setIsFilterOpen(false);
+                          }}
+                          className={`w-full px-4 py-3 text-left text-sm font-medium transition-colors duration-200 hover:bg-[#6f4e37]/5 ${
+                            selectedFilter === option.value
+                              ? 'bg-[#6f4e37]/10 text-[#6f4e37]'
+                              : 'text-[#8c7158]'
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  className={`flex items-center gap-2 ${BUTTON_HOVER_ICON}`}
+                >
+                  <PackagePlus className={`h-4 w-4 ${ICON_TRANSITION}`} />
+                  Tambah Kategori
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
@@ -143,8 +211,8 @@ const CategorySection = () => {
       <Card className="relative overflow-hidden rounded-xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white via-[#fefefe] to-[#faf9f7] shadow-lg">
         <CardContent className="p-6">
           <div className="space-y-4 md:space-y-6">
-            {searchItems.length > 0 ? (
-              searchItems.map(item => (
+            {filteredItems.length > 0 ? (
+              filteredItems.map(item => (
                 <ManagementCategoryItem key={item.id} item={item} />
               ))
             ) : (

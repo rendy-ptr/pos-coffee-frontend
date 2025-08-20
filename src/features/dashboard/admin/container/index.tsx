@@ -4,7 +4,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import TabListSection from '../sections/TabList';
 import SummaryCardSection from '../sections/SummaryCard';
 import RecentActivityCard from '../sections/RecentActivityCard';
-import ManagementMenuSection from '../sections/ManagementMenu';
+import ManagementMenuSection from '../sections/Menu/ManagementMenu';
 import ManagementKasirSection from '../sections/ManagementKasir';
 import ManagementPesanan from '../sections/ManagementPesanan';
 import ManagementReward from '../sections/ManagementReward';

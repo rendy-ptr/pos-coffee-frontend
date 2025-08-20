@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import ManagementMenuItem from '../components/ManagementMenuItem';
+import ManagementMenuItem from '../../components/Menu/ManagementMenuItem';
 import { Button } from '@/components/ui/button';
 const {
   UtensilsCrossed,
@@ -12,6 +12,10 @@ const {
   Coffee,
   AlertCircle,
 } = lucideIcons;
+import AddMenuModal from '../../components/Menu/AddMenuModal';
+import { COLOR } from '@/constants/Style';
+
+const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
 const filterOptions = [
   { value: 'Semua', label: 'Semua' },
@@ -62,6 +66,7 @@ const menuItems = [
 ];
 
 const ManagementMenuSection = () => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const filterMenuAktif = menuItems.filter(
     item => item.status === 'Aktif'
   ).length;
@@ -128,7 +133,7 @@ const ManagementMenuSection = () => {
                 />
               </div>
 
-              <div className="flex justify-end lg:justify-start">
+              <div className="flex justify-end gap-2 lg:justify-start">
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -162,11 +167,14 @@ const ManagementMenuSection = () => {
                     </div>
                   )}
                 </div>
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  className={`flex items-center gap-2 ${BUTTON_HOVER_ICON}`}
+                >
+                  <UtensilsCrossed className={`h-4 w-4 ${ICON_TRANSITION}`} />
+                  Tambah Menu
+                </Button>
               </div>
-              <Button className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg">
-                <UtensilsCrossed className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                Tambah Menu
-              </Button>
             </div>
           </div>
         </CardHeader>
@@ -242,6 +250,10 @@ const ManagementMenuSection = () => {
           </div>
         </CardContent>
       </Card>
+      <AddMenuModal
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </div>
   );
 };

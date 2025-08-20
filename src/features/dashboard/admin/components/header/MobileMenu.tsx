@@ -12,11 +12,13 @@ interface Admin {
 interface MobileMenuProps {
   show: boolean;
   admin: Admin;
-  onMenuItemClick: (action: 'Profile' | 'Settings' | 'Keluar') => void;
+  onMenuItemClick: (
+    action: 'Dashboard' | 'Profile' | 'Settings' | 'Keluar' | 'Kategori'
+  ) => void;
 }
 
 const MobileMenu = ({ show, admin, onMenuItemClick }: MobileMenuProps) => {
-  const { User, Settings, LogOut } = lucideIcons;
+  const { Home, User, Settings, LogOut, Package } = lucideIcons;
 
   if (!show) return null;
 
@@ -48,6 +50,13 @@ const MobileMenu = ({ show, admin, onMenuItemClick }: MobileMenuProps) => {
       </div>
       <div className="space-y-1">
         <button
+          onClick={() => onMenuItemClick('Dashboard')}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all duration-150 hover:bg-[#6f4e37]/5 hover:text-[#6f4e37]"
+        >
+          <Home className="h-4 w-4" />
+          <span className="font-medium">Dashboard</span>
+        </button>
+        <button
           onClick={() => onMenuItemClick('Profile')}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all duration-150 hover:bg-[#6f4e37]/5 hover:text-[#6f4e37]"
         >
@@ -61,6 +70,14 @@ const MobileMenu = ({ show, admin, onMenuItemClick }: MobileMenuProps) => {
           <Settings className="h-4 w-4" />
           <span className="font-medium">Settings</span>
         </button>
+        <button
+          onClick={() => onMenuItemClick('Kategori')}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all duration-150 hover:bg-[#6f4e37]/5 hover:text-[#6f4e37]"
+        >
+          <Package className="h-4 w-4" />
+          <span className="font-medium">Kategori</span>
+        </button>
+        <hr className="my-1 border-[#e6d9c9]" />
         <button
           onClick={() => onMenuItemClick('Keluar')}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 transition-all duration-150 hover:bg-red-50 hover:text-red-700"

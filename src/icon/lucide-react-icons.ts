@@ -66,12 +66,18 @@ import {
   IceCreamBowl,
   Popcorn,
   Sandwich,
+  Image,
+  XCircle,
+  Camera,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
   Sandwich,
   Popcorn,
+  XCircle,
+  Camera,
+  Image,
   FileText,
   IceCreamBowl,
   IceCreamCone,

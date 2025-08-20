@@ -13,10 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Controller, useForm } from 'react-hook-form';
 import { iconOptions } from '../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useUpdateCategory } from '../../../hooks/categoryHooks';
+import { useCreateCategory } from '../../../hooks/categoryHooks';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { Category } from '../../../types/category';
-import { useEffect } from 'react';
+import { CheckCircle } from 'lucide-react';
+import { COLOR } from '@/constants/Style';
+
+const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 
 type CategoryFormValues = {
   name: string;
@@ -25,17 +27,12 @@ type CategoryFormValues = {
   isActive: boolean;
 };
 
-interface EditCategoryModalProps {
+interface AddCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  category: Category | null;
 }
 
-const EditCategoryModal = ({
-  open,
-  onClose,
-  category,
-}: EditCategoryModalProps) => {
+const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
   const {
     register,
     handleSubmit,
@@ -52,32 +49,21 @@ const EditCategoryModal = ({
     },
   });
 
-  useEffect(() => {
-    if (category) {
-      reset({
-        name: category.name,
-        description: category.description ?? '',
-        icon: category.icon,
-        isActive: category.isActive,
-      });
-    }
-  }, [category, reset]);
-
   const selectedIcon = watch('icon');
-  const { doUpdateCategory, isPending } = useUpdateCategory();
+
+  const { doCreateCategory, isPending } = useCreateCategory();
   const { addToast } = useToast();
 
   const submitForm = async (data: CategoryFormValues) => {
-    if (!category) return;
+    console.log('Form Data:', data);
     try {
-      await doUpdateCategory({ id: category.id, payload: data });
-      console.log('Form Data:', data);
-      addToast('Kategori berhasil diperbarui', 'success', 3000);
+      await doCreateCategory(data);
+      addToast('Kategori berhasil ditambahkan', 'success', 3000);
       reset();
       onClose();
     } catch (err: unknown) {
       if (err instanceof Error) {
-        addToast(err.message || 'Gagal memperbarui kategori', 'error', 3000);
+        addToast(err.message || 'Gagal menambahkan kategori', 'error', 3000);
       }
     }
   };
@@ -86,11 +72,11 @@ const EditCategoryModal = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-lg rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] shadow-xl">
         <DialogHeader>
-          <DialogTitle className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-xl font-bold text-transparent">
-            Edit Kategori
+          <DialogTitle className="bg-clip-text text-xl font-bold text-[#6f4e37]">
+            Tambah Kategori Baru
           </DialogTitle>
-          <DialogDescription>
-            Ubah data kategori sesuai kebutuhan.
+          <DialogDescription className="text-sm font-medium text-[#8c7158]">
+            Lengkapi form berikut untuk menambahkan kategori baru.
           </DialogDescription>
         </DialogHeader>
 
@@ -153,7 +139,7 @@ const EditCategoryModal = ({
                       type="radio"
                       value={opt.value}
                       {...register('icon', {
-                        required: 'Icon wajib dipilih',
+                        required: 'Kategori Wajib Di Isi',
                       })}
                       className="hidden"
                     />
@@ -180,6 +166,7 @@ const EditCategoryModal = ({
                   onValueChange={val => field.onChange(val === 'true')}
                   className="grid grid-cols-2 gap-4"
                 >
+                  {/* Aktif */}
                   <label
                     htmlFor="aktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
@@ -196,6 +183,7 @@ const EditCategoryModal = ({
                     Aktif
                   </label>
 
+                  {/* Tidak Aktif */}
                   <label
                     htmlFor="nonaktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
@@ -222,16 +210,25 @@ const EditCategoryModal = ({
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-[#e6d9c9]/70 text-[#6f4e37] hover:bg-[#6f4e37]/10"
+              className={`h-10 ${BUTTON_CANCEL}`}
             >
               Batal
             </Button>
             <Button
               type="submit"
               disabled={isPending}
-              className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] text-white shadow-md hover:from-[#5d4130] hover:to-[#7a5033]"
+              className={`h-10 ${BUTTON_HOVER_ICON}`}
             >
-              {isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
+              {isPending ? (
+                <span>Loading...</span>
+              ) : (
+                <>
+                  <CheckCircle
+                    className={`h-5 w-5 ${ICON_TRANSITION} text-white`}
+                  />
+                  Tambah Kategori
+                </>
+              )}
             </Button>
           </DialogFooter>
         </form>
@@ -240,4 +237,4 @@ const EditCategoryModal = ({
   );
 };
 
-export default EditCategoryModal;
+export default AddCategoryModal;
