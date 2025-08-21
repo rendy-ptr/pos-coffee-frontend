@@ -22,9 +22,3 @@ export interface UpdateCategoryInput {
   icon?: string;
   isActive?: boolean;
 }
-
-export interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  data: T;
-}

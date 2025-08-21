@@ -8,9 +8,9 @@ import {
 import type {
   Category,
   CreateCategoryInput,
-  ApiResponse,
   UpdateCategoryInput,
 } from '../types/category';
+import type { ApiResponse } from '@/types/ApiResponse';
 
 export const useCategories = () => {
   return useQuery({

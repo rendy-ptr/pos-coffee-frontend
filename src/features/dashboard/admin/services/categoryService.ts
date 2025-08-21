@@ -1,10 +1,10 @@
 import type {
   Category,
   CreateCategoryInput,
-  ApiResponse,
   UpdateCategoryInput,
 } from '../types/category';
 import apiClient from '@/utils/apiClient';
+import type { ApiResponse } from '@/types/ApiResponse';
 
 export const createCategory = async (
   payload: CreateCategoryInput

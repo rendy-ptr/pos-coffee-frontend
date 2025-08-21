@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,19 @@ import { Label } from '@/components/ui/label';
 import { Controller, useForm } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import { useCategories } from '../../hooks/categoryHooks';
+import { useToast } from '@/components/shared/ToastProvider';
+
+import type { CreateMenuInput } from '../../types/menu';
+import type { Category } from '../../types/category';
+import * as LucideIcons from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
+import { useCreateMenu, useUploadImage } from '../../hooks/menuHooks';
+
+type LucideIconName = keyof typeof LucideIcons;
+type LucideIconComponent = React.ForwardRefExoticComponent<
+  Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
+>;
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const {
@@ -35,28 +48,26 @@ const {
   UtensilsCrossed,
 } = lucideIcons;
 
-type MenuFormValues = {
-  name: string;
-  categoryId: string;
-  stock: number;
-  cost: number;
-  price: number;
-  profit: number;
-  imageUrl: string;
-  status: 'Aktif' | 'Tidak Aktif';
-};
-
 interface AddMenuModalProps {
   open: boolean;
   onClose: () => void;
 }
 
-const mockCategories = [
-  { id: '1', name: 'Hot Coffee', isActive: true },
-  { id: '2', name: 'Cold Coffee', isActive: true },
-  { id: '3', name: 'Non Coffee', isActive: true },
-  { id: '4', name: 'Pastry', isActive: true },
-];
+const FORM_DEFAULTS = {
+  imageUrl: '',
+  name: '',
+  categoryId: '',
+  stock: 0,
+  productionCapital: 0,
+  sellingPrice: 0,
+  profitMargin: 0,
+  isActive: true,
+} as const;
+
+const IMAGE_CONSTRAINTS = {
+  MAX_SIZE: 5 * 1024 * 1024,
+  ACCEPTED_TYPES: 'image/*',
+} as const;
 
 const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
   const {
@@ -67,48 +78,126 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
     setValue,
     control,
     formState: { errors },
-  } = useForm<MenuFormValues>({
-    defaultValues: {
-      name: '',
-      categoryId: '',
-      stock: 0,
-      cost: 0,
-      price: 0,
-      profit: 0,
-      imageUrl: '',
-      status: 'Aktif',
-    },
+  } = useForm<CreateMenuInput>({
+    defaultValues: FORM_DEFAULTS,
   });
 
+  // Refs
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Local state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [dragOver, setDragOver] = useState(false);
 
-  const activeCategories = mockCategories.filter(cat => cat.isActive);
+  // Hooks
+  const { addToast } = useToast();
+  const { data: categories = [] } = useCategories();
+  const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
+  const { doCreateMenu, isPending: isLoadingSave } = useCreateMenu();
 
-  const watchedPrice = watch('price');
-  const watchedCost = watch('cost');
+  // Watched values
+  const watchedValues = {
+    price: watch('sellingPrice'),
+    cost: watch('productionCapital'),
+    imageUrl: watch('imageUrl'),
+    profitMargin: watch('profitMargin'),
+  };
+
+  // Computed values
+  const activeCategories = useMemo(() => {
+    const unique = new Map<string, Category>();
+    categories
+      .filter(cat => cat.isActive)
+      .forEach(cat => {
+        if (!unique.has(cat.name)) {
+          unique.set(cat.name, cat);
+        }
+      });
+    return Array.from(unique.values());
+  }, [categories]);
+
+  const profitPercentage = useMemo(() => {
+    return watchedValues.price > 0
+      ? ((watchedValues.profitMargin / watchedValues.price) * 100).toFixed(1)
+      : '0';
+  }, [watchedValues.price, watchedValues.profitMargin]);
+
+  // Helper function to get loading message
+  const getLoadingMessage = () => {
+    if (isLoadingUpload) return 'Mengupload gambar...';
+    if (isLoadingSave) return 'Menyimpan menu...';
+    return 'Loading...';
+  };
+
+  // Combined loading state
+  const isLoading = isLoadingUpload || isLoadingSave;
+
+  // Effects
+  useEffect(() => {
+    const price = Number(watchedValues.price) || 0;
+    const cost = Number(watchedValues.cost) || 0;
+    const profit = price - cost;
+    setValue('profitMargin', profit);
+  }, [watchedValues.price, watchedValues.cost, setValue]);
 
   useEffect(() => {
-    const price = Number(watchedPrice) || 0;
-    const cost = Number(watchedCost) || 0;
-    const profit = price - cost;
-    setValue('profit', profit);
-  }, [watchedPrice, watchedCost, setValue]);
+    if (!watchedValues.imageUrl && !imageFile) {
+      setImagePreview(null);
+    }
+  }, [watchedValues.imageUrl, imageFile]);
 
-  const handleFileChange = (file: File) => {
-    if (file.size > 5 * 1024 * 1024) {
-      alert('Ukuran file terlalu besar (max 5MB)');
-      return;
+  // Helper functions
+  const validateFile = (file: File): string | null => {
+    if (file.size > IMAGE_CONSTRAINTS.MAX_SIZE) {
+      return 'Ukuran file terlalu besar (max 5MB)';
     }
     if (!file.type.startsWith('image/')) {
-      alert('File harus berupa gambar');
+      return 'File harus berupa gambar';
+    }
+    return null;
+  };
+
+  const isValidUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  const resetImageState = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    setValue('imageUrl', '');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const resetForm = () => {
+    reset();
+    resetImageState();
+  };
+
+  // Event handlers
+  const handleFileSelect = (file: File) => {
+    const validationError = validateFile(file);
+    if (validationError) {
+      alert(validationError);
       return;
     }
+
     setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
     setValue('imageUrl', '');
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleInputFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -126,7 +215,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
     setDragOver(false);
     const file = e.dataTransfer.files[0];
     if (file) {
-      handleFileChange(file);
+      handleFileSelect(file);
     }
   };
 
@@ -139,48 +228,60 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
     }
   };
 
-  const submitForm = async (data: MenuFormValues) => {
-    try {
-      setIsSubmitting(true);
-      if (!imageFile && !data.imageUrl) {
-        alert('Silakan upload gambar atau masukkan URL gambar');
-        return;
-      }
-      let imageUrl = data.imageUrl;
-      if (imageFile) {
-        imageUrl = URL.createObjectURL(imageFile);
-        console.log('Uploading file:', imageFile);
-      }
-      const menuData = { ...data, imageUrl };
-      console.log('Form Data:', menuData);
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      alert('Menu berhasil ditambahkan');
-      handleClose();
-    } catch (err) {
-      console.error(err);
-      alert('Gagal menambahkan menu');
-    } finally {
-      setIsSubmitting(false);
+  const handleUploadAreaClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleUploadAreaKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInputRef.current?.click();
     }
   };
 
   const handleClose = () => {
-    reset();
-    setImageFile(null);
-    setImagePreview(null);
+    resetForm();
     onClose();
   };
 
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
-    setValue('imageUrl', '');
-  };
+  const submitForm = async (data: CreateMenuInput) => {
+    try {
+      // Image validation
+      if (!imageFile && !data.imageUrl) {
+        addToast(
+          'Silakan upload gambar atau masukkan URL gambar',
+          'error',
+          3000
+        );
+        return;
+      }
 
-  const profitMargin =
-    watchedPrice > 0
-      ? ((watch('profit') / watchedPrice) * 100).toFixed(1)
-      : '0';
+      if (data.imageUrl && !isValidUrl(data.imageUrl)) {
+        addToast('URL gambar tidak valid', 'error', 3000);
+        return;
+      }
+
+      // Handle image upload
+      let finalImageUrl = data.imageUrl;
+      if (imageFile) {
+        const result = await doUploadImage(imageFile);
+        finalImageUrl = result.imageUrl;
+      }
+
+      // Create menu
+      await doCreateMenu({
+        ...data,
+        imageUrl: finalImageUrl,
+      });
+
+      addToast('Menu berhasil ditambahkan', 'success', 3000);
+      handleClose();
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Gagal menambahkan menu';
+      addToast(errorMessage, 'error', 3000);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -188,17 +289,18 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
         {/* Header */}
         <DialogHeader className="relative border-b-2 border-[#e6d9c9]/50 bg-transparent bg-gradient-to-r from-white to-[#faf9f7] px-8 py-6">
           <div className="relative flex items-center gap-4">
-            <div className={`rounded-xl ${COLOR.BG_ICON} p-3 shadow-md`}>
+            <div
+              className={`rounded-xl ${COLOR.BG_ICON} hidden p-3 shadow-md sm:flex`}
+            >
               <UtensilsCrossed className="h-6 w-6 text-white" />
             </div>
+
             <div className="flex-1">
-              <DialogTitle
-                className={`text-2xl ${COLOR.TEXT_PRIMARY} tracking-tight`}
-              >
+              <DialogTitle className={`text-2xl ${COLOR.TEXT_PRIMARY}`}>
                 Tambah Menu Baru
               </DialogTitle>
               <DialogDescription className={`text-sm ${COLOR.TEXT_SECONDARY}`}>
-                Buat menu menarik dengan detail yang lengkap dan akurat
+                Tambahkan Menu baru dengan detail yang lengkap
               </DialogDescription>
             </div>
           </div>
@@ -222,10 +324,19 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                   <span className="text-lg text-red-500">*</span>
                 </div>
                 <div className="space-y-6">
-                  {imagePreview || watch('imageUrl') ? (
+                  {/* Input file tersembunyi */}
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleInputFileChange}
+                    accept={IMAGE_CONSTRAINTS.ACCEPTED_TYPES}
+                    className="hidden"
+                  />
+
+                  {imagePreview || watchedValues.imageUrl ? (
                     <div className="group/preview relative overflow-hidden rounded-2xl border-2 border-[#e6d9c9]/50 shadow-lg">
                       <img
-                        src={imagePreview || watch('imageUrl')}
+                        src={imagePreview || watchedValues.imageUrl}
                         alt="Preview"
                         className="h-56 w-full object-cover transition-transform duration-300 group-hover/preview:scale-105"
                       />
@@ -235,17 +346,21 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                         size="sm"
                         variant="destructive"
                         className="absolute top-4 right-4 rounded-full shadow-lg transition-transform hover:scale-110"
-                        onClick={removeImage}
+                        onClick={resetImageState}
                       >
                         <X className="h-4 w-4" />
                       </Button>
                     </div>
                   ) : (
-                    <div
+                    <button
+                      type="button"
+                      tabIndex={-1}
                       onDragOver={handleDragOver}
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
-                      className={`group/upload cursor-pointer rounded-2xl border-3 border-dashed p-8 transition-all duration-300 ${
+                      onClick={handleUploadAreaClick}
+                      onKeyDown={handleUploadAreaKeyDown}
+                      className={`group/upload w-full cursor-pointer rounded-2xl border-3 border-dashed p-8 transition-all duration-300 focus:ring-2 focus:ring-[#6f4e37] focus:ring-offset-2 focus:outline-none ${
                         dragOver
                           ? 'scale-105 border-[#6f4e37] bg-[#6f4e37]/5'
                           : 'border-[#e6d9c9]/50 bg-white/80 hover:border-[#6f4e37]/30 hover:bg-[#6f4e37]/5'
@@ -267,7 +382,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                           Maksimal 5MB • JPG, PNG, WebP
                         </p>
                       </div>
-                    </div>
+                    </button>
                   )}
                   <div className="relative">
                     <Input
@@ -336,6 +451,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
+                          disabled={activeCategories.length === 0}
                         >
                           <SelectTrigger
                             className={`h-12 w-full rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
@@ -344,18 +460,38 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                                 : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
                             }`}
                           >
-                            <SelectValue placeholder="Pilih Kategori Menu" />
+                            <SelectValue
+                              placeholder={
+                                activeCategories.length === 0
+                                  ? 'Aktifkan atau Tambahkan Kategori Dahulu'
+                                  : 'Pilih Kategori Menu'
+                              }
+                            />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-2 border-[#e6d9c9]/50 bg-white shadow-lg">
-                            {activeCategories.map(cat => (
-                              <SelectItem
-                                key={cat.id}
-                                value={cat.id}
-                                className="cursor-pointer px-4 py-2 font-medium text-[#6f4e37] hover:bg-[#f7f3ef]"
-                              >
-                                {cat.name}
-                              </SelectItem>
-                            ))}
+                            {activeCategories.length === 0 ? (
+                              <div className="px-4 py-2 text-sm text-gray-500">
+                                Tidak ada kategori tersedia
+                              </div>
+                            ) : (
+                              activeCategories.map(cat => {
+                                const iconName = cat.icon as LucideIconName;
+                                const IconComponent =
+                                  (LucideIcons[
+                                    iconName
+                                  ] as LucideIconComponent) ?? LucideIcons.Box;
+                                return (
+                                  <SelectItem
+                                    key={cat.id}
+                                    value={cat.id}
+                                    className="flex cursor-pointer items-center gap-2 px-4 py-2 font-medium text-[#6f4e37] hover:bg-[#f7f3ef]"
+                                  >
+                                    <IconComponent className="h-5 w-5" />
+                                    {cat.name}
+                                  </SelectItem>
+                                );
+                              })
+                            )}
                           </SelectContent>
                         </Select>
                       )}
@@ -375,7 +511,10 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                     </Label>
                     <Input
                       type="number"
-                      {...register('stock')}
+                      {...register('stock', {
+                        required: 'Stock wajib diisi',
+                        min: { value: 0, message: 'Stock tidak boleh negatif' },
+                      })}
                       placeholder="0"
                       onWheel={e => e.currentTarget.blur()}
                       className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
@@ -410,7 +549,12 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                     <div className="relative">
                       <Input
                         type="number"
-                        {...register('cost')}
+                        {...register('productionCapital', {
+                          min: {
+                            value: 0,
+                            message: 'Modal tidak boleh negatif',
+                          },
+                        })}
                         placeholder="0"
                         onWheel={e => e.currentTarget.blur()}
                         className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
@@ -421,6 +565,12 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                         Rp
                       </span>
                     </div>
+                    {errors.productionCapital && (
+                      <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
+                        <XCircle className="h-4 w-4" />
+                        {errors.productionCapital.message}
+                      </p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label className={`text-base ${COLOR.TEXT_PRIMARY}`}>
@@ -429,7 +579,13 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                     <div className="relative">
                       <Input
                         type="number"
-                        {...register('price')}
+                        {...register('sellingPrice', {
+                          required: 'Harga jual wajib diisi',
+                          min: {
+                            value: 0,
+                            message: 'Harga jual tidak boleh negatif',
+                          },
+                        })}
                         placeholder="0"
                         onWheel={e => e.currentTarget.blur()}
                         className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
@@ -440,6 +596,12 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                         Rp
                       </span>
                     </div>
+                    {errors.sellingPrice && (
+                      <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
+                        <XCircle className="h-4 w-4" />
+                        {errors.sellingPrice.message}
+                      </p>
+                    )}
                   </div>
                 </div>
                 <div className="mt-6 rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-r from-white to-[#faf9f7] p-6">
@@ -455,13 +617,13 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                     <div
                       className={`rounded-xl bg-[#e6d9c9]/50 px-3 py-1 text-xs lg:text-sm ${COLOR.TEXT_SECONDARY}`}
                     >
-                      Margin: {profitMargin}%
+                      Margin: {profitPercentage}%
                     </div>
                   </div>
                   <div className="relative">
                     <Input
                       type="number"
-                      {...register('profit')}
+                      {...register('profitMargin')}
                       readOnly
                       className={`h-14 cursor-not-allowed rounded-xl border-2 border-[#e6d9c9]/50 bg-[#faf9f7] pl-12 text-2xl ${COLOR.TEXT_PRIMARY}`}
                     />
@@ -471,7 +633,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                       Rp
                     </span>
                   </div>
-                  {watch('profit') > 0 && (
+                  {watchedValues.profitMargin > 0 && (
                     <p
                       className={`mt-2 flex items-center gap-1 text-sm text-green-600`}
                     >
@@ -480,7 +642,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                       modal
                     </p>
                   )}
-                  {watch('profit') < 0 && (
+                  {watchedValues.profitMargin < 0 && (
                     <p
                       className={`mt-2 flex items-center gap-1 text-sm text-red-600`}
                     >
@@ -505,14 +667,15 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                 </div>
                 <Controller
                   control={control}
-                  name="status"
+                  name="isActive"
                   render={({ field }) => (
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      {/* Tombol Aktif (true) */}
                       <button
                         type="button"
-                        onClick={() => field.onChange('Aktif')}
+                        onClick={() => field.onChange(true)}
                         className={`group relative overflow-hidden rounded-xl border-2 px-4 py-3 text-center font-medium transition-all duration-300 ${
-                          field.value === 'Aktif'
+                          field.value === true
                             ? 'scale-105 border-emerald-600 bg-emerald-50 text-emerald-700 shadow-sm'
                             : `border-[#e6d9c9]/50 bg-white/80 ${COLOR.TEXT_PRIMARY} hover:scale-105 hover:border-[#6f4e37] hover:bg-[#6f4e37]/5`
                         }`}
@@ -521,16 +684,17 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                           <CheckCircle className="h-5 w-5" />
                           <span className="text-base">Menu Aktif</span>
                         </div>
-                        {field.value === 'Aktif' && (
+                        {field.value === true && (
                           <div className="absolute inset-0 animate-pulse bg-emerald-400/10"></div>
                         )}
                       </button>
 
+                      {/* Tombol Tidak Aktif (false) */}
                       <button
                         type="button"
-                        onClick={() => field.onChange('Tidak Aktif')}
+                        onClick={() => field.onChange(false)}
                         className={`group relative overflow-hidden rounded-xl border-2 px-4 py-3 text-center font-medium transition-all duration-300 ${
-                          field.value === 'Tidak Aktif'
+                          field.value === false
                             ? 'scale-105 border-red-600 bg-red-50 text-red-700 shadow-sm'
                             : `border-[#e6d9c9]/50 bg-white/80 ${COLOR.TEXT_PRIMARY} hover:scale-105 hover:border-[#6f4e37] hover:bg-[#6f4e37]/5`
                         }`}
@@ -539,7 +703,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
                           <XCircle className="h-5 w-5" />
                           <span className="text-base">Tidak Aktif</span>
                         </div>
-                        {field.value === 'Tidak Aktif' && (
+                        {field.value === false && (
                           <div className="absolute inset-0 animate-pulse bg-red-400/10"></div>
                         )}
                       </button>
@@ -553,23 +717,27 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
 
         {/* Footer */}
         <DialogFooter className="border-t-2 border-[#e6d9c9]/50 bg-gradient-to-r from-white to-[#faf9f7] px-8 py-6">
-          <div className="flex w-full gap-4 sm:ml-auto sm:w-auto">
+          <div className="flex justify-end gap-4">
             <Button
               type="button"
               variant="outline"
               onClick={handleClose}
-              className={`h-12 ${BUTTON_CANCEL} `}
+              disabled={isLoading}
+              className={`h-12 ${BUTTON_CANCEL} ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
             >
               Batalkan
             </Button>
             <Button
               type="button"
               onClick={handleSubmit(submitForm)}
-              disabled={isSubmitting}
-              className={`h-12 ${BUTTON_HOVER_ICON}`}
+              disabled={isLoading}
+              className={`h-12 ${BUTTON_HOVER_ICON} ${isLoading ? 'opacity-90' : ''}`}
             >
-              {isSubmitting ? (
-                <span className="animate-spin">Loading...</span>
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span>{getLoadingMessage()}</span>
+                </div>
               ) : (
                 <>
                   <CheckCircle
