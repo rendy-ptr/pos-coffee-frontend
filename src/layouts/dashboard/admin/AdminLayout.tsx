@@ -1,6 +1,6 @@
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import { useAdminDashboard } from '@/features/dashboard/admin/hooks/useAdminDashboard';
-import HeaderAdmin from '@/features/dashboard/admin/sections/AdminHeader';
+import HeaderAdmin from '@/features/dashboard/admin/components/sections/Header/AdminHeader';
 import { Outlet } from 'react-router-dom';
 
 const AdminLayout = () => {

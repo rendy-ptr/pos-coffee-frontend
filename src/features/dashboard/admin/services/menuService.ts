@@ -1,5 +1,10 @@
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { Menu, CreateMenuInput, UploadResponse } from '../types/menu';
+import type {
+  Menu,
+  CreateMenuInput,
+  UploadResponse,
+  UpdateMenuInput,
+} from '../types/menu';
 import apiClient from '@/utils/apiClient';
 
 export const createMenu = async (
@@ -24,5 +29,21 @@ export const uploadImage = async (file: File): Promise<UploadResponse> => {
     }
   );
 
+  return data;
+};
+
+export const getMenus = async (): Promise<Menu[]> => {
+  const { data } = await apiClient.get<ApiResponse<Menu[]>>('/admin/menu');
+  return data.data;
+};
+
+export const updateMenu = async (
+  id: string,
+  payload: UpdateMenuInput
+): Promise<ApiResponse<Menu>> => {
+  const { data } = await apiClient.patch<ApiResponse<Menu>>(
+    `/admin/menu/${id}`,
+    payload
+  );
   return data;
 };

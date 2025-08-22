@@ -17,8 +17,8 @@ export interface CreateCategoryInput {
 }
 
 export interface UpdateCategoryInput {
-  name?: string;
+  name: string;
   description?: string;
-  icon?: string;
-  isActive?: boolean;
+  icon: string;
+  isActive: boolean;
 }

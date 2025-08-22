@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 
-import TabListSection from '../sections/TabList';
-import SummaryCardSection from '../sections/SummaryCard';
-import RecentActivityCard from '../sections/RecentActivityCard';
-import ManagementMenuSection from '../sections/Menu/ManagementMenu';
-import ManagementKasirSection from '../sections/ManagementKasir';
-import ManagementPesanan from '../sections/ManagementPesanan';
-import ManagementReward from '../sections/ManagementReward';
+import TabListSection from '../components/sections/TabList/TabList';
+import SummaryCardSection from '../components/sections/OverviewTab/SummaryCard';
+import RecentActivityCard from '../components/sections/OverviewTab/RecentActivityCard';
+import ManagementMenuSection from '../components/sections/MenuTab/ManagementMenu';
+import ManagementKasirSection from '../components/sections/KasirTab/ManagementKasir';
+import ManagementPesanan from '../components/sections/OverviewTab/ManagementPesanan';
+import ManagementReward from '../components/sections/RewardTab/ManagementReward';
 
 import { useToast } from '@/components/shared/ToastProvider';
 import { useAdminStore } from '@/store/adminStore';
