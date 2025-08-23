@@ -16,6 +16,12 @@ const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 const { Package, Search, CheckCircle, AlertCircle, Filter, ChevronDown } =
   lucideIcons;
 
+const filterOptions = [
+  { value: 'semua', label: 'Semua' },
+  { value: 'aktif', label: 'Kategori Aktif' },
+  { value: 'tidakAktif', label: 'Kategori Tidak Aktif' },
+];
+
 const CategorySection = () => {
   const { data: categories = [], isLoading, error } = useCategories();
   const [searchTerm, setSearchTerm] = useState('');
@@ -23,44 +29,33 @@ const CategorySection = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('semua');
 
-  const filterOptions = useMemo(() => {
-    const uniqueStatus = [...new Set(categories.map(item => item.isActive))];
-    const options = [
-      { value: 'semua', label: 'Semua Kategori' },
-      ...uniqueStatus.map(status => ({
-        value: status.toString(),
-        label: status ? 'Kategori Aktif' : 'Kategori Tidak Aktif',
-      })),
-    ];
-    return options;
-  }, [categories]);
-
   const selectedFilterLabel = useMemo(() => {
     const selected = filterOptions.find(
       option => option.value === selectedFilter
     );
-    return selected ? selected.label : 'Semua Kategori';
-  }, [selectedFilter, filterOptions]);
+    return selected ? selected.label : 'Semua';
+  }, [selectedFilter]);
 
   const filterKategoriAktif = categories.filter(k => k.isActive).length;
   const filterKategoriTidakAktif = categories.filter(k => !k.isActive).length;
   const filterKategori = categories.length;
 
   const filteredItems = useMemo(() => {
-    return categories.filter(item => {
+    return categories.filter(cat => {
       const matchesSearch = searchTerm
-        ? item.name.toLowerCase().includes(searchTerm.toLowerCase())
+        ? cat.name.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
 
       const matchesFilter =
         selectedFilter === 'semua'
           ? true
-          : item.isActive === (selectedFilter === 'true');
+          : selectedFilter === 'aktif'
+            ? cat.isActive === true
+            : cat.isActive === false;
 
       return matchesSearch && matchesFilter;
     });
   }, [categories, searchTerm, selectedFilter]);
-
   if (isLoading) {
     return (
       <CoffeeLoadingAnimation
@@ -212,8 +207,11 @@ const CategorySection = () => {
         <CardContent className="p-6">
           <div className="space-y-4 md:space-y-6">
             {filteredItems.length > 0 ? (
-              filteredItems.map(item => (
-                <ManagementCategoryItem key={item.id} item={item} />
+              filteredItems.map(category => (
+                <ManagementCategoryItem
+                  key={category.id}
+                  categoryItem={category}
+                />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">

@@ -25,13 +25,13 @@ const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 interface EditCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  category: Category;
+  categoryItem: Category;
 }
 
 const EditCategoryModal = ({
   open,
   onClose,
-  category,
+  categoryItem,
 }: EditCategoryModalProps) => {
   const {
     register,
@@ -50,15 +50,15 @@ const EditCategoryModal = ({
   });
 
   useEffect(() => {
-    if (category) {
+    if (categoryItem) {
       reset({
-        name: category.name,
-        description: category.description ?? '',
-        icon: category.icon,
-        isActive: category.isActive,
+        name: categoryItem.name,
+        description: categoryItem.description ?? '',
+        icon: categoryItem.icon,
+        isActive: categoryItem.isActive,
       });
     }
-  }, [category, reset]);
+  }, [categoryItem, reset]);
 
   const selectedIcon = watch('icon');
   const { doUpdateCategory, isPending: isLoadingEdit } = useUpdateCategory();
@@ -74,7 +74,7 @@ const EditCategoryModal = ({
   const submitForm = async (data: UpdateCategoryInput) => {
     // if (!category) return;
     try {
-      await doUpdateCategory({ id: category.id, payload: data });
+      await doUpdateCategory({ id: categoryItem.id, payload: data });
       console.log('Form Data:', data);
       addToast('Kategori berhasil diperbarui', 'success', 3000);
       reset();

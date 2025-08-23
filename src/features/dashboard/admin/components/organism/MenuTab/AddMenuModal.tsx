@@ -274,7 +274,7 @@ const AddMenuModal = ({ open, onClose }: AddMenuModalProps) => {
         imageUrl: finalImageUrl,
       });
 
-      addToast('Menu berhasil ditambahkan', 'success', 3000);
+      addToast(`Menu ${data.name} berhasil ditambahkan`, 'success', 3000);
       handleClose();
     } catch (err) {
       const errorMessage =

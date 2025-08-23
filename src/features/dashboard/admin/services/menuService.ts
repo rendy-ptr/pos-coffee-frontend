@@ -47,3 +47,10 @@ export const updateMenu = async (
   );
   return data;
 };
+
+export const deleteMenu = async (id: string): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.delete<ApiResponse<null>>(
+    `/admin/menu/${id}`
+  );
+  return data;
+};

@@ -51,7 +51,7 @@ const {
 interface EditMenuModalProps {
   open: boolean;
   onClose: () => void;
-  menu: Menu;
+  menuItem: Menu;
 }
 
 const FORM_DEFAULTS = {
@@ -70,7 +70,7 @@ const IMAGE_CONSTRAINTS = {
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
-const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
+const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
   const {
     register,
     handleSubmit,
@@ -97,26 +97,26 @@ const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
   const { doUpdateMenu, isPending: isLoadingSave } = useUpdateMenu();
 
   useEffect(() => {
-    if (open && menu) {
+    if (open && menuItem) {
       reset({
-        imageUrl: menu.imageUrl,
-        name: menu.name,
-        categoryId: menu.categoryId,
-        stock: menu.stock,
-        productionCapital: menu.productionCapital,
-        sellingPrice: menu.sellingPrice,
-        profitMargin: menu.profitMargin,
-        isActive: menu.isActive,
+        imageUrl: menuItem.imageUrl,
+        name: menuItem.name,
+        categoryId: menuItem.categoryId,
+        stock: menuItem.stock,
+        productionCapital: menuItem.productionCapital,
+        sellingPrice: menuItem.sellingPrice,
+        profitMargin: menuItem.profitMargin,
+        isActive: menuItem.isActive,
       });
 
       setImageFile(null);
-      setImagePreview(menu.imageUrl || null);
+      setImagePreview(menuItem.imageUrl || null);
 
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
     }
-  }, [open, menu, reset]);
+  }, [open, menuItem, reset]);
 
   useEffect(() => {
     if (!open) {
@@ -249,7 +249,7 @@ const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
       setImageFile(null);
       setImagePreview(url);
     } else {
-      setImagePreview(menu?.imageUrl || null);
+      setImagePreview(menuItem?.imageUrl || null);
     }
   };
 
@@ -271,7 +271,7 @@ const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
   const submitForm = async (data: UpdateMenuInput) => {
     try {
       // Image validation
-      if (!imageFile && !data.imageUrl && !menu.imageUrl) {
+      if (!imageFile && !data.imageUrl && !menuItem.imageUrl) {
         addToast(
           'Silakan upload gambar atau gunakan gambar lama',
           'error',
@@ -286,7 +286,7 @@ const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
       }
 
       // Handle image upload
-      let finalImageUrl = data.imageUrl || menu.imageUrl;
+      let finalImageUrl = data.imageUrl || menuItem.imageUrl;
       if (imageFile) {
         const result = await doUploadImage(imageFile);
         finalImageUrl = result.imageUrl;
@@ -294,14 +294,14 @@ const EditMenuModal = ({ open, onClose, menu }: EditMenuModalProps) => {
 
       // Create menu
       await doUpdateMenu({
-        id: menu.id,
+        id: menuItem.id,
         payload: {
           ...data,
           imageUrl: finalImageUrl,
         },
       });
 
-      addToast('Menu berhasil diperbarui', 'success', 3000);
+      addToast(`Menu ${menuItem.name} berhasil diperbarui`, 'success', 3000);
       handleClose();
     } catch (err) {
       const errorMessage =

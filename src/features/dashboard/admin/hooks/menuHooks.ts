@@ -4,6 +4,7 @@ import {
   getMenus,
   uploadImage,
   updateMenu,
+  deleteMenu,
 } from '../services/menuService';
 
 import type { ApiResponse } from '@/types/ApiResponse';
@@ -63,5 +64,21 @@ export const useUpdateMenu = () => {
   return {
     ...mutation,
     doUpdateMenu: mutation.mutateAsync,
+  };
+};
+
+export const useDeleteMenu = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<ApiResponse<null>, Error, string>({
+    mutationFn: deleteMenu,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['menus'] });
+    },
+  });
+
+  return {
+    ...mutation,
+    doDeleteMenu: mutation.mutateAsync,
   };
 };

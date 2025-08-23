@@ -7,29 +7,25 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDeleteCategory } from '../../../../hooks/categoryHooks';
+import { useDeleteMenu } from '../../../hooks/menuHooks';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { Category } from '../../../../types/category';
+import type { Menu } from '../../../types/menu';
 import { COLOR } from '@/constants/Style';
 
 const { BUTTON_CANCEL } = COLOR;
 
-interface DeleteCategoryModalProps {
+interface DeleteMenuModalProps {
   open: boolean;
   onClose: () => void;
-  categoryItem: Category;
+  menuItem: Menu;
 }
 
-const DeleteCategoryModal = ({
-  open,
-  onClose,
-  categoryItem,
-}: DeleteCategoryModalProps) => {
-  const { doDeleteCategory, isPending: isLoadingDelete } = useDeleteCategory();
+const DeleteMenuModal = ({ open, onClose, menuItem }: DeleteMenuModalProps) => {
+  const { doDeleteMenu, isPending: isLoadingDelete } = useDeleteMenu();
   const { addToast } = useToast();
 
   const getLoadingMessage = () => {
-    if (isLoadingDelete) return 'Menghapus kategori...';
+    if (isLoadingDelete) return 'Menghapus menu...';
     return 'Loading...';
   };
 
@@ -37,12 +33,12 @@ const DeleteCategoryModal = ({
 
   const handleDelete = async () => {
     try {
-      await doDeleteCategory(categoryItem.id);
-      addToast('Kategori berhasil dihapus', 'success', 3000);
+      await doDeleteMenu(menuItem.id);
+      addToast(`Menu ${menuItem.name} berhasil dihapus`, 'success', 3000);
       onClose();
     } catch (err: unknown) {
       if (err instanceof Error) {
-        addToast(err.message || 'Gagal menghapus kategori', 'error', 3000);
+        addToast(err.message || 'Gagal menghapus menu', 'error', 3000);
       }
     }
   };
@@ -52,18 +48,18 @@ const DeleteCategoryModal = ({
       <DialogContent className="max-w-md rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] shadow-xl">
         <DialogHeader>
           <DialogTitle className="bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-xl font-bold text-transparent">
-            Hapus Kategori
+            Hapus Menu
           </DialogTitle>
           <DialogDescription>
-            Tindakan ini tidak dapat dibatalkan. Data kategori yang dihapus akan
+            Tindakan ini tidak dapat dibatalkan. Data menu yang dihapus akan
             hilang permanen dari sistem.
           </DialogDescription>
         </DialogHeader>
 
         <div className="my-4 text-sm text-gray-700">
-          Apakah Anda yakin ingin menghapus kategori{' '}
+          Apakah Anda yakin ingin menghapus menu{' '}
           <span className="font-semibold text-[#6f4e37]">
-            &quot;{categoryItem.name}&quot;
+            &quot;{menuItem.name}&quot;
           </span>
           ?
         </div>
@@ -90,7 +86,7 @@ const DeleteCategoryModal = ({
               </div>
             ) : (
               <>
-                <span className="text-white">Hapus Kategori</span>
+                <span className="text-white">Hapus Menu</span>
               </>
             )}
           </Button>
@@ -100,4 +96,4 @@ const DeleteCategoryModal = ({
   );
 };
 
-export default DeleteCategoryModal;
+export default DeleteMenuModal;

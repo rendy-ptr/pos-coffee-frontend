@@ -19,6 +19,12 @@ import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
+const filterOptions = [
+  { value: 'semua', label: 'Semua' },
+  { value: 'aktif', label: 'Menu Aktif' },
+  { value: 'tidakAktif', label: 'Menu Tidak Aktif' },
+];
+
 const ManagementMenuSection = () => {
   const { data: menus = [], isLoading, error } = useMenus();
   const [searchTerm, setSearchTerm] = useState('');
@@ -26,24 +32,12 @@ const ManagementMenuSection = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('semua');
 
-  const filterOptions = useMemo(() => {
-    const uniqueStatus = [...new Set(menus.map(menu => menu.isActive))];
-    const options = [
-      { value: 'semua', label: 'Semua Menu' },
-      ...uniqueStatus.map(status => ({
-        value: status.toString(),
-        label: status ? 'Menu Aktif' : 'Menu Tidak Aktif',
-      })),
-    ];
-    return options;
-  }, [menus]);
-
   const selectedFilterLabel = useMemo(() => {
     const selected = filterOptions.find(
       option => option.value === selectedFilter
     );
-    return selected ? selected.label : 'Semua Menu';
-  }, [selectedFilter, filterOptions]);
+    return selected ? selected.label : 'Semua';
+  }, [selectedFilter]);
 
   const filterMenuAktif = menus.filter(menu => menu.isActive).length;
   const filterMenuTidakAktif = menus.filter(menu => !menu.isActive).length;
@@ -58,7 +52,9 @@ const ManagementMenuSection = () => {
       const matchesFilter =
         selectedFilter === 'semua'
           ? true
-          : menu.isActive === (selectedFilter === 'true');
+          : selectedFilter === 'aktif'
+            ? menu.isActive === true
+            : menu.isActive === false;
 
       return matchesSearch && matchesFilter;
     });
@@ -214,8 +210,8 @@ const ManagementMenuSection = () => {
         <CardContent className="p-6">
           <div className="space-y-4 md:space-y-6">
             {filteredItems.length > 0 ? (
-              filteredItems.map(item => (
-                <ManagementMenuItem key={item.id} item={item} />
+              filteredItems.map(menuItem => (
+                <ManagementMenuItem key={menuItem.id} menuItem={menuItem} />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">

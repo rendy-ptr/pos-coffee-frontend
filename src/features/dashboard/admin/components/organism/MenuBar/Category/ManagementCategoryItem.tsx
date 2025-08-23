@@ -6,7 +6,7 @@ import { useState } from 'react';
 import DeleteCategoryModal from './DeleteCategoryModal';
 
 interface IManagementCategoryItemProps {
-  item: Category;
+  categoryItem: Category;
 }
 
 const getStatusConfig = (isActive: boolean) => {
@@ -15,8 +15,8 @@ const getStatusConfig = (isActive: boolean) => {
       bgColor: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
       textColor: 'text-white',
       text: 'Aktif',
-      dot: 'bg-emerald-500',
-      ringColor: 'ring-emerald-500/20',
+      dot: 'bg-emerald-400',
+      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     };
   }
 
@@ -25,102 +25,137 @@ const getStatusConfig = (isActive: boolean) => {
     textColor: 'text-white',
     text: 'Tidak Aktif',
     dot: 'bg-gray-400',
-    ringColor: 'ring-gray-400/20',
+    badge: 'bg-gray-50 text-gray-600 border-gray-200',
   };
 };
 
-const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
+const ManagementCategoryItem = ({
+  categoryItem,
+}: IManagementCategoryItemProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { Edit, Trash2 } = lucideIcons;
 
   type LucideIconKeys = keyof typeof lucideIcons;
   const IconComponent =
-    lucideIcons[item.icon as LucideIconKeys] || lucideIcons.HelpCircle;
-  const statusConfig = getStatusConfig(item.isActive);
+    lucideIcons[categoryItem.icon as LucideIconKeys] || lucideIcons.HelpCircle;
+  const statusConfig = getStatusConfig(categoryItem.isActive);
 
   return (
-    <div className="group rounded-xl border border-[#e6d9c9]/30 bg-gradient-to-br from-white to-[#faf9f7] p-4 shadow-sm transition-all duration-300 hover:border-[#6f4e37]/30 hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#6f4e37]/20 hover:shadow-lg">
+      {/* Subtle background pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#6f4e37]/2 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
       {/* Mobile Layout */}
-      <div className="block lg:hidden">
-        <div className="flex items-center justify-between">
-          {/* Left: icon & info */}
+      <div className="relative block lg:hidden">
+        {/* Header with icon and status */}
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/10 shadow-sm">
-              <IconComponent className="h-6 w-6 text-[#6f4e37]" />
+            <div className="relative">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/15 shadow-sm ring-1 ring-[#6f4e37]/5">
+                <IconComponent className="h-7 w-7 text-[#6f4e37]" />
+              </div>
+              {/* Status indicator dot */}
+              <div
+                className={`absolute -top-1 -right-1 h-4 w-4 rounded-full ${statusConfig.dot} shadow-sm ring-2 ring-white`}
+              />
             </div>
-            <div>
-              <h3 className="font-semibold text-[#6f4e37]">{item.name}</h3>
+            <div className="flex-1">
+              <h3 className="mb-1 text-lg font-semibold text-gray-900">
+                {categoryItem.name}
+              </h3>
               <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}
+                className={`inline-flex items-center rounded-lg border px-2.5 py-0.5 text-xs font-medium ${statusConfig.badge}`}
               >
-                <span
-                  className={`mr-1 inline-block h-2 w-2 rounded-full ${statusConfig.dot}`}
-                ></span>
                 {statusConfig.text}
               </span>
             </div>
           </div>
+        </div>
 
-          {/* Right: actions */}
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-[#6f4e37]/20 text-[#6f4e37] hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white"
-              onClick={() => setIsEditOpen(true)}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-red-200 text-red-600 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
-              onClick={() => setIsDeleteOpen(true)}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
+        {/* Description */}
+        {categoryItem.description && (
+          <div className="mb-4 rounded-lg bg-gray-50/50 p-3">
+            <p className="text-sm leading-relaxed text-gray-600">
+              {categoryItem.description}
+            </p>
           </div>
+        )}
+
+        {/* Action buttons */}
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 border-[#6f4e37]/20 text-[#6f4e37] transition-all duration-200 hover:border-[#6f4e37] hover:bg-[#6f4e37] hover:text-white"
+            onClick={() => setIsEditOpen(true)}
+          >
+            <Edit className="mr-2 h-4 w-4" />
+            Edit
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-red-200 text-red-600 transition-all duration-200 hover:border-red-500 hover:bg-red-500 hover:text-white"
+            onClick={() => setIsDeleteOpen(true)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
       {/* Desktop Layout */}
-      <div className="hidden lg:block">
-        <div className="grid grid-cols-12 items-center gap-4 lg:gap-6">
-          {/* Left: icon & info */}
-          <div className="col-span-6 flex items-center gap-4">
-            <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/10 shadow-sm">
-              <IconComponent className="h-7 w-7 text-[#6f4e37]" />
+      <div className="relative hidden lg:block">
+        <div className="flex items-start gap-6">
+          {/* Left side - Icon and main info */}
+          <div className="flex flex-1 items-start gap-4">
+            <div className="relative">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/15 shadow-sm ring-1 ring-[#6f4e37]/5">
+                <IconComponent className="h-8 w-8 text-[#6f4e37]" />
+              </div>
+              {/* Status indicator dot */}
+              <div
+                className={`absolute -top-1 -right-1 h-5 w-5 rounded-full ${statusConfig.dot} shadow-sm ring-2 ring-white`}
+              />
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-[#6f4e37]">
-                {item.name}
-              </h3>
-              <span
-                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusConfig.bgColor} ${statusConfig.textColor}`}
-              >
+
+            <div className="min-w-0 flex-1">
+              <div className="mb-2 flex items-center gap-3">
+                <h3 className="truncate text-xl font-semibold text-gray-900">
+                  {categoryItem.name}
+                </h3>
                 <span
-                  className={`mr-1 inline-block h-2 w-2 rounded-full ${statusConfig.dot}`}
-                ></span>
-                {statusConfig.text}
-              </span>
+                  className={`inline-flex items-center rounded-lg border px-3 py-1 text-sm font-medium ${statusConfig.badge}`}
+                >
+                  {statusConfig.text}
+                </span>
+              </div>
+
+              {categoryItem.description && (
+                <div className="mt-2">
+                  <p className="line-clamp-2 text-sm leading-relaxed text-gray-600">
+                    {categoryItem.description}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Right: actions */}
-          <div className="col-span-6 flex items-center justify-end gap-3">
+          {/* Right side - Actions */}
+          <div className="ml-4 flex items-center gap-3">
             <Button
               variant="outline"
               size="sm"
-              className="border-[#6f4e37]/20 px-4 text-sm text-[#6f4e37] hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white"
+              className="border-[#6f4e37]/20 px-4 text-[#6f4e37] transition-all duration-200 hover:border-[#6f4e37] hover:bg-[#6f4e37] hover:text-white"
               onClick={() => setIsEditOpen(true)}
             >
-              <Edit className="mr-1 h-4 w-4" /> Edit
+              <Edit className="mr-2 h-4 w-4" />
+              Edit
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="border-red-200 text-red-600 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
+              className="border-red-200 text-red-600 transition-all duration-200 hover:border-red-500 hover:bg-red-500 hover:text-white"
               onClick={() => setIsDeleteOpen(true)}
             >
               <Trash2 className="h-4 w-4" />
@@ -128,15 +163,16 @@ const ManagementCategoryItem = ({ item }: IManagementCategoryItemProps) => {
           </div>
         </div>
       </div>
+
       <EditCategoryModal
         open={isEditOpen}
         onClose={() => setIsEditOpen(false)}
-        category={item}
+        categoryItem={categoryItem}
       />
       <DeleteCategoryModal
         open={isDeleteOpen}
         onClose={() => setIsDeleteOpen(false)}
-        category={item}
+        categoryItem={categoryItem}
       />
     </div>
   );
