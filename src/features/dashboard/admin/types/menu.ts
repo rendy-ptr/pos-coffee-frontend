@@ -1,3 +1,5 @@
+import type { Category } from './category';
+
 export interface UploadResponse {
   imageUrl: string;
 }
@@ -10,13 +12,13 @@ export interface Menu {
   stock: number;
   productionCapital: number;
   sellingPrice: number;
-  profitMargin: number;
+  profit: number;
   soldCount: number;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
   createdById: string;
-  categoryName: string;
+  category: Category;
 }
 
 export interface CreateMenuInput {
@@ -26,7 +28,7 @@ export interface CreateMenuInput {
   stock: number;
   productionCapital: number;
   sellingPrice: number;
-  profitMargin: number;
+  profit: number;
   isActive: boolean;
 }
 
@@ -37,6 +39,6 @@ export interface UpdateMenuInput {
   stock: number;
   productionCapital: number;
   sellingPrice: number;
-  profitMargin: number;
+  profit: number;
   isActive: boolean;
 }

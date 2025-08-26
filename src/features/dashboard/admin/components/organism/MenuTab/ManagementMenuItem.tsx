@@ -39,14 +39,16 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // Calculate actual profit
+  const selling = menuItem.sellingPrice ?? 0;
+  const capital = menuItem.productionCapital ?? 0;
   const profit =
-    (menuItem.sellingPrice ?? 0) - (menuItem.productionCapital ?? 0);
+    typeof menuItem.profit === 'number' ? menuItem.profit : selling - capital;
+  const marginPct = selling > 0 ? (profit / selling) * 100 : 0;
 
   const statsData = [
     {
       label: 'Harga Jual',
-      value: formatCurrency(menuItem.sellingPrice ?? 0),
+      value: formatCurrency(selling),
       icon: DollarSign,
       color: 'from-[#6f4e37]/10 to-[#8b5e3c]/15',
       textColor: 'text-[#6f4e37]',
@@ -55,7 +57,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
     },
     {
       label: 'Modal',
-      value: formatCurrency(menuItem.productionCapital ?? 0),
+      value: formatCurrency(capital),
       icon: Package,
       color: 'from-slate-50 to-slate-100',
       textColor: 'text-slate-700',
@@ -65,9 +67,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
     {
       label: 'Profit',
       value: formatCurrency(profit),
-      secondaryValue: menuItem.profitMargin
-        ? `${menuItem.profitMargin}%`
-        : '0%',
+      secondaryValue: `${marginPct.toFixed(0)}%`,
       icon: TrendingUp,
       color:
         profit >= 0
@@ -111,6 +111,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
               <img
                 src={menuItem.imageUrl}
                 alt={menuItem.name}
+                loading="lazy"
                 className="h-20 w-20 rounded-2xl object-cover shadow-lg ring-2 ring-white"
                 onError={e => {
                   e.currentTarget.src = 'https://via.placeholder.com/80';
@@ -133,7 +134,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
             </h3>
             <div className="mb-3 flex items-center gap-2">
               <span className="text-sm text-gray-500">
-                {menuItem.categoryName}
+                {menuItem.category.name}
               </span>
               <span
                 className={`inline-flex items-center rounded-lg border px-2.5 py-1 text-xs font-medium ring-1 ${statusConfig.badge}`}
@@ -210,6 +211,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
                 <img
                   src={menuItem.imageUrl}
                   alt={menuItem.name}
+                  loading="lazy"
                   className="h-24 w-24 rounded-2xl object-cover shadow-lg ring-2 ring-white"
                   onError={e => {
                     e.currentTarget.src = 'https://via.placeholder.com/96';
@@ -232,7 +234,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
               </h3>
               <div className="mb-2 flex items-center gap-3">
                 <span className="text-sm text-gray-500">
-                  {menuItem.categoryName}
+                  {menuItem.category.name}
                 </span>
                 <span
                   className={`inline-flex items-center rounded-lg border px-3 py-1 text-sm font-medium ring-1 ${statusConfig.badge}`}

@@ -1,7 +1,7 @@
 import type { CreateMenuInput } from '@/features/dashboard/admin/types/menu';
 
 export const menuItems: CreateMenuInput[] = [
-  // Kopi
+  // Minuman
   {
     imageUrl: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04',
     name: 'Espresso',
@@ -9,7 +9,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 50,
     productionCapital: 15000,
     sellingPrice: 25000,
-    profitMargin: 10000,
+    profit: 10000,
     isActive: true,
   },
   {
@@ -19,7 +19,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 40,
     productionCapital: 18000,
     sellingPrice: 35000,
-    profitMargin: 17000,
+    profit: 17000,
     isActive: true,
   },
   {
@@ -29,7 +29,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 35,
     productionCapital: 16000,
     sellingPrice: 30000,
-    profitMargin: 14000,
+    profit: 14000,
     isActive: true,
   },
   {
@@ -39,7 +39,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 60,
     productionCapital: 12000,
     sellingPrice: 30000,
-    profitMargin: 18000,
+    profit: 18000,
     isActive: true,
   },
   {
@@ -49,7 +49,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 70,
     productionCapital: 10000,
     sellingPrice: 28000,
-    profitMargin: 18000,
+    profit: 18000,
     isActive: true,
   },
   {
@@ -59,7 +59,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 45,
     productionCapital: 20000,
     sellingPrice: 38000,
-    profitMargin: 18000,
+    profit: 18000,
     isActive: true,
   },
   {
@@ -69,7 +69,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 30,
     productionCapital: 22000,
     sellingPrice: 42000,
-    profitMargin: 20000,
+    profit: 20000,
     isActive: true,
   },
   {
@@ -79,7 +79,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 25,
     productionCapital: 17000,
     sellingPrice: 32000,
-    profitMargin: 15000,
+    profit: 15000,
     isActive: true,
   },
   {
@@ -89,7 +89,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 20,
     productionCapital: 18000,
     sellingPrice: 38000,
-    profitMargin: 20000,
+    profit: 20000,
     isActive: true,
   },
   {
@@ -99,7 +99,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 50,
     productionCapital: 10000,
     sellingPrice: 22000,
-    profitMargin: 12000,
+    profit: 12000,
     isActive: true,
   },
   {
@@ -109,7 +109,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 40,
     productionCapital: 15000,
     sellingPrice: 35000,
-    profitMargin: 20000,
+    profit: 20000,
     isActive: true,
   },
 
@@ -121,7 +121,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 30,
     productionCapital: 12000,
     sellingPrice: 25000,
-    profitMargin: 13000,
+    profit: 13000,
     isActive: true,
   },
   {
@@ -131,7 +131,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 20,
     productionCapital: 20000,
     sellingPrice: 45000,
-    profitMargin: 25000,
+    profit: 25000,
     isActive: true,
   },
   {
@@ -141,7 +141,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 15,
     productionCapital: 25000,
     sellingPrice: 42000,
-    profitMargin: 17000,
+    profit: 17000,
     isActive: true,
   },
   {
@@ -151,7 +151,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 25,
     productionCapital: 18000,
     sellingPrice: 38000,
-    profitMargin: 20000,
+    profit: 20000,
     isActive: true,
   },
   {
@@ -161,7 +161,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 10,
     productionCapital: 15000,
     sellingPrice: 32000,
-    profitMargin: 17000,
+    profit: 17000,
     isActive: true,
   },
 
@@ -173,7 +173,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 20,
     productionCapital: 20000,
     sellingPrice: 35000,
-    profitMargin: 15000,
+    profit: 15000,
     isActive: true,
   },
   {
@@ -183,7 +183,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 15,
     productionCapital: 22000,
     sellingPrice: 38000,
-    profitMargin: 16000,
+    profit: 16000,
     isActive: true,
   },
   {
@@ -193,7 +193,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 10,
     productionCapital: 18000,
     sellingPrice: 32000,
-    profitMargin: 14000,
+    profit: 14000,
     isActive: true,
   },
   {
@@ -203,7 +203,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 12,
     productionCapital: 25000,
     sellingPrice: 36000,
-    profitMargin: 11000,
+    profit: 11000,
     isActive: true,
   },
   {
@@ -213,7 +213,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 18,
     productionCapital: 15000,
     sellingPrice: 30000,
-    profitMargin: 15000,
+    profit: 15000,
     isActive: true,
   },
 
@@ -225,7 +225,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 40,
     productionCapital: 8000,
     sellingPrice: 18000,
-    profitMargin: 10000,
+    profit: 10000,
     isActive: true,
   },
   {
@@ -235,7 +235,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 25,
     productionCapital: 12000,
     sellingPrice: 22000,
-    profitMargin: 10000,
+    profit: 10000,
     isActive: true,
   },
   {
@@ -245,7 +245,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 50,
     productionCapital: 5000,
     sellingPrice: 15000,
-    profitMargin: 10000,
+    profit: 10000,
     isActive: true,
   },
   {
@@ -255,7 +255,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 30,
     productionCapital: 7000,
     sellingPrice: 16000,
-    profitMargin: 9000,
+    profit: 9000,
     isActive: true,
   },
   {
@@ -265,7 +265,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 20,
     productionCapital: 10000,
     sellingPrice: 20000,
-    profitMargin: 10000,
+    profit: 10000,
     isActive: true,
   },
   {
@@ -275,7 +275,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 35,
     productionCapital: 9000,
     sellingPrice: 18000,
-    profitMargin: 9000,
+    profit: 9000,
     isActive: true,
   },
   {
@@ -285,7 +285,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 25,
     productionCapital: 8000,
     sellingPrice: 20000,
-    profitMargin: 12000,
+    profit: 12000,
     isActive: true,
   },
   {
@@ -295,7 +295,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 40,
     productionCapital: 15000,
     sellingPrice: 28000,
-    profitMargin: 13000,
+    profit: 13000,
     isActive: true,
   },
   {
@@ -305,7 +305,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 30,
     productionCapital: 18000,
     sellingPrice: 32000,
-    profitMargin: 14000,
+    profit: 14000,
     isActive: true,
   },
   {
@@ -315,7 +315,7 @@ export const menuItems: CreateMenuInput[] = [
     stock: 45,
     productionCapital: 6000,
     sellingPrice: 15000,
-    profitMargin: 9000,
+    profit: 9000,
     isActive: true,
   },
 ];

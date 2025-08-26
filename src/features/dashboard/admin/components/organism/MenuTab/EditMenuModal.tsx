@@ -61,7 +61,7 @@ const FORM_DEFAULTS = {
   stock: 0,
   productionCapital: 0,
   sellingPrice: 0,
-  profitMargin: 0,
+  profit: 0,
   isActive: true,
 } as const;
 
@@ -105,7 +105,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
         stock: menuItem.stock,
         productionCapital: menuItem.productionCapital,
         sellingPrice: menuItem.sellingPrice,
-        profitMargin: menuItem.profitMargin,
+        profit: menuItem.profit,
         isActive: menuItem.isActive,
       });
 
@@ -134,7 +134,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
     price: watch('sellingPrice'),
     cost: watch('productionCapital'),
     imageUrl: watch('imageUrl'),
-    profitMargin: watch('profitMargin'),
+    profit: watch('profit'),
   };
 
   // Computed values
@@ -152,9 +152,9 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
 
   const profitPercentage = useMemo(() => {
     return watchedValues.price > 0
-      ? ((watchedValues.profitMargin / watchedValues.price) * 100).toFixed(1)
+      ? ((watchedValues.profit / watchedValues.price) * 100).toFixed(1)
       : '0';
-  }, [watchedValues.price, watchedValues.profitMargin]);
+  }, [watchedValues.price, watchedValues.profit]);
 
   // Helper function to get loading message
   const getLoadingMessage = () => {
@@ -171,7 +171,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
     const price = Number(watchedValues.price) || 0;
     const cost = Number(watchedValues.cost) || 0;
     const profit = price - cost;
-    setValue('profitMargin', profit);
+    setValue('profit', profit);
   }, [watchedValues.price, watchedValues.cost, setValue]);
 
   // Helper functions
@@ -650,7 +650,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
                   <div className="relative">
                     <Input
                       type="number"
-                      {...register('profitMargin')}
+                      {...register('profit')}
                       readOnly
                       className={`h-14 cursor-not-allowed rounded-xl border-2 border-[#e6d9c9]/50 bg-[#faf9f7] pl-12 text-2xl ${COLOR.TEXT_PRIMARY}`}
                     />
@@ -660,7 +660,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
                       Rp
                     </span>
                   </div>
-                  {watchedValues.profitMargin > 0 && (
+                  {watchedValues.profit > 0 && (
                     <p
                       className={`mt-2 flex items-center gap-1 text-sm text-green-600`}
                     >
@@ -669,7 +669,7 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
                       modal
                     </p>
                   )}
-                  {watchedValues.profitMargin < 0 && (
+                  {watchedValues.profit < 0 && (
                     <p
                       className={`mt-2 flex items-center gap-1 text-sm text-red-600`}
                     >

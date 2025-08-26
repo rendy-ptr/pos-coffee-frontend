@@ -69,14 +69,22 @@ import {
   Image,
   XCircle,
   Camera,
+  ChevronLeft,
+  ChevronRight,
+  ChevronFirst,
+  ChevronLast,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
+  ChevronFirst,
+  ChevronLast,
   Sandwich,
   Popcorn,
+  ChevronLeft,
   XCircle,
   Camera,
+  ChevronRight,
   Image,
   FileText,
   IceCreamBowl,

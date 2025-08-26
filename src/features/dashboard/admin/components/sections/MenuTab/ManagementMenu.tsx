@@ -27,9 +27,9 @@ const filterOptions = [
 
 const ManagementMenuSection = () => {
   const { data: menus = [], isLoading, error } = useMenus();
-  const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('semua');
 
   const selectedFilterLabel = useMemo(() => {
