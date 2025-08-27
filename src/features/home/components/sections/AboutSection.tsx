@@ -1,5 +1,5 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import Image from '../components/Image';
+import Image from '../organism/Image';
 
 const AboutSection = () => {
   const { Coffee, Clock } = lucideIcons;

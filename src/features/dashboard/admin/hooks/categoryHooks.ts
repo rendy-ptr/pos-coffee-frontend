@@ -11,6 +11,7 @@ import type {
   UpdateCategoryInput,
 } from '../types/category';
 import type { ApiResponse } from '@/types/ApiResponse';
+import { AxiosError } from 'axios';
 
 export const useCategories = () => {
   return useQuery({
@@ -62,7 +63,11 @@ export const useUpdateCategory = () => {
 export const useDeleteCategory = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<null>, Error, string>({
+  const mutation = useMutation<
+    ApiResponse<null>,
+    AxiosError<ApiResponse<null>>,
+    string
+  >({
     mutationFn: deleteCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });

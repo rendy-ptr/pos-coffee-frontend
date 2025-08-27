@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { MENU_FAVORITES, MENU_CATEGORIES } from '@/constants/menuFavorites';
 import { Link } from 'react-router-dom';
-import Image from '../components/Image';
+import Image from '../organism/Image';
 
 const MenuFavoriteSection = () => {
   const [selectedCategory, setSelectedCategory] = useState('kopi');

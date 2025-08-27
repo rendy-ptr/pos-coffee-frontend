@@ -1,4 +1,4 @@
-import MenuLengkapContainer from '@/features/menulengkap/container';
+import MenuLengkapContainer from '@/features/menu/container';
 
 const MenuLengkapPage = () => {
   return <MenuLengkapContainer />;

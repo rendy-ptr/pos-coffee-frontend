@@ -3,13 +3,17 @@ import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '@/constants/navLinks';
 import { navScrollToSection } from '@/utils/navScrollToSection';
 
-const Navbar = () => {
+interface NavbarProps {
+  variant?: 'landing' | 'subpage';
+}
+
+const Navbar = ({ variant = 'landing' }: NavbarProps) => {
   const { Coffee } = lucideIcons;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-[#e6d9c9] bg-[#f8f3e9]/80 backdrop-blur-sm">
       <div className="relative mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-4 md:px-6">
-        {/* Kiri: Logo */}
+        {/* Logo */}
         <Link
           to="#beranda"
           onClick={e => {
@@ -22,22 +26,31 @@ const Navbar = () => {
           <span className="text-xl font-bold text-[#6f4e37]">Aroma Kopi</span>
         </Link>
 
-        {/* Tengah: Nav */}
-        <nav className="hidden gap-6 md:flex">
-          {NAV_LINKS.map((item, index) => (
-            <Link
-              key={index}
-              to={item.to}
-              onClick={e => {
-                e.preventDefault();
-                navScrollToSection(item.to);
-              }}
-              className="text-md font-medium text-[#6f4e37] transition-colors hover:text-[#a67c52]"
-            >
-              {item.name}
-            </Link>
-          ))}
-        </nav>
+        {variant === 'landing' ? (
+          // ✅ NAV untuk Landing Page
+          <nav className="hidden gap-6 md:flex">
+            {NAV_LINKS.map((item, index) => (
+              <Link
+                key={index}
+                to={item.to}
+                onClick={e => {
+                  e.preventDefault();
+                  navScrollToSection(item.to);
+                }}
+                className="text-md font-medium text-[#6f4e37] transition-colors hover:text-[#a67c52]"
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        ) : (
+          <Link
+            to="/"
+            className="rounded-lg bg-[#6f4e37] px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:bg-[#5a3d2c]"
+          >
+            Kembali ke Beranda
+          </Link>
+        )}
       </div>
     </header>
   );

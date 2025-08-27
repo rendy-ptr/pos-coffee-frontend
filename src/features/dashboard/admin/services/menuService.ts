@@ -6,12 +6,13 @@ import type {
   UpdateMenuInput,
 } from '../types/menu';
 import apiClient from '@/utils/apiClient';
+import { API_PATHS } from '@/constants/apiPaths';
 
 export const createMenu = async (
   payload: CreateMenuInput
 ): Promise<ApiResponse<Menu>> => {
   const { data } = await apiClient.post<ApiResponse<Menu>>(
-    '/admin/menu',
+    API_PATHS.ADMIN.MENU(),
     payload
   );
   return data;
@@ -22,7 +23,7 @@ export const uploadImage = async (file: File): Promise<UploadResponse> => {
   formData.append('image', file);
 
   const { data } = await apiClient.post<UploadResponse>(
-    '/admin/upload',
+    API_PATHS.ADMIN.UPLOAD_IMAGE,
     formData,
     {
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -33,7 +34,9 @@ export const uploadImage = async (file: File): Promise<UploadResponse> => {
 };
 
 export const getMenus = async (): Promise<Menu[]> => {
-  const { data } = await apiClient.get<ApiResponse<Menu[]>>('/admin/menu');
+  const { data } = await apiClient.get<ApiResponse<Menu[]>>(
+    API_PATHS.ADMIN.MENU()
+  );
   return data.data;
 };
 
@@ -42,7 +45,7 @@ export const updateMenu = async (
   payload: UpdateMenuInput
 ): Promise<ApiResponse<Menu>> => {
   const { data } = await apiClient.patch<ApiResponse<Menu>>(
-    `/admin/menu/${id}`,
+    API_PATHS.ADMIN.MENU(id),
     payload
   );
   return data;
@@ -50,7 +53,7 @@ export const updateMenu = async (
 
 export const deleteMenu = async (id: string): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.delete<ApiResponse<null>>(
-    `/admin/menu/${id}`
+    API_PATHS.ADMIN.MENU(id)
   );
   return data;
 };

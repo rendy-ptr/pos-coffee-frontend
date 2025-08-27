@@ -1,4 +1,5 @@
 import apiClient from '@/utils/apiClient';
+import { API_PATHS } from '@/constants/apiPaths';
 
 export interface AuthMeResponse {
   success: boolean;
@@ -10,7 +11,7 @@ export interface AuthMeResponse {
 }
 
 export const getMe = async (): Promise<AuthMeResponse> => {
-  const res = await apiClient.get<AuthMeResponse>('/auth/me');
+  const res = await apiClient.get<AuthMeResponse>(API_PATHS.AUTH.ME);
   return res.data;
 };
 
@@ -26,6 +27,9 @@ export interface LoginResponse {
 }
 
 export const login = async (payload: { email: string; password: string }) => {
-  const res = await apiClient.post<LoginResponse>('/auth/login', payload);
+  const res = await apiClient.post<LoginResponse>(
+    API_PATHS.AUTH.LOGIN,
+    payload
+  );
   return res.data;
 };

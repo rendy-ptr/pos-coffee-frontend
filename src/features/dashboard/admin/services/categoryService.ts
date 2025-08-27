@@ -6,19 +6,22 @@ import type {
 import apiClient from '@/utils/apiClient';
 import type { ApiResponse } from '@/types/ApiResponse';
 
+import { API_PATHS } from '@/constants/apiPaths';
+
 export const createCategory = async (
   payload: CreateCategoryInput
 ): Promise<ApiResponse<Category>> => {
   const { data } = await apiClient.post<ApiResponse<Category>>(
-    '/admin/kategori',
+    API_PATHS.ADMIN.KATEGORI(),
     payload
   );
   return data;
 };
 
 export const getCategories = async (): Promise<Category[]> => {
-  const { data } =
-    await apiClient.get<ApiResponse<Category[]>>('/admin/kategori');
+  const { data } = await apiClient.get<ApiResponse<Category[]>>(
+    API_PATHS.ADMIN.KATEGORI()
+  );
   return data.data;
 };
 
@@ -27,7 +30,7 @@ export const updateCategory = async (
   payload: UpdateCategoryInput
 ): Promise<ApiResponse<Category>> => {
   const { data } = await apiClient.patch<ApiResponse<Category>>(
-    `/admin/kategori/${id}`,
+    API_PATHS.ADMIN.KATEGORI(id),
     payload
   );
   return data;
@@ -37,7 +40,7 @@ export const deleteCategory = async (
   id: string
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.delete<ApiResponse<null>>(
-    `/admin/kategori/${id}`
+    API_PATHS.ADMIN.KATEGORI(id)
   );
   return data;
 };

@@ -11,6 +11,7 @@ import { useDeleteCategory } from '../../../../hooks/categoryHooks';
 import { useToast } from '@/components/shared/ToastProvider';
 import type { Category } from '../../../../types/category';
 import { COLOR } from '@/constants/Style';
+import { AxiosError } from 'axios';
 
 const { BUTTON_CANCEL } = COLOR;
 
@@ -40,9 +41,11 @@ const DeleteCategoryModal = ({
       await doDeleteCategory(categoryItem.id);
       addToast('Kategori berhasil dihapus', 'success', 3000);
       onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        addToast(err.message || 'Gagal menghapus kategori', 'error', 3000);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        addToast(err.response?.data?.message || err.message, 'error', 3000);
+      } else {
+        addToast('Gagal menghapus kategori', 'error', 3000);
       }
     }
   };

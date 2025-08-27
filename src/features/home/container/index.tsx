@@ -1,17 +1,18 @@
 import Navbar from '@/components/shared/Navbar';
-import HeroSection from '../sections/HeroSection';
-import MenuFavoriteSection from '../sections/MenuFavoriteSection';
-import AboutSection from '../sections/AboutSection';
-import LocationSection from '../sections/LocationSection';
-import ServiceSection from '../sections/ServiceSection';
-import TestimonialSection from '../sections/TestimonialSection';
-import MemberSection from '../sections/MemberSection';
+import HeroSection from '../components/sections/HeroSection';
+import MenuFavoriteSection from '../components/sections/MenuFavoriteSection';
+import AboutSection from '../components/sections/AboutSection';
+import LocationSection from '../components/sections/LocationSection';
+import ServiceSection from '../components/sections/ServiceSection';
+import TestimonialSection from '../components/sections/TestimonialSection';
+import MemberSection from '../components/sections/MemberSection';
 import Footer from '@/components/shared/Footer';
+import { FOOTER_LINKS } from '@/constants/footerLinks';
 
 const LandingPageContainer = () => {
   return (
     <div className="flex min-h-screen flex-col bg-[#f8f3e9]">
-      <Navbar />
+      <Navbar variant="landing" />
       {/* Main Content */}
       <main className="flex-1">
         {/* Hero Section */}
@@ -29,7 +30,7 @@ const LandingPageContainer = () => {
         {/* Member Section */}
         <MemberSection />
       </main>
-      <Footer />
+      <Footer variant="light" links={FOOTER_LINKS} />
     </div>
   );
 };

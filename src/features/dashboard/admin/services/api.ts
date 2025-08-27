@@ -4,9 +4,10 @@ import type {
 } from '../types/AdminDashboardTypes';
 import apiClient from '@/utils/apiClient';
 import axios from 'axios';
+import { API_PATHS } from '@/constants/apiPaths';
 
 export const logout = async (): Promise<IAdminLogoutData> => {
-  const res = await apiClient.post('/auth/logout');
+  const res = await apiClient.post(API_PATHS.AUTH.LOGOUT);
   const data: IAdminLogoutData = res.data;
 
   if (!data.success) {
@@ -21,7 +22,7 @@ export const fetchAdminDashboard = async (
 ): Promise<IAdminDashboardResponse> => {
   try {
     const res = await apiClient.get<IAdminDashboardResponse>(
-      '/dashboard/admin',
+      API_PATHS.ADMIN.DASHBOARD,
       { signal }
     );
     const data = res.data;

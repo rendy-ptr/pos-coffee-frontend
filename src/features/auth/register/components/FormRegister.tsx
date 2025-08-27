@@ -54,7 +54,7 @@ const FormRegister = () => {
     setErrorMessage(null);
     try {
       const response = await apiClient.post<IRegisterResponse>(
-        API_PATHS.AUTH_REGISTER,
+        API_PATHS.AUTH.REGISTER,
         data
       );
       console.log('API Response:', response.data);

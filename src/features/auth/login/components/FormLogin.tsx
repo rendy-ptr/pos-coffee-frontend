@@ -1,6 +1,5 @@
 // LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-// import { API_PATHS } from '@/constants/apiPaths';
 
 // HOOKS
 import { useEffect, useState } from 'react';
@@ -16,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 
 // FUNCTIONS
-// import apiClient from '@/utils/apiClient';
 
 // TYPES
 import { AxiosError } from 'axios';

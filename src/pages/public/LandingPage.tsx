@@ -1,4 +1,4 @@
-import LandingPageContainer from '@/features/landing/container';
+import LandingPageContainer from '@/features/home/container';
 
 const LandingPage = () => {
   return <LandingPageContainer />;

@@ -1,5 +1,5 @@
 import { TESTIMONIALS } from '@/constants/testimonial';
-import TestimonialCard from '@/features/landing/components/TestimonialCard';
+import TestimonialCard from '@/features/home/components/organism/TestimonialCard';
 
 const TestimonialSection = () => {
   return (

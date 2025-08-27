@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { HERO_FEATURES } from '@/constants/heroFeatures';
 import { useHeroAnimation } from '@/hooks/useHeroAnimation';
-import Image from '../components/Image';
+import Image from '../organism/Image';
 import { scrollToSection } from '@/utils/scrollToSection';
 
 const HeroSection = () => {
