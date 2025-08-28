@@ -15,7 +15,7 @@ import { iconOptions } from '../../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useUpdateCategory } from '../../../../hooks/categoryHooks';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { Category, UpdateCategoryInput } from '../../../../types/category';
+import type { UpdateCategoryInput, Category } from '../../../../types/category';
 import { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';

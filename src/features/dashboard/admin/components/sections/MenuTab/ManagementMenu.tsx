@@ -16,6 +16,7 @@ import AddMenuModal from '../../organism/MenuTab/AddMenuModal';
 import { COLOR } from '@/constants/Style';
 import { useMenus } from '../../../hooks/menuHooks';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
+import { useAdminCategories } from '../../../hooks/categoryHooks';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
@@ -27,6 +28,7 @@ const filterOptions = [
 
 const ManagementMenuSection = () => {
   const { data: menus = [], isLoading, error } = useMenus();
+  const { data: categories = [] } = useAdminCategories();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -211,7 +213,11 @@ const ManagementMenuSection = () => {
           <div className="space-y-4 md:space-y-6">
             {filteredItems.length > 0 ? (
               filteredItems.map(menuItem => (
-                <ManagementMenuItem key={menuItem.id} menuItem={menuItem} />
+                <ManagementMenuItem
+                  key={menuItem.id}
+                  menuItem={menuItem}
+                  categories={categories}
+                />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">
@@ -233,6 +239,7 @@ const ManagementMenuSection = () => {
       <AddMenuModal
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
+        categories={categories}
       />
     </div>
   );

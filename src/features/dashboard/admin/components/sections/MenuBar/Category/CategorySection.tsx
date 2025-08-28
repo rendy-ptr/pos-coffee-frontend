@@ -5,7 +5,7 @@ import { PackagePlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import ManagementCategoryItem from '../../../organism/MenuBar/Category/ManagementCategoryItem';
 import AddCategoryModal from '../../../organism/MenuBar/Category/AddCategoryModal';
-import { useCategories } from '../../../../hooks/categoryHooks';
+import { useAdminCategories } from '../../../../hooks/categoryHooks';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import { COLOR } from '@/constants/Style';
 
@@ -23,7 +23,7 @@ const filterOptions = [
 ];
 
 const CategorySection = () => {
-  const { data: categories = [], isLoading, error } = useCategories();
+  const { data: categories = [], isLoading, error } = useAdminCategories();
   const [searchTerm, setSearchTerm] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);

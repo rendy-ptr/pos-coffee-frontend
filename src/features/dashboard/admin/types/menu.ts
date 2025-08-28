@@ -1,8 +1,4 @@
-import type { Category } from './category';
-
-export interface UploadResponse {
-  imageUrl: string;
-}
+import type { Category } from '../types/category';
 
 export interface Menu {
   id: string;

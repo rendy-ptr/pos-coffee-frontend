@@ -5,9 +5,11 @@ import { useState } from 'react';
 import EditMenuModal from './EditMenuModal';
 import DeleteMenuModal from './DeleteMenuModal';
 import type { Menu } from '../../../types/menu';
+import type { Category } from '../../../types/category';
 
 interface IManagementMenuItemProps {
   menuItem: Menu;
+  categories: Category[];
 }
 
 const getStatusConfig = (isActive: boolean) => {
@@ -31,7 +33,10 @@ const getStatusConfig = (isActive: boolean) => {
   };
 };
 
-const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
+const ManagementMenuItem = ({
+  menuItem,
+  categories,
+}: IManagementMenuItemProps) => {
   const { Edit, Trash2, TrendingUp, Package, ShoppingCart, DollarSign } =
     lucideIcons;
   const statusConfig = getStatusConfig(menuItem.isActive);
@@ -307,6 +312,7 @@ const ManagementMenuItem = ({ menuItem }: IManagementMenuItemProps) => {
         open={isEditOpen}
         onClose={() => setIsEditOpen(false)}
         menuItem={menuItem}
+        categories={categories}
       />
       <DeleteMenuModal
         open={isDeleteOpen}

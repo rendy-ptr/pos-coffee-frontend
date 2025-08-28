@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import ManagementKasirItem from '../../organism/KasirTab/ManagementKasirItem';
+import AddKasirModal from '../../organism/KasirTab/AddKasirModal';
 const {
   Users,
   UserPlus,
@@ -55,7 +56,7 @@ const kasirMembers = [
   },
 ] as const;
 
-const M = () => {
+const ManagementKasir = () => {
   const filterKasirAktif = kasirMembers.filter(
     kasir => kasir.status === 'active'
   ).length;
@@ -66,6 +67,7 @@ const M = () => {
   const [selectedFilter, setSelectedFilter] = useState('semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const filteredKasir = useMemo(() => {
     return kasirMembers
@@ -157,7 +159,10 @@ const M = () => {
                   )}
                 </div>
               </div>
-              <Button className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg">
+              <Button
+                className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+                onClick={() => setIsDialogOpen(true)}
+              >
                 <UserPlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                 Tambah Kasir
               </Button>
@@ -236,8 +241,12 @@ const M = () => {
           </div>
         </CardContent>
       </Card>
+      <AddKasirModal
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+      />
     </div>
   );
 };
 
-export default M;
+export default ManagementKasir;

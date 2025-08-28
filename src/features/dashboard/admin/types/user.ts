@@ -1,0 +1,9 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'ADMIN' | 'KASIR' | 'CUSTOMER';
+  phone?: string;
+  profilePicture?: string | null;
+  isActive: boolean;
+}

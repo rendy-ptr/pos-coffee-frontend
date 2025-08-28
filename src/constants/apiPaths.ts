@@ -10,6 +10,11 @@ export const API_PATHS = {
     KATEGORI: (id?: string) =>
       id ? `/admin/kategori/${id}` : `/admin/kategori`,
     MENU: (id?: string) => (id ? `/admin/menu/${id}` : `/admin/menu`),
-    UPLOAD_IMAGE: '/admin/upload',
+    KASIR: (id?: string) => (id ? `/admin/kasir/${id}` : `/admin/kasir`),
+  },
+  PUBLIC: {
+    UPLOAD_IMAGE: '/upload',
+    MENU: () => '/menu',
+    KATEGORI: () => '/menu/kategori',
   },
 };

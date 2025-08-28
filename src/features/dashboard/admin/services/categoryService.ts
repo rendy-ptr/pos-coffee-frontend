@@ -18,7 +18,7 @@ export const createCategory = async (
   return data;
 };
 
-export const getCategories = async (): Promise<Category[]> => {
+export const getAdminCategories = async (): Promise<Category[]> => {
   const { data } = await apiClient.get<ApiResponse<Category[]>>(
     API_PATHS.ADMIN.KATEGORI()
   );

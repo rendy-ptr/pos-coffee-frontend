@@ -56,6 +56,7 @@ const HeaderAdmin = () => {
 
       localStorage.removeItem('welcomeShown');
       queryClient.removeQueries({ queryKey: ['auth'], exact: true });
+      await queryClient.cancelQueries();
       queryClient.clear();
 
       navigate('/auth/login', { replace: true });
@@ -63,8 +64,6 @@ const HeaderAdmin = () => {
       const errorMessage =
         error instanceof Error ? error.message : 'Terjadi kesalahan';
       addToast(errorMessage, 'error', 5000);
-    } finally {
-      setTimeout(() => setLoggingOut(false), 1000);
     }
   }, [doLogout, navigate, addToast, queryClient, setLoggingOut]);
 

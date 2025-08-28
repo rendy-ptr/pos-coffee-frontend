@@ -73,10 +73,20 @@ import {
   ChevronRight,
   ChevronFirst,
   ChevronLast,
+  ShoppingBasket,
+  Mail,
+  Lock,
+  Timer,
+  Flame,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
+  Lock,
+  Mail,
+  ShoppingBasket,
+  Flame,
+  Timer,
   ChevronFirst,
   ChevronLast,
   Sandwich,

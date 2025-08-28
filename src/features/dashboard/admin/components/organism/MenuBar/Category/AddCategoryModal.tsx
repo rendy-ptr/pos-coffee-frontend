@@ -17,15 +17,9 @@ import { useCreateCategory } from '../../../../hooks/categoryHooks';
 import { useToast } from '@/components/shared/ToastProvider';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';
+import type { CreateCategoryInput } from '../../../../types/category';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
-
-type CategoryFormValues = {
-  name: string;
-  description?: string;
-  icon: string;
-  isActive: boolean;
-};
 
 interface AddCategoryModalProps {
   open: boolean;
@@ -40,7 +34,7 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
     watch,
     control,
     formState: { errors },
-  } = useForm<CategoryFormValues>({
+  } = useForm<CreateCategoryInput>({
     defaultValues: {
       name: '',
       description: '',
@@ -61,7 +55,7 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
 
   const isLoading = isLoadingSave || false;
 
-  const submitForm = async (data: CategoryFormValues) => {
+  const submitForm = async (data: CreateCategoryInput) => {
     console.log('Form Data:', data);
     try {
       await doCreateCategory(data);

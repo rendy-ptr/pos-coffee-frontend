@@ -1,3 +1,10 @@
+export interface CreateCategoryInput {
+  name: string;
+  description?: string;
+  icon: string;
+  isActive: boolean;
+}
+
 export interface Category {
   id: string;
   name: string;
@@ -7,13 +14,6 @@ export interface Category {
   createdAt: string;
   updatedAt: string;
   createdById: string;
-}
-
-export interface CreateCategoryInput {
-  name: string;
-  description?: string;
-  icon: string;
-  isActive: boolean;
 }
 
 export interface UpdateCategoryInput {

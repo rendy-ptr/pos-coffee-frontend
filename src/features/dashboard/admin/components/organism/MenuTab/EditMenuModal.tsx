@@ -20,14 +20,14 @@ import { Label } from '@/components/ui/label';
 import { Controller, useForm } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useCategories } from '../../../hooks/categoryHooks';
 import { useToast } from '@/components/shared/ToastProvider';
 
-import type { Menu, UpdateMenuInput } from '../../../types/menu';
+import type { UpdateMenuInput, Menu } from '../../../types/menu';
 import type { Category } from '../../../types/category';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
-import { useUpdateMenu, useUploadImage } from '../../../hooks/menuHooks';
+import { useUpdateMenu } from '../../../hooks/menuHooks';
+import { useUploadImage } from '../../../hooks/useUpload';
 
 type LucideIconName = keyof typeof LucideIcons;
 type LucideIconComponent = React.ForwardRefExoticComponent<
@@ -52,6 +52,7 @@ interface EditMenuModalProps {
   open: boolean;
   onClose: () => void;
   menuItem: Menu;
+  categories: Category[];
 }
 
 const FORM_DEFAULTS = {
@@ -70,7 +71,12 @@ const IMAGE_CONSTRAINTS = {
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
-const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
+const EditMenuModal = ({
+  open,
+  onClose,
+  menuItem,
+  categories,
+}: EditMenuModalProps) => {
   const {
     register,
     handleSubmit,
@@ -92,7 +98,6 @@ const EditMenuModal = ({ open, onClose, menuItem }: EditMenuModalProps) => {
 
   // Hooks
   const { addToast } = useToast();
-  const { data: categories = [] } = useCategories();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
   const { doUpdateMenu, isPending: isLoadingSave } = useUpdateMenu();
 

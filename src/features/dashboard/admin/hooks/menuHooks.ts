@@ -2,29 +2,12 @@ import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import {
   createMenu,
   getMenus,
-  uploadImage,
   updateMenu,
   deleteMenu,
 } from '../services/menuService';
 
 import type { ApiResponse } from '@/types/ApiResponse';
-import type {
-  Menu,
-  CreateMenuInput,
-  UploadResponse,
-  UpdateMenuInput,
-} from '../types/menu';
-
-export const useUploadImage = () => {
-  const mutation = useMutation<UploadResponse, Error, File>({
-    mutationFn: uploadImage,
-  });
-
-  return {
-    ...mutation,
-    doUploadImage: mutation.mutateAsync,
-  };
-};
+import type { Menu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
 
 export const useCreateMenu = () => {
   const queryClient = useQueryClient();

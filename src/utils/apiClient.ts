@@ -12,48 +12,58 @@ const apiClient = axios.create({
   timeout: 10000,
 });
 
+// INTERCEPTOR RESPONSE
 apiClient.interceptors.response.use(
   res => res,
   err => {
     if (err.code === 'ERR_CANCELED') return Promise.reject(err);
 
+    const { isLoggingOut } = useAuthStore.getState();
+    const { clearAdminData } = useAdminStore.getState();
+
+    // jika user sedang logout, abaikan 401
+    if (isLoggingOut) return Promise.reject(err);
+
+    // hanya tangani 401
     if (err.response?.status === 401) {
-      const { clearAdminData } = useAdminStore.getState();
-      const { isLoggingOut } = useAuthStore.getState();
-
-      if (isLoggingOut) return Promise.reject(err);
-
-      clearAdminData();
-
+      const requestUrl = err.config?.url; // url request yang kena 401
       const errorCode = err.response.data?.errorCode;
+
+      // jangan munculin toast untuk logout request
+      if (requestUrl?.includes('/auth/logout')) {
+        clearAdminData();
+        return Promise.reject(err);
+      }
+
+      // clear data admin
+      clearAdminData();
+      localStorage.removeItem('welcomeShown');
 
       switch (errorCode) {
         case 'TOKEN_EXPIRED':
-          localStorage.removeItem('welcomeShown');
           toastController.addToast('Sesi habis, silakan login ulang', 'error');
-          if (history.location.pathname !== '/auth/login') {
-            history.push('/auth/login');
-          }
           break;
 
         case 'INVALID_TOKEN':
         case 'NO_TOKEN':
-          localStorage.removeItem('welcomeShown');
           toastController.addToast(
             'Unauthorized, silakan login ulang',
             'error'
           );
-          if (history.location.pathname !== '/auth/login') {
-            history.push('/auth/login');
-          }
           break;
 
         default:
           console.warn('Unhandled 401 error:', errorCode);
-          if (history.location.pathname !== '/auth/login') {
-            history.push('/auth/login');
-          }
+          toastController.addToast(
+            'Unauthorized, silakan login ulang',
+            'error'
+          );
           break;
+      }
+
+      // redirect ke login jika belum di halaman login
+      if (history.location.pathname !== '/auth/login') {
+        history.push('/auth/login');
       }
     }
 

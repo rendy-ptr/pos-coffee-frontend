@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import {
-  getCategories,
+  getAdminCategories,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -13,10 +13,10 @@ import type {
 import type { ApiResponse } from '@/types/ApiResponse';
 import { AxiosError } from 'axios';
 
-export const useCategories = () => {
+export const useAdminCategories = () => {
   return useQuery({
     queryKey: ['categories'],
-    queryFn: getCategories,
+    queryFn: getAdminCategories,
   });
 };
 

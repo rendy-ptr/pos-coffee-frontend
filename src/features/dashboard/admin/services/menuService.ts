@@ -1,10 +1,5 @@
 import type { ApiResponse } from '@/types/ApiResponse';
-import type {
-  Menu,
-  CreateMenuInput,
-  UploadResponse,
-  UpdateMenuInput,
-} from '../types/menu';
+import type { Menu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
 
@@ -15,21 +10,6 @@ export const createMenu = async (
     API_PATHS.ADMIN.MENU(),
     payload
   );
-  return data;
-};
-
-export const uploadImage = async (file: File): Promise<UploadResponse> => {
-  const formData = new FormData();
-  formData.append('image', file);
-
-  const { data } = await apiClient.post<UploadResponse>(
-    API_PATHS.ADMIN.UPLOAD_IMAGE,
-    formData,
-    {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    }
-  );
-
   return data;
 };
 

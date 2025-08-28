@@ -7,13 +7,6 @@ import {
   DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,47 +14,48 @@ import { Controller, useForm } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
-
-import type { CreateMenuInput } from '../../../types/menu';
-import type { Category } from '../../../types/category';
-import * as LucideIcons from 'lucide-react';
-import type { LucideProps } from 'lucide-react';
-import { useCreateMenu } from '../../../hooks/menuHooks';
 import { useUploadImage } from '../../../hooks/useUpload';
-
-type LucideIconName = keyof typeof LucideIcons;
-type LucideIconComponent = React.ForwardRefExoticComponent<
-  Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
->;
+import { useCreateKasir } from '../../../hooks/kasirHooks';
+import type { CreateKasirInput } from '../../../types/kasir';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { calculateShiftDuration } from '@/utils/calculateShiftDuration';
+import { AxiosError } from 'axios';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const {
   Upload,
   X,
-  Image,
-  DollarSign,
+  User,
   CheckCircle,
   XCircle,
-  TrendingUp,
-  Tag,
+  Clock,
+  Mail,
+  Phone,
+  Lock,
   Camera,
-  UtensilsCrossed,
+  UserCheck,
+  Timer,
 } = lucideIcons;
 
-interface AddMenuModalProps {
+interface AddKasirModalProps {
   open: boolean;
   onClose: () => void;
-  categories: Category[];
 }
 
 const FORM_DEFAULTS = {
-  imageUrl: '',
   name: '',
-  categoryId: '',
-  stock: 0,
-  productionCapital: 0,
-  sellingPrice: 0,
-  profit: 0,
+  email: '',
+  password: '',
+  phone: '',
+  profilePicture: '',
+  shiftStart: '',
+  shiftEnd: '',
   isActive: true,
 } as const;
 
@@ -70,7 +64,7 @@ const IMAGE_CONSTRAINTS = {
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
-const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
+const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   const {
     register,
     handleSubmit,
@@ -79,12 +73,13 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     setValue,
     control,
     formState: { errors },
-  } = useForm<CreateMenuInput>({
+  } = useForm<CreateKasirInput>({
     defaultValues: FORM_DEFAULTS,
   });
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Local state
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -93,39 +88,30 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
   // Hooks
   const { addToast } = useToast();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
-  const { doCreateMenu, isPending: isLoadingSave } = useCreateMenu();
+  const { doCreateKasir, isPending: isLoadingSave } = useCreateKasir();
 
   // Watched values
   const watchedValues = {
-    price: watch('sellingPrice'),
-    cost: watch('productionCapital'),
-    imageUrl: watch('imageUrl'),
-    profit: watch('profit'),
+    name: watch('name'),
   };
 
-  // Computed values
-  const activeCategories = useMemo(() => {
-    const unique = new Map<string, Category>();
-    categories
-      .filter(cat => cat.isActive)
-      .forEach(cat => {
-        if (!unique.has(cat.name)) {
-          unique.set(cat.name, cat);
-        }
-      });
-    return Array.from(unique.values());
-  }, [categories]);
+  // Generate default avatar URL based on name
+  const defaultAvatarUrl = useMemo(() => {
+    if (!watchedValues.name) return '';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(watchedValues.name)}&background=6f4e37&color=fff&size=128&bold=true`;
+  }, [watchedValues.name]);
 
-  const profitPercentage = useMemo(() => {
-    return watchedValues.price > 0
-      ? ((watchedValues.profit / watchedValues.price) * 100).toFixed(1)
-      : '0';
-  }, [watchedValues.price, watchedValues.profit]);
+  // Get current preview image
+  const currentPreviewImage = useMemo(() => {
+    if (imagePreview) return imagePreview;
+    if (defaultAvatarUrl) return defaultAvatarUrl;
+    return null;
+  }, [imagePreview, defaultAvatarUrl]);
 
   // Helper function to get loading message
   const getLoadingMessage = () => {
     if (isLoadingUpload) return 'Mengunggah gambar...';
-    if (isLoadingSave) return 'Menyimpan menu...';
+    if (isLoadingSave) return 'Menyimpan kasir...';
     return 'Loading...';
   };
 
@@ -134,17 +120,10 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
 
   // Effects
   useEffect(() => {
-    const price = Number(watchedValues.price) || 0;
-    const cost = Number(watchedValues.cost) || 0;
-    const profit = price - cost;
-    setValue('profit', profit);
-  }, [watchedValues.price, watchedValues.cost, setValue]);
-
-  useEffect(() => {
-    if (!watchedValues.imageUrl && !imageFile) {
+    if (!imageFile) {
       setImagePreview(null);
     }
-  }, [watchedValues.imageUrl, imageFile]);
+  }, [imageFile]);
 
   // Helper functions
   const validateFile = (file: File): string | null => {
@@ -157,19 +136,9 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     return null;
   };
 
-  const isValidUrl = (url: string): boolean => {
-    try {
-      new URL(url);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-
   const resetImageState = () => {
     setImageFile(null);
     setImagePreview(null);
-    setValue('imageUrl', '');
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -189,7 +158,6 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     }
 
     setImageFile(file);
-    setValue('imageUrl', '');
     setImagePreview(URL.createObjectURL(file));
   };
 
@@ -219,15 +187,6 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     }
   };
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
-    setValue('imageUrl', url);
-    if (url) {
-      setImageFile(null);
-      setImagePreview(null);
-    }
-  };
-
   const handleUploadAreaClick = () => {
     fileInputRef.current?.click();
   };
@@ -244,63 +203,52 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     onClose();
   };
 
-  const submitForm = async (data: CreateMenuInput) => {
+  const submitForm = async (data: CreateKasirInput) => {
     try {
-      // Image validation
-      if (!imageFile && !data.imageUrl) {
-        addToast(
-          'Silakan upload gambar atau masukkan URL gambar',
-          'error',
-          3000
-        );
-        return;
-      }
-
-      if (data.imageUrl && !isValidUrl(data.imageUrl)) {
-        addToast('URL gambar tidak valid', 'error', 3000);
-        return;
-      }
-
-      // Handle image upload
-      let finalImageUrl = data.imageUrl;
+      // Handle image upload if file exists
+      let finalProfilePicture: string | null = null;
       if (imageFile) {
         const result = await doUploadImage(imageFile);
-        finalImageUrl = result.imageUrl;
+        finalProfilePicture = result.imageUrl;
       }
 
-      // Create menu
-      await doCreateMenu({
+      const kasirData = {
         ...data,
-        imageUrl: finalImageUrl,
-      });
+        profilePicture: finalProfilePicture,
+      };
 
-      addToast(`Menu ${data.name} berhasil ditambahkan`, 'success', 3000);
+      await doCreateKasir(kasirData);
+      console.log('Kasir data:', kasirData);
+
+      addToast(`Kasir ${data.name} berhasil ditambahkan`, 'success', 3000);
       handleClose();
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Gagal menambahkan menu';
-      addToast(errorMessage, 'error', 3000);
+      if (err instanceof AxiosError) {
+        addToast(err.response?.data?.message || err.message, 'error', 3000);
+      } else {
+        addToast('Gagal menghapus kategori', 'error', 3000);
+      }
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="h-[90vh] max-h-[900px] w-full max-w-5xl overflow-hidden rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] p-0 shadow-xl">
+      <DialogContent className="h-[90vh] max-h-[900px] w-full max-w-4xl overflow-hidden rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white to-[#faf9f7] p-0 shadow-xl">
         {/* Header */}
         <DialogHeader className="relative border-b-2 border-[#e6d9c9]/50 bg-transparent bg-gradient-to-r from-white to-[#faf9f7] px-8 py-6">
           <div className="relative flex items-center gap-4">
             <div
               className={`rounded-xl ${COLOR.BG_ICON} hidden p-3 shadow-md sm:flex`}
             >
-              <UtensilsCrossed className="h-6 w-6 text-white" />
+              <UserCheck className="h-6 w-6 text-white" />
             </div>
 
             <div className="flex-1">
               <DialogTitle className={`text-2xl ${COLOR.TEXT_PRIMARY}`}>
-                Tambah Menu Baru
+                Tambah Kasir Baru
               </DialogTitle>
               <DialogDescription className={`text-sm ${COLOR.TEXT_SECONDARY}`}>
-                Tambahkan Menu baru dengan detail yang lengkap
+                Tambahkan kasir baru dengan detail yang lengkap
               </DialogDescription>
             </div>
           </div>
@@ -310,7 +258,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
         <div className="flex-1 overflow-auto">
           <div className="px-8 py-6">
             <div className="mx-auto max-w-3xl space-y-8">
-              {/* Section: Upload Gambar */}
+              {/* Section: Foto Profil */}
               <div className="group rounded-3xl border-2 border-[#e6d9c9]/50 bg-white/80 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
                   <div
@@ -319,10 +267,11 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                     <Camera className="h-5 w-5 text-white" />
                   </div>
                   <h3 className={`text-xl ${COLOR.TEXT_PRIMARY}`}>
-                    Gambar Menu
+                    Foto Profil
                   </h3>
-                  <span className="text-lg text-red-500">*</span>
+                  <span className="text-sm text-gray-500">(Opsional)</span>
                 </div>
+
                 <div className="space-y-6">
                   {/* Input file tersembunyi */}
                   <input
@@ -333,23 +282,25 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                     className="hidden"
                   />
 
-                  {imagePreview || watchedValues.imageUrl ? (
+                  {currentPreviewImage ? (
                     <div className="group/preview relative overflow-hidden rounded-2xl border-2 border-[#e6d9c9]/50 shadow-lg">
                       <img
-                        src={imagePreview || watchedValues.imageUrl}
+                        src={currentPreviewImage}
                         alt="Preview"
                         className="h-56 w-full object-cover transition-transform duration-300 group-hover/preview:scale-105"
                       />
                       <div className="absolute inset-0 bg-black/20 opacity-0 transition-opacity duration-300 group-hover/preview:opacity-100"></div>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="destructive"
-                        className="absolute top-4 right-4 rounded-full shadow-lg transition-transform hover:scale-110"
-                        onClick={resetImageState}
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
+                      {imagePreview && (
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-4 right-4 rounded-full shadow-lg transition-transform hover:scale-110"
+                          onClick={resetImageState}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   ) : (
                     <button
@@ -373,7 +324,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                           <Upload className="h-8 w-8 text-white group-hover/upload:animate-bounce" />
                         </div>
                         <h4 className={`mb-2 text-lg ${COLOR.TEXT_PRIMARY}`}>
-                          Drag & Drop Gambar di Sini
+                          Drag & Drop Foto Profil di Sini
                         </h4>
                         <p className={`mb-1 ${COLOR.TEXT_SECONDARY}`}>
                           atau klik untuk memilih file
@@ -384,46 +335,43 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                       </div>
                     </button>
                   )}
-                  <div className="relative">
-                    <Input
-                      type="url"
-                      {...register('imageUrl')}
-                      onChange={handleUrlChange}
-                      placeholder="Atau masukkan URL gambar..."
-                      className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 placeholder:${COLOR.TEXT_SECONDARY} focus:border-[#6f4e37] focus:bg-white focus:ring-4 focus:ring-[#6f4e37]/30`}
-                    />
-                    <Image
-                      className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
-                    />
-                  </div>
+
+                  {!imagePreview && watchedValues.name && (
+                    <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+                      <p className="text-sm text-blue-700">
+                        <strong>Info:</strong> Jika tidak mengunggah foto,
+                        sistem akan membuat avatar default berdasarkan nama
+                        kasir.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Section: Info Menu */}
+              {/* Section: Data Pribadi */}
               <div className="rounded-3xl border-2 border-[#e6d9c9]/50 bg-white/80 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
                   <div
                     className={`rounded-xl ${COLOR.BG_ICON} flex h-10 w-10 items-center justify-center p-2 shadow-md`}
                   >
-                    <Tag className="h-5 w-5 text-white" />
+                    <User className="h-5 w-5 text-white" />
                   </div>
                   <h3 className={`text-xl ${COLOR.TEXT_PRIMARY}`}>
-                    Informasi Menu
+                    Data Pribadi
                   </h3>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <div className="space-y-2">
                     <Label
                       className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
                     >
-                      Nama Menu <span className="text-red-500">*</span>
+                      Nama Lengkap <span className="text-red-500">*</span>
                     </Label>
                     <Input
                       {...register('name', {
-                        required: 'Nama menu wajib diisi',
+                        required: 'Nama lengkap wajib diisi',
                       })}
-                      onWheel={e => e.currentTarget.blur()}
-                      placeholder="Contoh: Cappuccino Premium Special"
+                      placeholder="Contoh: John Doe"
                       className={`h-12 rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
                         errors.name
                           ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
@@ -437,223 +385,249 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                       </p>
                     )}
                   </div>
+
                   <div className="space-y-2">
                     <Label
                       className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
                     >
-                      Kategori <span className="text-red-500">*</span>
+                      Email <span className="text-red-500">*</span>
                     </Label>
-                    <Controller
-                      name="categoryId"
-                      control={control}
-                      rules={{ required: 'Kategori wajib dipilih' }}
-                      render={({ field }) => (
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          disabled={activeCategories.length === 0}
-                        >
-                          <SelectTrigger
-                            className={`h-12 w-full rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
-                              errors.categoryId
-                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
-                                : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
-                            }`}
-                          >
-                            <SelectValue
-                              placeholder={
-                                activeCategories.length === 0
-                                  ? 'Aktifkan atau Tambahkan Kategori Dahulu'
-                                  : 'Pilih Kategori Menu'
-                              }
-                            />
-                          </SelectTrigger>
-                          <SelectContent className="rounded-xl border-2 border-[#e6d9c9]/50 bg-white shadow-lg">
-                            {activeCategories.length === 0 ? (
-                              <div className="px-4 py-2 text-sm text-gray-500">
-                                Tidak ada kategori tersedia
-                              </div>
-                            ) : (
-                              activeCategories.map(cat => {
-                                const iconName = cat.icon as LucideIconName;
-                                const IconComponent =
-                                  (LucideIcons[
-                                    iconName
-                                  ] as LucideIconComponent) ?? LucideIcons.Box;
-                                return (
-                                  <SelectItem
-                                    key={cat.id}
-                                    value={cat.id}
-                                    className="flex cursor-pointer items-center gap-2 px-4 py-2 font-medium text-[#6f4e37] hover:bg-[#f7f3ef]"
-                                  >
-                                    <IconComponent className="h-5 w-5" />
-                                    {cat.name}
-                                  </SelectItem>
-                                );
-                              })
-                            )}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.categoryId && (
+                    <div className="relative">
+                      <Input
+                        type="email"
+                        {...register('email', {
+                          required: 'Email wajib diisi',
+                          pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: 'Format email tidak valid',
+                          },
+                        })}
+                        placeholder="contoh@email.com"
+                        className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
+                          errors.email
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
+                        }`}
+                      />
+                      <Mail
+                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
+                      />
+                    </div>
+                    {errors.email && (
                       <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
                         <XCircle className="h-4 w-4" />
-                        {errors.categoryId.message}
+                        {errors.email.message}
                       </p>
                     )}
                   </div>
+
                   <div className="space-y-2">
                     <Label
                       className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
                     >
-                      Stock <span className="text-red-500">*</span>
+                      Password <span className="text-red-500">*</span>
                     </Label>
-                    <Input
-                      type="number"
-                      {...register('stock', {
-                        required: 'Stock wajib diisi',
-                        min: { value: 0, message: 'Stock tidak boleh negatif' },
-                      })}
-                      placeholder="0"
-                      onWheel={e => e.currentTarget.blur()}
-                      className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-                    />
-                    {errors.stock && (
+                    <div className="relative">
+                      <Input
+                        type="password"
+                        {...register('password', {
+                          required: 'Password wajib diisi',
+                          minLength: {
+                            value: 6,
+                            message: 'Password minimal 6 karakter',
+                          },
+                        })}
+                        placeholder="Masukkan password"
+                        className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
+                          errors.password
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
+                        }`}
+                      />
+                      <Lock
+                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
+                      />
+                    </div>
+                    {errors.password && (
                       <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
                         <XCircle className="h-4 w-4" />
-                        {errors.stock.message}
+                        {errors.password.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label
+                      className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
+                    >
+                      Nomor Telepon
+                      <span className="text-sm text-gray-500">(Opsional)</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        type="tel"
+                        {...register('phone', {
+                          pattern: {
+                            value: /^[0-9+\-\s()]+$/,
+                            message: 'Format nomor telepon tidak valid',
+                          },
+                        })}
+                        placeholder="08123456789"
+                        className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
+                          errors.phone
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
+                        }`}
+                      />
+                      <Phone
+                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
+                      />
+                    </div>
+                    {errors.phone && (
+                      <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
+                        <XCircle className="h-4 w-4" />
+                        {errors.phone.message}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Section: Harga & Keuntungan */}
+              {/* Section: Jadwal Kerja */}
               <div className="rounded-3xl border-2 border-[#e6d9c9]/50 bg-white/80 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
                   <div
                     className={`rounded-xl ${COLOR.BG_ICON} flex h-10 w-10 items-center justify-center p-2 shadow-md`}
                   >
-                    <DollarSign className="h-5 w-5 text-white" />
+                    <Clock className="h-5 w-5 text-white" />
                   </div>
                   <h3 className={`text-xl ${COLOR.TEXT_PRIMARY}`}>
-                    Harga & Keuntungan
+                    Jadwal Kerja
                   </h3>
                 </div>
+
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  {/* Jam Mulai */}
                   <div className="space-y-2">
-                    <Label className={`text-base ${COLOR.TEXT_PRIMARY}`}>
-                      Modal Produksi
+                    <Label
+                      className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
+                    >
+                      Jam Mulai Shift <span className="text-red-500">*</span>
                     </Label>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        {...register('productionCapital', {
-                          min: {
-                            value: 0,
-                            message: 'Modal tidak boleh negatif',
-                          },
-                        })}
-                        placeholder="0"
-                        onWheel={e => e.currentTarget.blur()}
-                        className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-                      />
-                      <span
-                        className={`absolute top-1/2 left-4 -translate-y-1/2 font-semibold ${COLOR.TEXT_PRIMARY}`}
+                    <Select
+                      onValueChange={val => setValue('shiftStart', val)}
+                      defaultValue={watch('shiftStart')}
+                    >
+                      <SelectTrigger
+                        className={`h-12 w-full justify-between rounded-xl border-2 bg-white/70 px-4 text-base text-[#3e2723] transition-all duration-200 ${
+                          errors.shiftStart
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
+                        }`}
                       >
-                        Rp
-                      </span>
-                    </div>
-                    {errors.productionCapital && (
+                        <SelectValue
+                          placeholder="Pilih jam mulai"
+                          className="w-full text-left"
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="scrollbar-thin scrollbar-thumb-[#d1bfa7] scrollbar-track-transparent max-h-60 overflow-y-auto rounded-2xl border border-[#e6d9c9]/60 bg-white shadow-xl backdrop-blur-md">
+                        {Array.from({ length: 24 }).map((_, h) =>
+                          Array.from({ length: 6 }).map((_, m) => {
+                            const hour = String(h).padStart(2, '0');
+                            const minute = String(m * 10).padStart(2, '0');
+                            const time = `${hour}:${minute}`;
+                            return (
+                              <SelectItem
+                                key={time}
+                                value={time}
+                                className="cursor-pointer rounded-lg px-4 py-2 text-base text-[#3e2723] transition-all duration-200 hover:bg-[#f3ece4] hover:text-[#6f4e37] focus:bg-[#e8d9c9] focus:text-[#3e2723] data-[state=checked]:bg-[#6f4e37] data-[state=checked]:text-white"
+                              >
+                                {time}
+                              </SelectItem>
+                            );
+                          })
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.shiftStart && (
                       <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
                         <XCircle className="h-4 w-4" />
-                        {errors.productionCapital.message}
+                        {errors.shiftStart.message}
                       </p>
                     )}
                   </div>
+
+                  {/* Jam Selesai */}
                   <div className="space-y-2">
-                    <Label className={`text-base ${COLOR.TEXT_PRIMARY}`}>
-                      Harga Jual
+                    <Label
+                      className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
+                    >
+                      Jam Selesai Shift <span className="text-red-500">*</span>
                     </Label>
-                    <div className="relative">
-                      <Input
-                        type="number"
-                        {...register('sellingPrice', {
-                          required: 'Harga jual wajib diisi',
-                          min: {
-                            value: 0,
-                            message: 'Harga jual tidak boleh negatif',
-                          },
-                        })}
-                        placeholder="0"
-                        onWheel={e => e.currentTarget.blur()}
-                        className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} [appearance:textfield] transition-all duration-200 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
-                      />
-                      <span
-                        className={`absolute top-1/2 left-4 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
+                    <Select
+                      onValueChange={val => setValue('shiftEnd', val)}
+                      defaultValue={watch('shiftEnd')}
+                    >
+                      <SelectTrigger
+                        className={`h-12 w-full justify-between rounded-xl border-2 bg-white/70 px-4 text-base text-[#3e2723] transition-all duration-200 ${
+                          errors.shiftStart
+                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
+                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
+                        }`}
                       >
-                        Rp
-                      </span>
-                    </div>
-                    {errors.sellingPrice && (
+                        <SelectValue
+                          placeholder="Pilih jam mulai"
+                          className="w-full text-left"
+                        />
+                      </SelectTrigger>
+
+                      <SelectContent className="scrollbar-thin scrollbar-thumb-[#d1bfa7] scrollbar-track-transparent max-h-60 overflow-y-auto rounded-2xl border border-[#e6d9c9]/60 bg-white shadow-xl backdrop-blur-md">
+                        {Array.from({ length: 24 }).map((_, h) =>
+                          Array.from({ length: 6 }).map((_, m) => {
+                            const hour = String(h).padStart(2, '0');
+                            const minute = String(m * 10).padStart(2, '0');
+                            const time = `${hour}:${minute}`;
+                            return (
+                              <SelectItem
+                                key={time}
+                                value={time}
+                                className="cursor-pointer rounded-lg px-4 py-2 text-base text-[#3e2723] transition-all duration-200 hover:bg-[#f3ece4] hover:text-[#6f4e37] focus:bg-[#e8d9c9] focus:text-[#3e2723] data-[state=checked]:bg-[#6f4e37] data-[state=checked]:text-white"
+                              >
+                                {time}
+                              </SelectItem>
+                            );
+                          })
+                        )}
+                      </SelectContent>
+                    </Select>
+                    {errors.shiftEnd && (
                       <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
                         <XCircle className="h-4 w-4" />
-                        {errors.sellingPrice.message}
+                        {errors.shiftEnd.message}
                       </p>
                     )}
                   </div>
                 </div>
-                <div className="mt-6 rounded-2xl border border-[#e6d9c9]/50 bg-gradient-to-r from-white to-[#faf9f7] p-6">
-                  <div className="mb-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <TrendingUp className={`h-6 w-6 ${COLOR.TEXT_PRIMARY}`} />
-                      <h4
-                        className={`text-md lg:text-lg ${COLOR.TEXT_PRIMARY}`}
-                      >
-                        Keuntungan
-                      </h4>
+
+                {/* Durasi Shift */}
+                <div className="mt-8">
+                  <div className="flex items-center gap-3 rounded-2xl border border-[#e6d9c9]/60 bg-gradient-to-r from-[#faf7f3] to-[#ffffff] p-4 shadow-md transition-all duration-300 hover:shadow-lg">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#6f4e37] shadow-md">
+                      <Timer className="h-6 w-6 text-white" />
                     </div>
-                    <div
-                      className={`rounded-xl bg-[#e6d9c9]/50 px-3 py-1 text-xs lg:text-sm ${COLOR.TEXT_SECONDARY}`}
-                    >
-                      Margin: {profitPercentage}%
+                    <div>
+                      <p className="text-sm text-[#6f4e37]/80">Durasi Shift</p>
+                      <p className="animate-in fade-in-50 text-lg font-semibold text-[#3e2723]">
+                        {calculateShiftDuration(
+                          watch('shiftStart'),
+                          watch('shiftEnd')
+                        )}
+                      </p>
                     </div>
                   </div>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      {...register('profit')}
-                      readOnly
-                      className={`h-14 cursor-not-allowed rounded-xl border-2 border-[#e6d9c9]/50 bg-[#faf9f7] pl-12 text-2xl ${COLOR.TEXT_PRIMARY}`}
-                    />
-                    <span
-                      className={`absolute top-1/2 left-4 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
-                    >
-                      Rp
-                    </span>
-                  </div>
-                  {watchedValues.profit > 0 && (
-                    <p
-                      className={`mt-2 flex items-center gap-1 text-sm text-green-600`}
-                    >
-                      <CheckCircle className="h-4 w-4" />
-                      Keuntungan dihitung otomatis berdasarkan harga jual -
-                      modal
-                    </p>
-                  )}
-                  {watchedValues.profit < 0 && (
-                    <p
-                      className={`mt-2 flex items-center gap-1 text-sm text-red-600`}
-                    >
-                      <XCircle className="h-4 w-4" />
-                      Menu ini merugi (harga jual lebih rendah dari modal)
-                    </p>
-                  )}
                 </div>
               </div>
-
-              {/* Section: Status */}
+              {/* Section: Status Kasir */}
               <div className="rounded-3xl border-2 border-[#e6d9c9]/50 bg-white/80 p-8 shadow-lg backdrop-blur-sm transition-all duration-300 hover:bg-white hover:shadow-xl">
                 <div className="mb-6 flex items-center gap-3">
                   <div
@@ -662,7 +636,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                     <CheckCircle className="h-5 w-5 text-white" />
                   </div>
                   <h3 className={`text-xl ${COLOR.TEXT_PRIMARY}`}>
-                    Status Menu
+                    Status Kasir
                   </h3>
                 </div>
                 <Controller
@@ -743,7 +717,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                   <CheckCircle
                     className={`h-5 w-5 ${ICON_TRANSITION} text-white`}
                   />
-                  Tambah Menu
+                  Tambah Kasir
                 </>
               )}
             </Button>
@@ -754,4 +728,4 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
   );
 };
 
-export default AddMenuModal;
+export default AddKasirModal;
