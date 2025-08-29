@@ -1,7 +1,7 @@
 import type { User } from './user';
 
 export interface Kasir extends User {
-  kasirProfile?: KasirProfile | null;
+  kasirProfile: KasirProfile;
 }
 
 export interface KasirProfile {

@@ -2,45 +2,35 @@ import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
+import type { Kasir } from '../../../types/kasir';
 
 interface IManagementKasirItemProps {
-  kasir: {
-    id: number;
-    name: string;
-    role: string;
-    shift: string;
-    status: 'active' | 'nonactive';
-    avatar: string;
-    todaySales: number;
-    todayOrders: number;
-    allOrders: number;
-  };
+  kasir: Kasir;
 }
 
-const getStatusConfig = (status: string) => {
-  const configs = {
-    active: {
+const getStatusConfig = (isActive: boolean) => {
+  if (isActive) {
+    return {
       bgColor: 'bg-gradient-to-r from-emerald-500 to-emerald-600',
       textColor: 'text-white',
       text: 'Aktif',
-      dot: 'bg-emerald-500',
-      ringColor: 'ring-emerald-500/20',
-    },
-    nonactive: {
-      bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
-      textColor: 'text-white',
-      text: 'Tidak Aktif',
-      dot: 'bg-gray-400',
-      ringColor: 'ring-gray-400/20',
-    },
-  };
+      dot: 'bg-emerald-400',
+      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    };
+  }
 
-  return configs[status as keyof typeof configs] || configs.active;
+  return {
+    bgColor: 'bg-gradient-to-r from-gray-400 to-gray-500',
+    textColor: 'text-white',
+    text: 'Tidak Aktif',
+    dot: 'bg-gray-400',
+    badge: 'bg-gray-50 text-gray-600 border-gray-200',
+  };
 };
 
 const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
   const { Edit, Trash2, Clock, RefreshCcw } = lucideIcons;
-  const statusConfig = getStatusConfig(kasir.status);
+  const statusConfig = getStatusConfig(kasir.isActive);
 
   return (
     <div
@@ -53,7 +43,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           <div className="relative flex-shrink-0">
             <img
               src={
-                kasir.avatar ||
+                kasir.profilePicture ||
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
               }
               alt={kasir.name}
@@ -78,11 +68,11 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               {kasir.name}
             </h3>
             <p className="mb-1 text-xs font-medium text-[#8c7158] sm:text-sm md:text-base">
-              {kasir.role}
+              {kasir.role.toLocaleLowerCase()}
             </p>
             <div className="mb-2 flex items-center text-xs text-[#8c7158] sm:text-sm">
               <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-              {kasir.shift}
+              {kasir.kasirProfile.shiftStart} - {kasir.kasirProfile.shiftEnd}
             </div>
             <div className="flex gap-2">
               <Button
@@ -122,7 +112,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Penjualan Hari Ini
             </div>
             <div className="text-xs font-bold text-[#6f4e37] sm:text-sm">
-              {formatCurrency(kasir.todaySales ?? 0)}
+              {formatCurrency(kasir.kasirProfile.todaySales ?? 0)}
             </div>
           </div>
           <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-2 sm:p-3">
@@ -130,7 +120,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Order Hari Ini
             </div>
             <div className="text-xs font-semibold text-blue-600 sm:text-sm">
-              {kasir.todayOrders?.toLocaleString() ?? 0}
+              {kasir.kasirProfile.todayOrder.toLocaleString() ?? 0}
             </div>
           </div>
           <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-2 sm:p-3">
@@ -138,7 +128,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Total Order
             </div>
             <div className="text-xs font-semibold text-purple-600 sm:text-sm">
-              {kasir.allOrders?.toLocaleString() ?? 0}
+              {kasir.kasirProfile.totalOrder.toLocaleString() ?? 0}
             </div>
           </div>
         </div>
@@ -152,7 +142,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
             <div className="relative flex-shrink-0">
               <img
                 src={
-                  kasir.avatar ||
+                  kasir.profilePicture ||
                   `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
                 }
                 alt={kasir.name}
@@ -181,7 +171,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               </p>
               <div className="flex items-center text-sm text-[#8c7158] xl:text-base">
                 <Clock className="mr-1 h-4 w-4" />
-                {kasir.shift}
+                {kasir.kasirProfile.shiftStart} - {kasir.kasirProfile.shiftEnd}
               </div>
             </div>
           </div>
@@ -194,7 +184,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Penjualan Hari Ini
                 </div>
                 <div className="text-sm font-bold text-[#6f4e37] xl:text-base">
-                  {formatCurrency(kasir.todaySales ?? 0)}
+                  {formatCurrency(kasir.kasirProfile.todaySales ?? 0)}
                 </div>
               </div>
 
@@ -203,7 +193,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Order Hari Ini
                 </div>
                 <div className="text-sm font-semibold text-blue-600 xl:text-base">
-                  {kasir.todayOrders?.toLocaleString() ?? 0}
+                  {kasir.kasirProfile.todayOrder?.toLocaleString() ?? 0}
                 </div>
               </div>
 
@@ -212,7 +202,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Total Order
                 </div>
                 <div className="text-sm font-semibold text-purple-600 xl:text-base">
-                  {kasir.allOrders?.toLocaleString() ?? 0}
+                  {kasir.kasirProfile.totalOrder?.toLocaleString() ?? 0}
                 </div>
               </div>
             </div>

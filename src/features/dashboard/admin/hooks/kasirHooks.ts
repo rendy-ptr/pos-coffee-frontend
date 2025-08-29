@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import type { CreateKasirInput, Kasir } from '../types/kasir';
 import type { ApiResponse } from '@/types/ApiResponse';
-import { createKasir } from '../services/kasirService';
+import { createKasir, getKasirs } from '../services/kasirService';
 
 export const useCreateKasir = () => {
   const queryClient = useQueryClient();
@@ -16,4 +16,11 @@ export const useCreateKasir = () => {
     ...mutation,
     doCreateKasir: mutation.mutateAsync,
   };
+};
+
+export const useGetKasirs = () => {
+  return useQuery({
+    queryKey: ['kasirs'],
+    queryFn: getKasirs,
+  });
 };

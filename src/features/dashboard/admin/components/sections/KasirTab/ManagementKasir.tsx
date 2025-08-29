@@ -4,6 +4,8 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import ManagementKasirItem from '../../organism/KasirTab/ManagementKasirItem';
 import AddKasirModal from '../../organism/KasirTab/AddKasirModal';
+import { useGetKasirs } from '../../../hooks/kasirHooks';
+import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 const {
   Users,
   UserPlus,
@@ -14,79 +16,99 @@ const {
   AlertCircle,
 } = lucideIcons;
 
+// const kasirMembers = [
+//   {
+//     id: 1,
+//     name: 'Maria Sari',
+//     role: 'Kasir',
+//     shift: '08:00 - 16:00',
+//     status: 'active',
+//     avatar: '/avatars/maria.jpg',
+//     todaySales: 1250000,
+//     todayOrders: 25,
+//     allOrders: 100,
+//   },
+//   {
+//     id: 2,
+//     name: 'Ahmad Wijaya',
+//     role: 'Kasir',
+//     shift: '10:00 - 18:00',
+//     status: 'active',
+//     avatar: '/avatars/ahmad.jpg',
+//     todaySales: 980000,
+//     todayOrders: 18,
+//     allOrders: 100,
+//   },
+//   {
+//     id: 3,
+//     name: 'Dewi Lestari',
+//     role: 'Kasir',
+//     shift: '16:00 - 24:00',
+//     status: 'nonactive',
+//     avatar: '/avatars/dewi.jpg',
+//     todaySales: 0,
+//     todayOrders: 0,
+//     allOrders: 0,
+//   },
+// ] as const;
+
 const filterOptions = [
   { value: 'semua', label: 'Semua' },
   { value: 'aktif', label: 'Kasir Aktif' },
   { value: 'non-aktif', label: 'Kasir Nonaktif' },
 ];
 
-const kasirMembers = [
-  {
-    id: 1,
-    name: 'Maria Sari',
-    role: 'Kasir',
-    shift: '08:00 - 16:00',
-    status: 'active',
-    avatar: '/avatars/maria.jpg',
-    todaySales: 1250000,
-    todayOrders: 25,
-    allOrders: 100,
-  },
-  {
-    id: 2,
-    name: 'Ahmad Wijaya',
-    role: 'Kasir',
-    shift: '10:00 - 18:00',
-    status: 'active',
-    avatar: '/avatars/ahmad.jpg',
-    todaySales: 980000,
-    todayOrders: 18,
-    allOrders: 100,
-  },
-  {
-    id: 3,
-    name: 'Dewi Lestari',
-    role: 'Kasir',
-    shift: '16:00 - 24:00',
-    status: 'nonactive',
-    avatar: '/avatars/dewi.jpg',
-    todaySales: 0,
-    todayOrders: 0,
-    allOrders: 0,
-  },
-] as const;
-
 const ManagementKasir = () => {
-  const filterKasirAktif = kasirMembers.filter(
-    kasir => kasir.status === 'active'
-  ).length;
-  const filterKasirNonAktif = kasirMembers.filter(
-    kasir => kasir.status !== 'active'
-  ).length;
-
   const [selectedFilter, setSelectedFilter] = useState('semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { data: Kasirs = [], isLoading, error } = useGetKasirs();
+
+  const selectedFilterLabel = useMemo(() => {
+    const selected = filterOptions.find(
+      option => option.value === selectedFilter
+    );
+    return selected ? selected.label : 'Semua';
+  }, [selectedFilter]);
+
+  const filterKasirAktif = Kasirs.filter(kasir => kasir.isActive).length;
+  const filterKasirNonAktif = Kasirs.filter(kasir => !kasir.isActive).length;
+  const filterKasirSemua = Kasirs.length;
 
   const filteredKasir = useMemo(() => {
-    return kasirMembers
-      .filter(kasir => {
-        if (selectedFilter === 'semua') return true;
-        if (selectedFilter === 'aktif') return kasir.status === 'active';
-        if (selectedFilter === 'non-aktif') return kasir.status !== 'active';
-        return false;
-      })
-      .filter(kasir =>
-        searchTerm
-          ? kasir.name.toLowerCase().includes(searchTerm.toLowerCase())
-          : true
-      );
-  }, [selectedFilter, searchTerm]);
+    return Kasirs.filter(kasir => {
+      const matchesSearch = searchTerm
+        ? kasir.name.toLowerCase().includes(searchTerm.toLowerCase())
+        : true;
 
-  const selectedFilterLabel =
-    filterOptions.find(option => option.value === selectedFilter)?.label ||
-    'Pilih Filter';
+      const matchesFilter =
+        selectedFilter === 'semua'
+          ? true
+          : selectedFilter === 'aktif'
+            ? kasir.isActive === true
+            : kasir.isActive === false;
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [selectedFilter, searchTerm, Kasirs]);
+
+  if (isLoading) {
+    return (
+      <CoffeeLoadingAnimation
+        title="Loading Informasi Kasir"
+        messages={[
+          'Mengambil data Kasir',
+          'Memproses informasi',
+          'Mempersiapkan tampilan',
+        ]}
+      />
+    );
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">Gagal memuat menu</p>;
+  }
 
   return (
     <div className="space-y-6">
@@ -124,7 +146,7 @@ const ManagementKasir = () => {
                 />
               </div>
 
-              <div className="flex justify-end lg:justify-start">
+              <div className="flex justify-end gap-2 lg:justify-start">
                 <div className="relative">
                   <button
                     onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -158,14 +180,14 @@ const ManagementKasir = () => {
                     </div>
                   )}
                 </div>
+                <Button
+                  className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+                  onClick={() => setIsDialogOpen(true)}
+                >
+                  <UserPlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+                  Tambah Kasir
+                </Button>
               </div>
-              <Button
-                className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
-                onClick={() => setIsDialogOpen(true)}
-              >
-                <UserPlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
-                Tambah Kasir
-              </Button>
             </div>
           </div>
         </CardHeader>
@@ -180,7 +202,7 @@ const ManagementKasir = () => {
             </div>
             <div>
               <p className="text-2xl font-bold text-[#6f4e37]">
-                {kasirMembers.length}
+                {filterKasirSemua}
               </p>
               <p className="text-sm text-[#8c7158]/70">Total Kasir</p>
             </div>

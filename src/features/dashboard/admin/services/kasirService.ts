@@ -12,3 +12,10 @@ export const createKasir = async (
   );
   return data;
 };
+
+export const getKasirs = async (): Promise<Kasir[]> => {
+  const { data } = await apiClient.get<ApiResponse<Kasir[]>>(
+    API_PATHS.ADMIN.KASIR()
+  );
+  return data.data;
+};
