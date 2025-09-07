@@ -3,9 +3,12 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
 import type { Kasir } from '../../../types/kasir';
+import EditKasirModal from './EditKasirModal';
+import { useState } from 'react';
+import DeleteKasirModal from './DeleteKasirModal';
 
 interface IManagementKasirItemProps {
-  kasir: Kasir;
+  kasirItem: Kasir;
 }
 
 const getStatusConfig = (isActive: boolean) => {
@@ -28,9 +31,12 @@ const getStatusConfig = (isActive: boolean) => {
   };
 };
 
-const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
+const ManagementKasirItem = ({ kasirItem }: IManagementKasirItemProps) => {
   const { Edit, Trash2, Clock, RefreshCcw } = lucideIcons;
-  const statusConfig = getStatusConfig(kasir.isActive);
+  const statusConfig = getStatusConfig(kasirItem.isActive);
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
     <div
@@ -43,13 +49,13 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           <div className="relative flex-shrink-0">
             <img
               src={
-                kasir.profilePicture ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
+                kasirItem.profilePicture ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(kasirItem.name)}&background=6f4e37&color=fff&size=128&bold=true`
               }
-              alt={kasir.name}
+              alt={kasirItem.name}
               className="h-16 w-16 rounded-xl object-cover shadow-md ring-2 ring-[#e6d9c9]/30 sm:h-20 sm:w-20 md:h-24 md:w-24"
               onError={e => {
-                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`;
+                e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasirItem.name)}&background=6f4e37&color=fff&size=128&bold=true`;
               }}
             />
             {/* Status Badge */}
@@ -65,14 +71,15 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
 
           <div className="min-w-0 flex-1">
             <h3 className="mb-1 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-base font-bold text-transparent sm:text-lg md:text-xl">
-              {kasir.name}
+              {kasirItem.name}
             </h3>
             <p className="mb-1 text-xs font-medium text-[#8c7158] sm:text-sm md:text-base">
-              {kasir.role.toLocaleLowerCase()}
+              {kasirItem.role.toLocaleLowerCase()}
             </p>
             <div className="mb-2 flex items-center text-xs text-[#8c7158] sm:text-sm">
               <Clock className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
-              {kasir.kasirProfile.shiftStart} - {kasir.kasirProfile.shiftEnd}
+              {kasirItem.kasirProfile.shiftStart} -
+              {kasirItem.kasirProfile.shiftEnd}
             </div>
             <div className="flex gap-2">
               <Button
@@ -80,6 +87,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                 size="sm"
                 className="border-[#6f4e37]/20 px-3 text-xs text-[#6f4e37] transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white sm:px-4 sm:text-sm"
                 aria-label="Edit kasir"
+                onClick={() => setIsEditOpen(true)}
               >
                 <Edit className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                 Edit
@@ -89,6 +97,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                 size="sm"
                 className="border-red-200 px-3 text-xs text-red-600 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white sm:px-4 sm:text-sm"
                 aria-label="Delete kasir"
+                onClick={() => setIsDeleteOpen(true)}
               >
                 <Trash2 className="mr-1 h-3 w-3 sm:h-4 sm:w-4" />
                 Hapus
@@ -112,7 +121,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Penjualan Hari Ini
             </div>
             <div className="text-xs font-bold text-[#6f4e37] sm:text-sm">
-              {formatCurrency(kasir.kasirProfile.todaySales ?? 0)}
+              {formatCurrency(kasirItem.kasirProfile.todaySales ?? 0)}
             </div>
           </div>
           <div className="rounded-lg border border-blue-200/50 bg-gradient-to-br from-blue-50 to-blue-100 p-2 sm:p-3">
@@ -120,7 +129,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Order Hari Ini
             </div>
             <div className="text-xs font-semibold text-blue-600 sm:text-sm">
-              {kasir.kasirProfile.todayOrder.toLocaleString() ?? 0}
+              {kasirItem.kasirProfile.todayOrder.toLocaleString() ?? 0}
             </div>
           </div>
           <div className="rounded-lg border border-purple-200/50 bg-gradient-to-br from-purple-50 to-purple-100 p-2 sm:p-3">
@@ -128,7 +137,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               Total Order
             </div>
             <div className="text-xs font-semibold text-purple-600 sm:text-sm">
-              {kasir.kasirProfile.totalOrder.toLocaleString() ?? 0}
+              {kasirItem.kasirProfile.totalOrder.toLocaleString() ?? 0}
             </div>
           </div>
         </div>
@@ -142,13 +151,13 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
             <div className="relative flex-shrink-0">
               <img
                 src={
-                  kasir.profilePicture ||
-                  `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`
+                  kasirItem.profilePicture ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(kasirItem.name)}&background=6f4e37&color=fff&size=128&bold=true`
                 }
-                alt={kasir.name}
+                alt={kasirItem.name}
                 className="h-20 w-20 rounded-xl object-cover shadow-md ring-2 ring-[#e6d9c9]/30 xl:h-24 xl:w-24"
                 onError={e => {
-                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasir.name)}&background=6f4e37&color=fff&size=128&bold=true`;
+                  e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(kasirItem.name)}&background=6f4e37&color=fff&size=128&bold=true`;
                 }}
               />
               {/* Status Badge */}
@@ -164,14 +173,15 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
 
             <div className="min-w-0 flex-1">
               <h3 className="mb-1 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-lg font-bold text-transparent xl:text-xl">
-                {kasir.name}
+                {kasirItem.name}
               </h3>
               <p className="mb-1 text-sm font-medium text-[#8c7158] xl:text-base">
-                {kasir.role}
+                {kasirItem.role}
               </p>
               <div className="flex items-center text-sm text-[#8c7158] xl:text-base">
                 <Clock className="mr-1 h-4 w-4" />
-                {kasir.kasirProfile.shiftStart} - {kasir.kasirProfile.shiftEnd}
+                {kasirItem.kasirProfile.shiftStart} -
+                {kasirItem.kasirProfile.shiftEnd}
               </div>
             </div>
           </div>
@@ -184,7 +194,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Penjualan Hari Ini
                 </div>
                 <div className="text-sm font-bold text-[#6f4e37] xl:text-base">
-                  {formatCurrency(kasir.kasirProfile.todaySales ?? 0)}
+                  {formatCurrency(kasirItem.kasirProfile.todaySales ?? 0)}
                 </div>
               </div>
 
@@ -193,7 +203,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Order Hari Ini
                 </div>
                 <div className="text-sm font-semibold text-blue-600 xl:text-base">
-                  {kasir.kasirProfile.todayOrder?.toLocaleString() ?? 0}
+                  {kasirItem.kasirProfile.todayOrder?.toLocaleString() ?? 0}
                 </div>
               </div>
 
@@ -202,7 +212,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
                   Total Order
                 </div>
                 <div className="text-sm font-semibold text-purple-600 xl:text-base">
-                  {kasir.kasirProfile.totalOrder?.toLocaleString() ?? 0}
+                  {kasirItem.kasirProfile.totalOrder?.toLocaleString() ?? 0}
                 </div>
               </div>
             </div>
@@ -215,6 +225,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               size="sm"
               className="border-[#6f4e37]/20 px-4 text-xs text-[#6f4e37] shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white hover:shadow-md xl:px-6 xl:text-sm"
               aria-label="Edit kasir"
+              onClick={() => setIsEditOpen(true)}
             >
               <Edit className="h-4 w-4 xl:mr-2" />
               <span className="hidden xl:inline">Edit</span>
@@ -224,6 +235,7 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
               size="sm"
               className="border-red-200 px-4 text-xs text-red-600 shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-md xl:px-6 xl:text-sm"
               aria-label="Delete kasir"
+              onClick={() => setIsDeleteOpen(true)}
             >
               <Trash2 className="h-4 w-4 xl:mr-2" />
               <span className="hidden xl:inline">Hapus</span>
@@ -239,6 +251,16 @@ const ManagementKasirItem = ({ kasir }: IManagementKasirItemProps) => {
           </div>
         </div>
       </div>
+      <EditKasirModal
+        open={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        kasirItem={kasirItem}
+      />
+      <DeleteKasirModal
+        open={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        kasirItem={kasirItem}
+      />
     </div>
   );
 };

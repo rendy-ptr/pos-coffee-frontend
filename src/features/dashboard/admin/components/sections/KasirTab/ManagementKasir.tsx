@@ -244,7 +244,7 @@ const ManagementKasir = () => {
           <div className="space-y-4 md:space-y-6">
             {filteredKasir.length > 0 ? (
               filteredKasir.map(kasir => (
-                <ManagementKasirItem key={kasir.id} kasir={kasir} />
+                <ManagementKasirItem key={kasir.id} kasirItem={kasir} />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">

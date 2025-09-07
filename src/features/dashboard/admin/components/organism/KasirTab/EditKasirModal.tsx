@@ -15,8 +15,8 @@ import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useUploadImage } from '../../../hooks/useUpload';
-import { useCreateKasir } from '../../../hooks/kasirHooks';
-import type { CreateKasirInput } from '../../../types/kasir';
+import { useUpdateKasir } from '../../../hooks/kasirHooks';
+import type { CreateKasirInput, Kasir } from '../../../types/kasir';
 import {
   Select,
   SelectContent,
@@ -43,9 +43,10 @@ const {
   Timer,
 } = lucideIcons;
 
-interface AddKasirModalProps {
+interface EditKasirModalProps {
   open: boolean;
   onClose: () => void;
+  kasirItem: Kasir;
 }
 
 const FORM_DEFAULTS = {
@@ -64,7 +65,7 @@ const IMAGE_CONSTRAINTS = {
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
-const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
+const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
   const {
     register,
     handleSubmit,
@@ -88,7 +89,40 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   // Hooks
   const { addToast } = useToast();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
-  const { doCreateKasir, isPending: isLoadingSave } = useCreateKasir();
+  const { doUpdateKasir, isPending: isLoadingSave } = useUpdateKasir();
+
+  useEffect(() => {
+    if (open && kasirItem) {
+      reset({
+        name: kasirItem.name,
+        email: kasirItem.email,
+        password: '',
+        phone: kasirItem.phone,
+        profilePicture: kasirItem.profilePicture,
+        shiftStart: kasirItem.kasirProfile.shiftStart,
+        shiftEnd: kasirItem.kasirProfile.shiftEnd,
+        isActive: kasirItem.isActive,
+      });
+
+      setImageFile(null);
+      setImagePreview(kasirItem.profilePicture || null);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [open, kasirItem, reset]);
+
+  useEffect(() => {
+    if (!open) {
+      setImageFile(null);
+      setImagePreview(null);
+      setDragOver(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  }, [open]);
 
   // Watched values
   const watchedValues = {
@@ -118,13 +152,6 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   // Combined loading state
   const isLoading = isLoadingUpload || isLoadingSave;
 
-  // Effects
-  useEffect(() => {
-    if (!imageFile) {
-      setImagePreview(null);
-    }
-  }, [imageFile]);
-
   // Helper functions
   const validateFile = (file: File): string | null => {
     if (file.size > IMAGE_CONSTRAINTS.MAX_SIZE) {
@@ -139,6 +166,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   const resetImageState = () => {
     setImageFile(null);
     setImagePreview(null);
+    setValue('profilePicture', null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -205,30 +233,35 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
 
   const submitForm = async (data: CreateKasirInput) => {
     try {
-      // Handle image upload if file exists
       let finalProfilePicture: string | null = null;
+
       if (imageFile) {
         const result = await doUploadImage(imageFile);
         finalProfilePicture = result.imageUrl;
+      } else if (data.profilePicture && data.profilePicture.trim() !== '') {
+        finalProfilePicture = data.profilePicture;
       }
 
-      console.log(data);
-
       const kasirData = {
-        ...data,
-        profilePicture: finalProfilePicture,
+        id: kasirItem.id,
+        payload: {
+          ...data,
+          profilePicture: finalProfilePicture,
+        },
       };
 
-      await doCreateKasir(kasirData);
-      console.log('Kasir data:', kasirData);
-
-      addToast(`Kasir ${data.name} berhasil ditambahkan`, 'success', 3000);
+      console.log(
+        'Payload dikirim:',
+        JSON.stringify(kasirData.payload, null, 2)
+      );
+      await doUpdateKasir(kasirData);
+      addToast(`Kasir ${data.name} berhasil diperbarui`, 'success', 3000);
       handleClose();
     } catch (err) {
       if (err instanceof AxiosError) {
         addToast(err.response?.data?.message || err.message, 'error', 3000);
       } else {
-        addToast('Gagal Menambahkan kasir', 'error', 3000);
+        addToast('Gagal Mengubah Kasir', 'error', 3000);
       }
     }
   };
@@ -247,10 +280,10 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
 
             <div className="flex-1">
               <DialogTitle className={`text-2xl ${COLOR.TEXT_PRIMARY}`}>
-                Tambah Kasir Baru
+                Edit Kasir
               </DialogTitle>
               <DialogDescription className={`text-sm ${COLOR.TEXT_SECONDARY}`}>
-                Tambahkan kasir baru dengan detail yang lengkap
+                Edit kasir dengan detail yang lengkap
               </DialogDescription>
             </div>
           </div>
@@ -427,18 +460,12 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                     <Label
                       className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
                     >
-                      Password <span className="text-red-500">*</span>
+                      Password
                     </Label>
                     <div className="relative">
                       <Input
                         type="password"
-                        {...register('password', {
-                          required: 'Password wajib diisi',
-                          minLength: {
-                            value: 6,
-                            message: 'Password minimal 6 karakter',
-                          },
-                        })}
+                        {...register('password')}
                         placeholder="Masukkan password"
                         className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
                           errors.password
@@ -518,7 +545,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                     </Label>
                     <Select
                       onValueChange={val => setValue('shiftStart', val)}
-                      defaultValue={watch('shiftStart')}
+                      value={watch('shiftStart')}
                     >
                       <SelectTrigger
                         className={`h-12 w-full justify-between rounded-xl border-2 bg-white/70 px-4 text-base text-[#3e2723] transition-all duration-200 ${
@@ -719,7 +746,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                   <CheckCircle
                     className={`h-5 w-5 ${ICON_TRANSITION} text-white`}
                   />
-                  Tambah Kasir
+                  Simpan Perubahan
                 </>
               )}
             </Button>
@@ -730,4 +757,4 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   );
 };
 
-export default AddKasirModal;
+export default EditKasirModal;

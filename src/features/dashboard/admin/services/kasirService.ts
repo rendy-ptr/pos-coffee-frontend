@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@/types/ApiResponse';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
-import type { CreateKasirInput, Kasir } from '../types/kasir';
+import type { CreateKasirInput, Kasir, UpdateKasirInput } from '../types/kasir';
 
 export const createKasir = async (
   payload: CreateKasirInput
@@ -18,4 +18,22 @@ export const getKasirs = async (): Promise<Kasir[]> => {
     API_PATHS.ADMIN.KASIR()
   );
   return data.data;
+};
+
+export const updateKasir = async (
+  id: string,
+  payload: UpdateKasirInput
+): Promise<ApiResponse<Kasir>> => {
+  const { data } = await apiClient.patch<ApiResponse<Kasir>>(
+    API_PATHS.ADMIN.KASIR(id),
+    payload
+  );
+  return data;
+};
+
+export const deleteKasir = async (id: string): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.delete<ApiResponse<null>>(
+    API_PATHS.ADMIN.KASIR(id)
+  );
+  return data;
 };
