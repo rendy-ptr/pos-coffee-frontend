@@ -37,3 +37,10 @@ export const deleteKasir = async (id: string): Promise<ApiResponse<null>> => {
   );
   return data;
 };
+
+export const refreshKasir = async (id: string): Promise<Kasir> => {
+  const { data } = await apiClient.get<ApiResponse<Kasir>>(
+    API_PATHS.ADMIN.KASIR(id)
+  );
+  return data.data;
+};

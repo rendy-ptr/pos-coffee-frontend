@@ -4,7 +4,7 @@ import {
   getMenus,
   updateMenu,
   deleteMenu,
-} from '../services/menuService';
+} from '../services/menu.service';
 
 import type { ApiResponse } from '@/types/ApiResponse';
 import type { Menu, CreateMenuInput, UpdateMenuInput } from '../types/menu';

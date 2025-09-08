@@ -4,7 +4,7 @@ import {
   createCategory,
   updateCategory,
   deleteCategory,
-} from '../services/categoryService';
+} from '../services/category.service';
 import type {
   Category,
   CreateCategoryInput,

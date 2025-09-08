@@ -6,6 +6,8 @@ import type { Kasir } from '../../../types/kasir';
 import EditKasirModal from './EditKasirModal';
 import { useState } from 'react';
 import DeleteKasirModal from './DeleteKasirModal';
+import { useToast } from '@/components/shared/ToastProvider';
+import { useRefreshKasir } from '../../../hooks/kasirHooks';
 
 interface IManagementKasirItemProps {
   kasirItem: Kasir;
@@ -37,6 +39,24 @@ const ManagementKasirItem = ({ kasirItem }: IManagementKasirItemProps) => {
 
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  const { addToast } = useToast();
+  const { doRefreshKasir, isPending } = useRefreshKasir();
+
+  const handleRefreshKasir = async () => {
+    try {
+      await doRefreshKasir(kasirItem.id);
+      addToast(`Kasir ${kasirItem.name} berhasil diperbarui`, 'success', 3000);
+    } catch (error) {
+      if (error instanceof Error) {
+        addToast(
+          error.message || 'Gagal memperbarui data kasir',
+          'error',
+          3000
+        );
+      }
+    }
+  };
 
   return (
     <div
@@ -107,6 +127,8 @@ const ManagementKasirItem = ({ kasirItem }: IManagementKasirItemProps) => {
                 size="sm"
                 className="gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
                 aria-label="Delete kasir"
+                onClick={handleRefreshKasir}
+                disabled={isPending}
               >
                 <RefreshCcw className="h-4 w-4" />
               </Button>
@@ -245,6 +267,8 @@ const ManagementKasirItem = ({ kasirItem }: IManagementKasirItemProps) => {
               size="sm"
               className="gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
               aria-label="Delete kasir"
+              onClick={handleRefreshKasir}
+              disabled={isPending}
             >
               <RefreshCcw className="h-4 w-4" />
             </Button>

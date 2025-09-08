@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { fetchAdminDashboard } from '../services/api';
+import { fetchAdminDashboard } from '../services/api.service';
 import { useAdminStore } from '@/store/adminStore';
 
 export const useAdminDashboard = (enabled: boolean) => {

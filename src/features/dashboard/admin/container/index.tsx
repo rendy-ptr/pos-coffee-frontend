@@ -11,6 +11,7 @@ import ManagementReward from '../components/sections/RewardTab/ManagementReward'
 
 import { useToast } from '@/components/shared/ToastProvider';
 import { useAdminStore } from '@/store/adminStore';
+import ManagementTableSection from '../components/sections/TableTab/ManagementTable';
 
 const AdminDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -42,6 +43,10 @@ const AdminDashboardContainer = () => {
 
       <TabsContent value="kasir" className="space-y-4 md:space-y-6">
         <ManagementKasirSection />
+      </TabsContent>
+
+      <TabsContent value="meja" className="space-y-4 md:space-y-6">
+        <ManagementTableSection />
       </TabsContent>
 
       <TabsContent value="pesanan" className="space-y-4 md:space-y-6">

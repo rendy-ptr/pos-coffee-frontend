@@ -5,8 +5,9 @@ import {
   createKasir,
   deleteKasir,
   getKasirs,
+  refreshKasir,
   updateKasir,
-} from '../services/kasirService';
+} from '../services/kasir.service';
 
 export const useCreateKasir = () => {
   const queryClient = useQueryClient();
@@ -61,5 +62,21 @@ export const useDeleteKasir = () => {
   return {
     ...mutation,
     doDeleteKasir: mutation.mutateAsync,
+  };
+};
+
+export const useRefreshKasir = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<Kasir, Error, string>({
+    mutationFn: refreshKasir,
+    onSuccess: (data, id) => {
+      queryClient.setQueryData(['kasir', id], data);
+    },
+  });
+
+  return {
+    ...mutation,
+    doRefreshKasir: mutation.mutateAsync,
   };
 };
