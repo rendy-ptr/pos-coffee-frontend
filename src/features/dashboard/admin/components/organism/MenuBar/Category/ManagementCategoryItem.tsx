@@ -1,12 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import type { Category } from '../../../../types/category';
+import type { BaseCategory } from '../../../../types/category';
 import EditCategoryModal from './EditCategoryModal';
 import { useState } from 'react';
 import DeleteCategoryModal from './DeleteCategoryModal';
 
 interface IManagementCategoryItemProps {
-  categoryItem: Category;
+  categoryItem: BaseCategory;
 }
 
 const getStatusConfig = (isActive: boolean) => {

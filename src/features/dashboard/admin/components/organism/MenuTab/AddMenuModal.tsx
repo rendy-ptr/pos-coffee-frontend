@@ -23,11 +23,12 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 
 import type { CreateMenuInput } from '../../../types/menu';
-import type { Category } from '../../../types/category';
+import type { BaseCategory } from '../../../types/category';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
-import { useCreateMenu } from '../../../hooks/menuHooks';
+import { useCreateMenu } from '../../../hooks/menu.hook';
 import { useUploadImage } from '../../../hooks/useUpload';
+import { AxiosError } from 'axios';
 
 type LucideIconName = keyof typeof LucideIcons;
 type LucideIconComponent = React.ForwardRefExoticComponent<
@@ -51,7 +52,7 @@ const {
 interface AddMenuModalProps {
   open: boolean;
   onClose: () => void;
-  categories: Category[];
+  categories: BaseCategory[];
 }
 
 const FORM_DEFAULTS = {
@@ -105,7 +106,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
 
   // Computed values
   const activeCategories = useMemo(() => {
-    const unique = new Map<string, Category>();
+    const unique = new Map<string, BaseCategory>();
     categories
       .filter(cat => cat.isActive)
       .forEach(cat => {
@@ -269,17 +270,31 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
       }
 
       // Create menu
-      await doCreateMenu({
+      const response = await doCreateMenu({
         ...data,
         imageUrl: finalImageUrl,
       });
 
-      addToast(`Menu ${data.name} berhasil ditambahkan`, 'success', 3000);
-      handleClose();
+      if (response.success) {
+        addToast(
+          response.message || 'Menu berhasil ditambahkan',
+          'success',
+          3000
+        );
+        handleClose();
+      } else {
+        addToast(response.message || 'Gagal menambahkan menu', 'error', 3000);
+      }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Gagal menambahkan menu';
-      addToast(errorMessage, 'error', 3000);
+      let message = 'Gagal menambahkan menu';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

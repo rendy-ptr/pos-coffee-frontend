@@ -15,8 +15,8 @@ import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useUploadImage } from '../../../hooks/useUpload';
-import { useUpdateKasir } from '../../../hooks/kasirHooks';
-import type { CreateKasirInput, Kasir } from '../../../types/kasir';
+import { useUpdateKasir } from '../../../hooks/kasir.hook';
+import type { CreateKasirInput, BaseKasir } from '../../../types/kasir';
 import {
   Select,
   SelectContent,
@@ -46,7 +46,7 @@ const {
 interface EditKasirModalProps {
   open: boolean;
   onClose: () => void;
-  kasirItem: Kasir;
+  kasirItem: BaseKasir;
 }
 
 const FORM_DEFAULTS = {
@@ -250,19 +250,28 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
         },
       };
 
-      console.log(
-        'Payload dikirim:',
-        JSON.stringify(kasirData.payload, null, 2)
-      );
-      await doUpdateKasir(kasirData);
-      addToast(`Kasir ${data.name} berhasil diperbarui`, 'success', 3000);
-      handleClose();
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        addToast(err.response?.data?.message || err.message, 'error', 3000);
+      const response = await doUpdateKasir(kasirData);
+
+      if (response.success) {
+        addToast(
+          response.message || 'Kasir berhasil diperbarui',
+          'success',
+          3000
+        );
+        handleClose();
       } else {
-        addToast('Gagal Mengubah Kasir', 'error', 3000);
+        addToast(response.message || 'Gagal memperbarui kasir', 'error', 3000);
       }
+    } catch (err) {
+      let message = 'Gagal memperbarui kasir';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

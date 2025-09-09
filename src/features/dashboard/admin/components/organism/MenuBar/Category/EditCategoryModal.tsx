@@ -13,19 +13,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { Controller, useForm } from 'react-hook-form';
 import { iconOptions } from '../../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useUpdateCategory } from '../../../../hooks/categoryHooks';
+import { useUpdateCategory } from '../../../../hooks/category.hook';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { UpdateCategoryInput, Category } from '../../../../types/category';
+import type {
+  UpdateCategoryInput,
+  BaseCategory,
+} from '../../../../types/category';
 import { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';
+import { AxiosError } from 'axios';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 
 interface EditCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  categoryItem: Category;
+  categoryItem: BaseCategory;
 }
 
 const EditCategoryModal = ({
@@ -72,17 +76,36 @@ const EditCategoryModal = ({
   const isLoading = isLoadingEdit || false;
 
   const submitForm = async (data: UpdateCategoryInput) => {
-    // if (!category) return;
     try {
-      await doUpdateCategory({ id: categoryItem.id, payload: data });
-      console.log('Form Data:', data);
-      addToast('Kategori berhasil diperbarui', 'success', 3000);
-      reset();
-      onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        addToast(err.message || 'Gagal memperbarui kategori', 'error', 3000);
+      const response = await doUpdateCategory({
+        id: categoryItem.id,
+        payload: data,
+      });
+      if (response.success) {
+        addToast(
+          response.message || 'Kategori berhasil diperbarui',
+          'success',
+          3000
+        );
+        reset();
+        onClose();
+      } else {
+        addToast(
+          response.message || 'Gagal memperbarui kategori',
+          'error',
+          3000
+        );
       }
+    } catch (err) {
+      let message = 'Gagal memperbarui kategori';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

@@ -4,12 +4,12 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { useState } from 'react';
 import EditMenuModal from './EditMenuModal';
 import DeleteMenuModal from './DeleteMenuModal';
-import type { Menu } from '../../../types/menu';
-import type { Category } from '../../../types/category';
+import type { BaseMenu } from '../../../types/menu';
+import type { BaseCategory } from '../../../types/category';
 
 interface IManagementMenuItemProps {
-  menuItem: Menu;
-  categories: Category[];
+  menuItem: BaseMenu;
+  categories: BaseCategory[];
 }
 
 const getStatusConfig = (isActive: boolean) => {

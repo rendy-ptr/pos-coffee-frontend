@@ -7,9 +7,9 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDeleteCategory } from '../../../../hooks/categoryHooks';
+import { useDeleteCategory } from '../../../../hooks/category.hook';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { Category } from '../../../../types/category';
+import type { BaseCategory } from '../../../../types/category';
 import { COLOR } from '@/constants/Style';
 import { AxiosError } from 'axios';
 
@@ -18,7 +18,7 @@ const { BUTTON_CANCEL } = COLOR;
 interface DeleteCategoryModalProps {
   open: boolean;
   onClose: () => void;
-  categoryItem: Category;
+  categoryItem: BaseCategory;
 }
 
 const DeleteCategoryModal = ({
@@ -38,15 +38,26 @@ const DeleteCategoryModal = ({
 
   const handleDelete = async () => {
     try {
-      await doDeleteCategory(categoryItem.id);
-      addToast('Kategori berhasil dihapus', 'success', 3000);
-      onClose();
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        addToast(err.response?.data?.message || err.message, 'error', 3000);
+      const response = await doDeleteCategory(categoryItem.id);
+      if (response.success) {
+        addToast(
+          response.message || 'Kategori berhasil dihapus',
+          'success',
+          3000
+        );
+        onClose();
       } else {
-        addToast('Gagal menghapus kategori', 'error', 3000);
+        addToast(response.message || 'Gagal menghapus kategori', 'error', 3000);
       }
+    } catch (err) {
+      let message = 'Gagal menghapus kategori';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+      addToast(message, 'error', 3000);
     }
   };
 

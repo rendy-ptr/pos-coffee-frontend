@@ -1,30 +1,30 @@
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { Menu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
+import type { BaseMenu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
 
 export const createMenu = async (
   payload: CreateMenuInput
-): Promise<ApiResponse<Menu>> => {
-  const { data } = await apiClient.post<ApiResponse<Menu>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.MENU(),
     payload
   );
   return data;
 };
 
-export const getMenus = async (): Promise<Menu[]> => {
-  const { data } = await apiClient.get<ApiResponse<Menu[]>>(
+export const getMenus = async (): Promise<ApiResponse<BaseMenu[]>> => {
+  const { data } = await apiClient.get<ApiResponse<BaseMenu[]>>(
     API_PATHS.ADMIN.MENU()
   );
-  return data.data;
+  return data;
 };
 
 export const updateMenu = async (
   id: string,
   payload: UpdateMenuInput
-): Promise<ApiResponse<Menu>> => {
-  const { data } = await apiClient.patch<ApiResponse<Menu>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.MENU(id),
     payload
   );

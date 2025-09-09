@@ -7,12 +7,12 @@ import {
 } from '../services/menu.service';
 
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { Menu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
+import type { CreateMenuInput, UpdateMenuInput, BaseMenu } from '../types/menu';
 
 export const useCreateMenu = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<Menu>, Error, CreateMenuInput>({
+  const mutation = useMutation<ApiResponse<null>, Error, CreateMenuInput>({
     mutationFn: createMenu,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['menus'] });
@@ -25,17 +25,22 @@ export const useCreateMenu = () => {
 };
 
 export const useMenus = () => {
-  return useQuery({
+  const query = useQuery<ApiResponse<BaseMenu[]>>({
     queryKey: ['menus'],
     queryFn: getMenus,
   });
+
+  return {
+    menus: query.data?.data ?? [],
+    ...query,
+  };
 };
 
 export const useUpdateMenu = () => {
   const QueryClient = useQueryClient();
 
   const mutation = useMutation<
-    ApiResponse<Menu>,
+    ApiResponse<null>,
     Error,
     { id: string; payload: UpdateMenuInput }
   >({

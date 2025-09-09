@@ -4,7 +4,7 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import ManagementKasirItem from '../../organism/KasirTab/ManagementKasirItem';
 import AddKasirModal from '../../organism/KasirTab/AddKasirModal';
-import { useGetKasirs } from '../../../hooks/kasirHooks';
+import { useGetKasirs } from '../../../hooks/kasir.hook';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 const {
   Users,
@@ -15,42 +15,6 @@ const {
   CheckCircle,
   AlertCircle,
 } = lucideIcons;
-
-// const kasirMembers = [
-//   {
-//     id: 1,
-//     name: 'Maria Sari',
-//     role: 'Kasir',
-//     shift: '08:00 - 16:00',
-//     status: 'active',
-//     avatar: '/avatars/maria.jpg',
-//     todaySales: 1250000,
-//     todayOrders: 25,
-//     allOrders: 100,
-//   },
-//   {
-//     id: 2,
-//     name: 'Ahmad Wijaya',
-//     role: 'Kasir',
-//     shift: '10:00 - 18:00',
-//     status: 'active',
-//     avatar: '/avatars/ahmad.jpg',
-//     todaySales: 980000,
-//     todayOrders: 18,
-//     allOrders: 100,
-//   },
-//   {
-//     id: 3,
-//     name: 'Dewi Lestari',
-//     role: 'Kasir',
-//     shift: '16:00 - 24:00',
-//     status: 'nonactive',
-//     avatar: '/avatars/dewi.jpg',
-//     todaySales: 0,
-//     todayOrders: 0,
-//     allOrders: 0,
-//   },
-// ] as const;
 
 const filterOptions = [
   { value: 'semua', label: 'Semua' },
@@ -63,7 +27,7 @@ const ManagementKasir = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { data: Kasirs = [], isLoading, error } = useGetKasirs();
+  const { kasirs, isLoading, error } = useGetKasirs();
 
   const selectedFilterLabel = useMemo(() => {
     const selected = filterOptions.find(
@@ -72,12 +36,12 @@ const ManagementKasir = () => {
     return selected ? selected.label : 'Semua';
   }, [selectedFilter]);
 
-  const filterKasirAktif = Kasirs.filter(kasir => kasir.isActive).length;
-  const filterKasirNonAktif = Kasirs.filter(kasir => !kasir.isActive).length;
-  const filterKasirSemua = Kasirs.length;
+  const filterKasirAktif = kasirs.filter(kasir => kasir.isActive).length;
+  const filterKasirNonAktif = kasirs.filter(kasir => !kasir.isActive).length;
+  const filterKasirSemua = kasirs.length;
 
   const filteredKasir = useMemo(() => {
-    return Kasirs.filter(kasir => {
+    return kasirs.filter(kasir => {
       const matchesSearch = searchTerm
         ? kasir.name.toLowerCase().includes(searchTerm.toLowerCase())
         : true;
@@ -91,7 +55,7 @@ const ManagementKasir = () => {
 
       return matchesSearch && matchesFilter;
     });
-  }, [selectedFilter, searchTerm, Kasirs]);
+  }, [selectedFilter, searchTerm, kasirs]);
 
   if (isLoading) {
     return (

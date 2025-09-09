@@ -1,5 +1,9 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import type { CreateKasirInput, Kasir, UpdateKasirInput } from '../types/kasir';
+import type {
+  CreateKasirInput,
+  BaseKasir,
+  UpdateKasirInput,
+} from '../types/kasir';
 import type { ApiResponse } from '@/types/ApiResponse';
 import {
   createKasir,
@@ -12,7 +16,7 @@ import {
 export const useCreateKasir = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<Kasir>, Error, CreateKasirInput>({
+  const mutation = useMutation<ApiResponse<null>, Error, CreateKasirInput>({
     mutationFn: createKasir,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['kasirs'] });
@@ -25,17 +29,22 @@ export const useCreateKasir = () => {
 };
 
 export const useGetKasirs = () => {
-  return useQuery({
+  const query = useQuery<ApiResponse<BaseKasir[]>>({
     queryKey: ['kasirs'],
     queryFn: getKasirs,
   });
+
+  return {
+    kasirs: query.data?.data ?? [],
+    ...query,
+  };
 };
 
 export const useUpdateKasir = () => {
   const QueryClient = useQueryClient();
 
   const mutation = useMutation<
-    ApiResponse<Kasir>,
+    ApiResponse<null>,
     Error,
     { id: string; payload: UpdateKasirInput }
   >({
@@ -68,7 +77,7 @@ export const useDeleteKasir = () => {
 export const useRefreshKasir = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<Kasir, Error, string>({
+  const mutation = useMutation<ApiResponse<BaseKasir>, Error, string>({
     mutationFn: refreshKasir,
     onSuccess: (data, id) => {
       queryClient.setQueryData(['kasir', id], data);

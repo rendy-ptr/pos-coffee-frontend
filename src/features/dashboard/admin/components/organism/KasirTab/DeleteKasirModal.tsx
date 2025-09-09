@@ -9,15 +9,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/shared/ToastProvider';
 import { COLOR } from '@/constants/Style';
-import { useDeleteKasir } from '../../../hooks/kasirHooks';
-import type { Kasir } from '../../../types/kasir';
+import { useDeleteKasir } from '../../../hooks/kasir.hook';
+import type { BaseKasir } from '../../../types/kasir';
+import { AxiosError } from 'axios';
 
 const { BUTTON_CANCEL } = COLOR;
 
 interface DeleteKasirModalProps {
   open: boolean;
   onClose: () => void;
-  kasirItem: Kasir;
+  kasirItem: BaseKasir;
 }
 
 const DeleteKasirModal = ({
@@ -37,13 +38,24 @@ const DeleteKasirModal = ({
 
   const handleDelete = async () => {
     try {
-      await doDeleteKasir(kasirItem.id);
-      addToast(`Kasir ${kasirItem.name} berhasil dihapus`, 'success', 3000);
-      onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        addToast(err.message || 'Gagal menghapus menu', 'error', 3000);
+      const response = await doDeleteKasir(kasirItem.id);
+
+      if (response.success) {
+        addToast(response.message || 'Kasir berhasil dihapus', 'success', 3000);
+        onClose();
+      } else {
+        addToast(response.message || 'Gagal menghapus kasir', 'error', 3000);
       }
+    } catch (err) {
+      let message = 'Gagal menghapus kasir';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

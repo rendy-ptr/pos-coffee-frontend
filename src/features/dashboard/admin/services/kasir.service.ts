@@ -1,30 +1,34 @@
 import type { ApiResponse } from '@/types/ApiResponse';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
-import type { CreateKasirInput, Kasir, UpdateKasirInput } from '../types/kasir';
+import type {
+  CreateKasirInput,
+  BaseKasir,
+  UpdateKasirInput,
+} from '../types/kasir';
 
 export const createKasir = async (
   payload: CreateKasirInput
-): Promise<ApiResponse<Kasir>> => {
-  const { data } = await apiClient.post<ApiResponse<Kasir>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.KASIR(),
     payload
   );
   return data;
 };
 
-export const getKasirs = async (): Promise<Kasir[]> => {
-  const { data } = await apiClient.get<ApiResponse<Kasir[]>>(
+export const getKasirs = async (): Promise<ApiResponse<BaseKasir[]>> => {
+  const { data } = await apiClient.get<ApiResponse<BaseKasir[]>>(
     API_PATHS.ADMIN.KASIR()
   );
-  return data.data;
+  return data;
 };
 
 export const updateKasir = async (
   id: string,
   payload: UpdateKasirInput
-): Promise<ApiResponse<Kasir>> => {
-  const { data } = await apiClient.patch<ApiResponse<Kasir>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.KASIR(id),
     payload
   );
@@ -38,9 +42,11 @@ export const deleteKasir = async (id: string): Promise<ApiResponse<null>> => {
   return data;
 };
 
-export const refreshKasir = async (id: string): Promise<Kasir> => {
-  const { data } = await apiClient.get<ApiResponse<Kasir>>(
+export const refreshKasir = async (
+  id: string
+): Promise<ApiResponse<BaseKasir>> => {
+  const { data } = await apiClient.get<ApiResponse<BaseKasir>>(
     API_PATHS.ADMIN.KASIR(id)
   );
-  return data.data;
+  return data;
 };

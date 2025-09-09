@@ -7,15 +7,15 @@ import {
   Users,
   Wrench,
 } from 'lucide-react';
-import type { Meja } from '../../../types/meja';
+import type { BaseTable } from '../../../types/table.type';
 
 interface IManagementTableItemProps {
-  mejaItem: Meja;
-  onClick: (meja: Meja) => void;
+  tableItem: BaseTable;
+  onClick: (table: BaseTable) => void;
 }
 
 const ManagementTableItem = ({
-  mejaItem,
+  tableItem,
   onClick,
 }: IManagementTableItemProps) => {
   const getStatusConfig = (status: string) => {
@@ -68,12 +68,12 @@ const ManagementTableItem = ({
     }
   };
 
-  const statusConfig = getStatusConfig(mejaItem.status);
+  const statusConfig = getStatusConfig(tableItem.status);
   const StatusIcon = statusConfig.icon;
 
   return (
     <button
-      onClick={() => onClick(mejaItem)}
+      onClick={() => onClick(tableItem)}
       className="group relative flex h-full w-full cursor-pointer flex-col overflow-hidden rounded-xl border border-[#e6d9c9]/50 bg-gradient-to-br from-white via-[#fefefe] to-[#faf9f7] shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#6f4e37]/30 hover:shadow-xl"
     >
       {/* Status Indicator */}
@@ -85,13 +85,13 @@ const ManagementTableItem = ({
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#6f4e37] to-[#8b5e3c] text-base font-bold text-white shadow-lg">
-              {mejaItem.number}
+              {tableItem.number}
             </div>
             <div className="text-left">
               <h3 className="text-base font-semibold text-[#6f4e37]">
-                Meja {mejaItem.number}
+                Meja {tableItem.number}
               </h3>
-              <p className="text-xs text-[#8c7158]/70">{mejaItem.location}</p>
+              <p className="text-xs text-[#8c7158]/70">{tableItem.location}</p>
             </div>
           </div>
 
@@ -113,14 +113,14 @@ const ManagementTableItem = ({
               <span className="text-xs">Kapasitas</span>
             </div>
             <span className="text-sm font-semibold text-[#6f4e37]">
-              {mejaItem.capacity} orang
+              {tableItem.capacity} orang
             </span>
           </div>
 
           <div className="flex items-center space-x-2 text-[#8c7158]/60">
             <Clock className="h-3.5 w-3.5" />
             <span className="text-xs">
-              Terakhir dibersihkan: {mejaItem.lastCleaned}
+              Terakhir dibersihkan: {tableItem.lastCleaned}
             </span>
           </div>
         </div>

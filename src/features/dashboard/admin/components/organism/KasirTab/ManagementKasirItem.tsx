@@ -2,15 +2,16 @@ import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
-import type { Kasir } from '../../../types/kasir';
+import type { BaseKasir } from '../../../types/kasir';
 import EditKasirModal from './EditKasirModal';
 import { useState } from 'react';
 import DeleteKasirModal from './DeleteKasirModal';
 import { useToast } from '@/components/shared/ToastProvider';
-import { useRefreshKasir } from '../../../hooks/kasirHooks';
+import { useRefreshKasir } from '../../../hooks/kasir.hook';
+import { AxiosError } from 'axios';
 
 interface IManagementKasirItemProps {
-  kasirItem: Kasir;
+  kasirItem: BaseKasir;
 }
 
 const getStatusConfig = (isActive: boolean) => {
@@ -45,16 +46,31 @@ const ManagementKasirItem = ({ kasirItem }: IManagementKasirItemProps) => {
 
   const handleRefreshKasir = async () => {
     try {
-      await doRefreshKasir(kasirItem.id);
-      addToast(`Kasir ${kasirItem.name} berhasil diperbarui`, 'success', 3000);
-    } catch (error) {
-      if (error instanceof Error) {
+      const response = await doRefreshKasir(kasirItem.id);
+
+      if (response.success) {
         addToast(
-          error.message || 'Gagal memperbarui data kasir',
+          response.message || 'Kasir berhasil di refresh',
+          'success',
+          3000
+        );
+      } else {
+        addToast(
+          response.message || 'Gagal melakukan refresh kasir',
           'error',
           3000
         );
       }
+    } catch (err) {
+      let message = 'Gagal melakukan refresh kasir';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

@@ -5,7 +5,7 @@ export interface CreateCategoryInput {
   isActive: boolean;
 }
 
-export interface Category {
+export interface BaseCategory {
   id: string;
   name: string;
   description?: string;

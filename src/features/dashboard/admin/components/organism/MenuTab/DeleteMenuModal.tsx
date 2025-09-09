@@ -7,17 +7,18 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useDeleteMenu } from '../../../hooks/menuHooks';
+import { useDeleteMenu } from '../../../hooks/menu.hook';
 import { useToast } from '@/components/shared/ToastProvider';
-import type { Menu } from '../../../types/menu';
+import type { BaseMenu } from '../../../types/menu';
 import { COLOR } from '@/constants/Style';
+import { AxiosError } from 'axios';
 
 const { BUTTON_CANCEL } = COLOR;
 
 interface DeleteMenuModalProps {
   open: boolean;
   onClose: () => void;
-  menuItem: Menu;
+  menuItem: BaseMenu;
 }
 
 const DeleteMenuModal = ({ open, onClose, menuItem }: DeleteMenuModalProps) => {
@@ -33,13 +34,24 @@ const DeleteMenuModal = ({ open, onClose, menuItem }: DeleteMenuModalProps) => {
 
   const handleDelete = async () => {
     try {
-      await doDeleteMenu(menuItem.id);
-      addToast(`Menu ${menuItem.name} berhasil dihapus`, 'success', 3000);
-      onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        addToast(err.message || 'Gagal menghapus menu', 'error', 3000);
+      const response = await doDeleteMenu(menuItem.id);
+
+      if (response.success) {
+        addToast(response.message || 'Menu berhasil dihapus', 'success', 3000);
+        onClose();
+      } else {
+        addToast(response.message || 'Gagal menghapus menu', 'error', 3000);
       }
+    } catch (err) {
+      let message = 'Gagal menghapus menu';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

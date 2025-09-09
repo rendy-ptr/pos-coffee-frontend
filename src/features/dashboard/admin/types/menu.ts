@@ -1,6 +1,6 @@
-import type { Category } from '../types/category';
+import type { BaseCategory } from '../types/category';
 
-export interface Menu {
+export interface BaseMenu {
   id: string;
   imageUrl: string;
   name: string;
@@ -14,7 +14,7 @@ export interface Menu {
   createdAt: string;
   updatedAt: string;
   createdById: string;
-  category: Category;
+  category: BaseCategory;
 }
 
 export interface CreateMenuInput {

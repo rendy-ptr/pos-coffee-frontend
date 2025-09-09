@@ -13,7 +13,7 @@ const {
 } = lucideIcons;
 import { COLOR } from '@/constants/Style';
 import ManagementTableItem from '../../organism/TableTab/ManagementTableItem';
-import type { Meja } from '../../../types/meja';
+import type { BaseTable } from '../../../types/table.type';
 import TableModal from '../../organism/TableTab/TableModal';
 import AddTableModal from '../../organism/TableTab/AddTableModal';
 
@@ -27,14 +27,14 @@ const filterOptions = [
   { value: 'available', label: 'Meja Tersedia' },
 ];
 
-const MOCKS_MEJA: Meja[] = [
+const MOCKS_MEJA: BaseTable[] = [
   {
     id: 1,
     number: '01',
     capacity: '4',
     status: 'available',
     currentGuests: 0,
-    location: 'Indoor',
+    location: 'INDOOR',
     lastCleaned: '2024-06-20 10:00',
     reservedBy: null,
     reservedTime: null,
@@ -45,7 +45,7 @@ const MOCKS_MEJA: Meja[] = [
     capacity: '2',
     status: 'occupied',
     currentGuests: 2,
-    location: 'Outdoor',
+    location: 'INDOOR',
     lastCleaned: '2024-06-20 11:30',
     reservedBy: null,
     reservedTime: null,
@@ -56,7 +56,7 @@ const MOCKS_MEJA: Meja[] = [
     capacity: '6',
     status: 'reserved',
     currentGuests: 0,
-    location: 'Indoor',
+    location: 'INDOOR',
     lastCleaned: '2024-06-19 15:00',
     reservedBy: 'John Doe',
     reservedTime: '2024-06-20 19:00',
@@ -67,7 +67,7 @@ const MOCKS_MEJA: Meja[] = [
     capacity: '4',
     status: 'maintenance',
     currentGuests: 0,
-    location: 'Indoor',
+    location: 'INDOOR',
     lastCleaned: '2024-06-18 09:00',
     reservedBy: null,
     reservedTime: null,
@@ -78,11 +78,11 @@ const ManagementTableSection = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('semua');
-  const [selectedMeja, setSelectedMeja] = useState<Meja | null>(null);
+  const [selectedMeja, setSelectedMeja] = useState<BaseTable | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const handleCardClick = (meja: Meja) => {
+  const handleCardClick = (meja: BaseTable) => {
     setSelectedMeja(meja);
     setIsModalOpen(true);
   };
@@ -289,10 +289,10 @@ const ManagementTableSection = () => {
         <CardContent className="p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {filteredItems.length > 0 ? (
-              filteredItems.map(mejaItem => (
+              filteredItems.map(tableItem => (
                 <ManagementTableItem
-                  key={mejaItem.id}
-                  mejaItem={mejaItem}
+                  key={tableItem.id}
+                  tableItem={tableItem}
                   onClick={handleCardClick}
                 />
               ))
@@ -320,7 +320,7 @@ const ManagementTableSection = () => {
       <TableModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        mejaItem={selectedMeja}
+        tableItem={selectedMeja}
       />
     </div>
   );

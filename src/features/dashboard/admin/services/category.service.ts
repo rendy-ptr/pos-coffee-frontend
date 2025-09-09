@@ -1,5 +1,5 @@
 import type {
-  Category,
+  BaseCategory,
   CreateCategoryInput,
   UpdateCategoryInput,
 } from '../types/category';
@@ -10,26 +10,29 @@ import { API_PATHS } from '@/constants/apiPaths';
 
 export const createCategory = async (
   payload: CreateCategoryInput
-): Promise<ApiResponse<Category>> => {
-  const { data } = await apiClient.post<ApiResponse<Category>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.KATEGORI(),
     payload
   );
   return data;
 };
 
-export const getAdminCategories = async (): Promise<Category[]> => {
-  const { data } = await apiClient.get<ApiResponse<Category[]>>(
+export const fetchCategories = async (): Promise<
+  ApiResponse<BaseCategory[]>
+> => {
+  const { data } = await apiClient.get<ApiResponse<BaseCategory[]>>(
     API_PATHS.ADMIN.KATEGORI()
   );
-  return data.data;
+
+  return data;
 };
 
 export const updateCategory = async (
   id: string,
   payload: UpdateCategoryInput
-): Promise<ApiResponse<Category>> => {
-  const { data } = await apiClient.patch<ApiResponse<Category>>(
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.KATEGORI(id),
     payload
   );

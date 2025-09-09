@@ -15,7 +15,7 @@ import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useUploadImage } from '../../../hooks/useUpload';
-import { useCreateKasir } from '../../../hooks/kasirHooks';
+import { useCreateKasir } from '../../../hooks/kasir.hook';
 import type { CreateKasirInput } from '../../../types/kasir';
 import {
   Select,
@@ -219,17 +219,28 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
         profilePicture: finalProfilePicture,
       };
 
-      await doCreateKasir(kasirData);
-      console.log('Kasir data:', kasirData);
+      const response = await doCreateKasir(kasirData);
 
-      addToast(`Kasir ${data.name} berhasil ditambahkan`, 'success', 3000);
-      handleClose();
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        addToast(err.response?.data?.message || err.message, 'error', 3000);
+      if (response.success) {
+        addToast(
+          response.message || 'Kasir berhasil ditambahkan',
+          'success',
+          3000
+        );
+        handleClose();
       } else {
-        addToast('Gagal Menambahkan kasir', 'error', 3000);
+        addToast(response.message || 'Gagal menambahkan kasir', 'error', 3000);
       }
+    } catch (err) {
+      let message = 'Gagal menambahkan kasir';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

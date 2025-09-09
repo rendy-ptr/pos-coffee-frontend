@@ -13,11 +13,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Controller, useForm } from 'react-hook-form';
 import { iconOptions } from '../../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { useCreateCategory } from '../../../../hooks/categoryHooks';
+import { useCreateCategory } from '../../../../hooks/category.hook';
 import { useToast } from '@/components/shared/ToastProvider';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';
 import type { CreateCategoryInput } from '../../../../types/category';
+import { AxiosError } from 'axios';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 
@@ -56,16 +57,33 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
   const isLoading = isLoadingSave || false;
 
   const submitForm = async (data: CreateCategoryInput) => {
-    console.log('Form Data:', data);
     try {
-      await doCreateCategory(data);
-      addToast('Kategori berhasil ditambahkan', 'success', 3000);
-      reset();
-      onClose();
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        addToast(err.message || 'Gagal menambahkan kategori', 'error', 3000);
+      const response = await doCreateCategory(data);
+      if (response.success) {
+        addToast(
+          response.message || 'Kategori berhasil ditambahkan',
+          'success',
+          3000
+        );
+        reset();
+        onClose();
+      } else {
+        addToast(
+          response.message || 'Gagal menambahkan kategori',
+          'error',
+          3000
+        );
       }
+    } catch (err) {
+      let message = 'Gagal menambahkan kategori';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

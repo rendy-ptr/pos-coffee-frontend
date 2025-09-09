@@ -20,16 +20,16 @@ import {
 } from '@/components/ui/dialog';
 
 // Mock Meja type for demonstration
-import type { Meja } from '../../../types/meja';
+import type { BaseTable } from '../../../types/table.type';
 
 interface ITableModalProps {
   isOpen: boolean;
   onClose: () => void;
-  mejaItem: Meja | null;
+  tableItem: BaseTable | null;
 }
 
-const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
-  if (!mejaItem) return null;
+const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
+  if (!tableItem) return null;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -101,26 +101,26 @@ const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
     }
   };
 
-  const statusConfig = getStatusConfig(mejaItem.status);
+  const statusConfig = getStatusConfig(tableItem.status);
   const StatusIcon = statusConfig.icon;
 
   const detailItems = [
     {
       icon: Users,
       label: 'Kapasitas',
-      value: `${mejaItem.capacity} orang`,
+      value: `${tableItem.capacity} orang`,
       description: 'Maksimal tamu',
     },
     {
       icon: User,
       label: 'Tamu saat ini',
-      value: `${mejaItem.currentGuests} orang`,
+      value: `${tableItem.currentGuests} orang`,
       description: 'Sedang menempati',
     },
     {
       icon: Clock,
       label: 'Terakhir dibersihkan',
-      value: mejaItem.lastCleaned,
+      value: tableItem.lastCleaned,
       description: 'Kebersihan meja',
     },
   ];
@@ -166,7 +166,7 @@ const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
                   />
                   {/* Main element */}
                   <div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#6f4e37] via-[#8b5e3c] to-[#5d4130] text-2xl font-bold text-white shadow-xl ring-2 ring-white/20">
-                    <span className="relative z-10">{mejaItem.number}</span>
+                    <span className="relative z-10">{tableItem.number}</span>
                     {/* Inner shine */}
                     <div className="absolute inset-1 rounded-xl bg-gradient-to-br from-white/20 to-transparent" />
                   </div>
@@ -174,12 +174,12 @@ const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
 
                 <div className="space-y-1">
                   <DialogTitle className="text-2xl font-bold tracking-tight text-gray-900">
-                    Meja {mejaItem.number}
+                    Meja {tableItem.number}
                   </DialogTitle>
                   <div className="flex items-center space-x-2 text-sm">
                     <MapPin className="h-4 w-4 text-amber-600" />
                     <span className="font-medium text-gray-600">
-                      {mejaItem.location}
+                      {tableItem.location}
                     </span>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
           </div>
 
           {/* Premium Reservation Info */}
-          {mejaItem.status === 'reserved' && mejaItem.reservedBy && (
+          {tableItem.status === 'reserved' && tableItem.reservedBy && (
             <div className="via-purple-25/60 mb-6 transform overflow-hidden rounded-xl border border-purple-200/60 bg-gradient-to-br from-purple-50/80 to-white/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-lg hover:shadow-purple-500/20">
               {/* Animated background */}
               <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-purple-400/5 via-purple-500/10 to-purple-600/5" />
@@ -270,16 +270,16 @@ const TableModal = ({ isOpen, onClose, mejaItem }: ITableModalProps) => {
                       Nama Pemesan
                     </span>
                     <span className="font-bold text-purple-900">
-                      {mejaItem.reservedBy}
+                      {tableItem.reservedBy}
                     </span>
                   </div>
-                  {mejaItem.reservedTime && (
+                  {tableItem.reservedTime && (
                     <div className="flex items-center justify-between rounded-lg bg-purple-100/60 p-3 backdrop-blur-sm">
                       <span className="font-medium text-purple-700">
                         Waktu Reservasi
                       </span>
                       <span className="font-bold text-purple-900">
-                        {mejaItem.reservedTime}
+                        {tableItem.reservedTime}
                       </span>
                     </div>
                   )}

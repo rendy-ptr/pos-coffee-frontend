@@ -1,6 +1,6 @@
 import type { User } from './user';
 
-export interface Kasir extends User {
+export interface BaseKasir extends User {
   kasirProfile: KasirProfile;
 }
 

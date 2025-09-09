@@ -22,12 +22,13 @@ import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 
-import type { UpdateMenuInput, Menu } from '../../../types/menu';
-import type { Category } from '../../../types/category';
+import type { UpdateMenuInput, BaseMenu } from '../../../types/menu';
+import type { BaseCategory } from '../../../types/category';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
-import { useUpdateMenu } from '../../../hooks/menuHooks';
+import { useUpdateMenu } from '../../../hooks/menu.hook';
 import { useUploadImage } from '../../../hooks/useUpload';
+import { AxiosError } from 'axios';
 
 type LucideIconName = keyof typeof LucideIcons;
 type LucideIconComponent = React.ForwardRefExoticComponent<
@@ -51,8 +52,8 @@ const {
 interface EditMenuModalProps {
   open: boolean;
   onClose: () => void;
-  menuItem: Menu;
-  categories: Category[];
+  menuItem: BaseMenu;
+  categories: BaseCategory[];
 }
 
 const FORM_DEFAULTS = {
@@ -144,7 +145,7 @@ const EditMenuModal = ({
 
   // Computed values
   const activeCategories = useMemo(() => {
-    const unique = new Map<string, Category>();
+    const unique = new Map<string, BaseCategory>();
     categories
       .filter(cat => cat.isActive)
       .forEach(cat => {
@@ -298,7 +299,7 @@ const EditMenuModal = ({
       }
 
       // Create menu
-      await doUpdateMenu({
+      const response = await doUpdateMenu({
         id: menuItem.id,
         payload: {
           ...data,
@@ -306,12 +307,26 @@ const EditMenuModal = ({
         },
       });
 
-      addToast(`Menu ${menuItem.name} berhasil diperbarui`, 'success', 3000);
-      handleClose();
+      if (response.success) {
+        addToast(
+          response.message || 'Menu berhasil diperbarui',
+          'success',
+          3000
+        );
+        handleClose();
+      } else {
+        addToast(response.message || 'Gagal memperbarui menu', 'error', 3000);
+      }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Gagal memperbarui menu';
-      addToast(errorMessage, 'error', 3000);
+      let message = 'Gagal memperbarui menu';
+
+      if (err instanceof AxiosError) {
+        message = err.response?.data?.message || err.message || message;
+      } else if (err instanceof Error) {
+        message = err.message || message;
+      }
+
+      addToast(message, 'error', 3000);
     }
   };
 

@@ -14,7 +14,7 @@ import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 // import { useCreateTable } from '../../../hooks/tableHooks';
-import type { CreateMejaInput } from '../../../types/meja';
+import type { CreateTableInput } from '../../../types/table.type';
 import {
   Select,
   SelectContent,
@@ -25,7 +25,7 @@ import {
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { useState } from 'react';
+import { useCreateTable } from '../../../hooks/table.hook';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const { CheckCircle, XCircle, SquaresExclude, Home, Palmtree } = lucideIcons;
@@ -40,7 +40,7 @@ const tableSchema = z.object({
     .string()
     .min(1, 'Kapasitas wajib diisi')
     .regex(/^\d+$/, 'Kapasitas harus berupa angka'),
-  location: z.enum(['Indoor', 'Outdoor'], {
+  location: z.enum(['INDOOR', 'OUTDOOR'], {
     required_error: 'Lokasi wajib dipilih',
   }),
 });
@@ -48,7 +48,7 @@ const tableSchema = z.object({
 const FORM_DEFAULTS = {
   number: '',
   capacity: '',
-  location: 'Indoor' as const,
+  location: 'INDOOR' as const,
 };
 
 interface AddTableModalProps {
@@ -63,31 +63,37 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
     reset,
     control,
     formState: { errors },
-  } = useForm<CreateMejaInput>({
+  } = useForm<CreateTableInput>({
     resolver: zodResolver(tableSchema),
     defaultValues: FORM_DEFAULTS,
   });
 
   const { addToast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  //   const { doCreateTable, isPending: isLoading } = useCreateTable();
+  const { doCreateTable, isPending: isLoading } = useCreateTable();
 
   const handleClose = () => {
     reset();
     onClose();
   };
 
-  const submitForm = async (data: CreateMejaInput) => {
+  const submitForm = async (data: CreateTableInput) => {
     try {
-      console.log(data);
-      addToast(`Meja ${data.number} berhasil ditambahkan`, 'success', 3000);
-      handleClose();
+      const response = await doCreateTable(data);
+      if (response.success) {
+        addToast(
+          response.message || `Meja ${data.number} berhasil ditambahkan`,
+          'success',
+          3000
+        );
+        console.log('Table created:', response);
+        console.log('Status :', response.success);
+        handleClose();
+      }
     } catch (err) {
       if (err instanceof AxiosError) {
         addToast(err.response?.data?.message || err.message, 'error', 3000);
       } else {
         addToast('Gagal menambahkan meja', 'error', 3000);
-        setIsLoading(false);
       }
     }
   };
@@ -198,18 +204,18 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
                         </SelectTrigger>
                         <SelectContent className="rounded-xl border border-[#e6d9c9]/60 bg-white shadow-lg">
                           <SelectItem
-                            value="Indoor"
+                            value="INDOOR"
                             className="flex items-center gap-2"
                           >
                             <Home className="h-4 w-4" />
-                            Indoor
+                            INDOOR
                           </SelectItem>
                           <SelectItem
-                            value="Outdoor"
+                            value="OUTDOOR"
                             className="flex items-center gap-2"
                           >
                             <Palmtree className="h-4 w-4" />
-                            Outdoor
+                            OUTDOOR
                           </SelectItem>
                         </SelectContent>
                       </Select>

@@ -1,19 +1,22 @@
-export interface Meja {
+export interface BaseTable {
   id: number;
   number: string;
   capacity: string;
-  status: 'available' | 'occupied' | 'reserved' | 'maintenance';
+  status: 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'MAINTENANCE';
   currentGuests: number;
-  location: 'Indoor' | 'Outdoor';
+  location: 'INDOOR' | 'OUTDOOR';
   lastCleaned: string;
   reservedBy: string | null;
   reservedTime: string | null;
+  createdAt: string;
+  updatedAt: string;
+  createdById: string;
 }
 
-export interface CreateMejaInput {
+export interface CreateTableInput {
   number: string;
   capacity: string;
-  location: 'Indoor' | 'Outdoor';
+  location: 'INDOOR' | 'OUTDOOR';
 }
 
 // status default to 'available'

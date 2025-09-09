@@ -14,9 +14,9 @@ const {
 } = lucideIcons;
 import AddMenuModal from '../../organism/MenuTab/AddMenuModal';
 import { COLOR } from '@/constants/Style';
-import { useMenus } from '../../../hooks/menuHooks';
+import { useMenus } from '../../../hooks/menu.hook';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
-import { useAdminCategories } from '../../../hooks/categoryHooks';
+import { useFetchCategories } from '../../../hooks/category.hook';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
@@ -27,8 +27,8 @@ const filterOptions = [
 ];
 
 const ManagementMenuSection = () => {
-  const { data: menus = [], isLoading, error } = useMenus();
-  const { data: categories = [] } = useAdminCategories();
+  const { menus, isLoading, error } = useMenus();
+  const { categories } = useFetchCategories();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
