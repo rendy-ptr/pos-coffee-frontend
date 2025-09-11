@@ -1,7 +1,7 @@
 export interface BaseTable {
-  id: number;
-  number: string;
-  capacity: string;
+  id: string;
+  number: number;
+  capacity: number;
   status: 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'MAINTENANCE';
   currentGuests: number;
   location: 'INDOOR' | 'OUTDOOR';
@@ -13,11 +13,11 @@ export interface BaseTable {
   createdById: string;
 }
 
-export interface CreateTableInput {
-  number: string;
-  capacity: string;
-  location: 'INDOOR' | 'OUTDOOR';
-}
+// export interface CreateTableInput {
+//   number: string;
+//   capacity: string;
+//   location: 'INDOOR' | 'OUTDOOR';
+// }
 
 // status default to 'available'
 // reservedBy and reservedTime default to null

@@ -16,6 +16,8 @@ import ManagementTableItem from '../../organism/TableTab/ManagementTableItem';
 import type { BaseTable } from '../../../types/table.type';
 import TableModal from '../../organism/TableTab/TableModal';
 import AddTableModal from '../../organism/TableTab/AddTableModal';
+import { useGetTables } from '../../../hooks/table.hook';
+import EditTableModal from '../../organism/TableTab/EditTableModal';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
@@ -27,53 +29,6 @@ const filterOptions = [
   { value: 'available', label: 'Meja Tersedia' },
 ];
 
-const MOCKS_MEJA: BaseTable[] = [
-  {
-    id: 1,
-    number: '01',
-    capacity: '4',
-    status: 'available',
-    currentGuests: 0,
-    location: 'INDOOR',
-    lastCleaned: '2024-06-20 10:00',
-    reservedBy: null,
-    reservedTime: null,
-  },
-  {
-    id: 2,
-    number: '02',
-    capacity: '2',
-    status: 'occupied',
-    currentGuests: 2,
-    location: 'INDOOR',
-    lastCleaned: '2024-06-20 11:30',
-    reservedBy: null,
-    reservedTime: null,
-  },
-  {
-    id: 3,
-    number: '03',
-    capacity: '6',
-    status: 'reserved',
-    currentGuests: 0,
-    location: 'INDOOR',
-    lastCleaned: '2024-06-19 15:00',
-    reservedBy: 'John Doe',
-    reservedTime: '2024-06-20 19:00',
-  },
-  {
-    id: 4,
-    number: '04',
-    capacity: '4',
-    status: 'maintenance',
-    currentGuests: 0,
-    location: 'INDOOR',
-    lastCleaned: '2024-06-18 09:00',
-    reservedBy: null,
-    reservedTime: null,
-  },
-];
-
 const ManagementTableSection = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -81,15 +36,13 @@ const ManagementTableSection = () => {
   const [selectedMeja, setSelectedMeja] = useState<BaseTable | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  const { tables } = useGetTables();
 
   const handleCardClick = (meja: BaseTable) => {
     setSelectedMeja(meja);
     setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setSelectedMeja(null);
   };
 
   const selectedFilterLabel = useMemo(() => {
@@ -99,34 +52,37 @@ const ManagementTableSection = () => {
     return selected ? selected.label : 'Semua';
   }, [selectedFilter]);
 
-  const filterMejaSemua = MOCKS_MEJA.length;
-  const filterMejaAvailable = MOCKS_MEJA.filter(
-    meja => meja.status === 'available'
+  const filterMejaSemua = tables.length;
+  const filterMejaAvailable = tables.filter(
+    table => table.status === 'available'.toUpperCase()
   ).length;
-  const filterMejaOccupied = MOCKS_MEJA.filter(
-    meja => meja.status === 'occupied'
+  const filterMejaOccupied = tables.filter(
+    table => table.status === 'occupied'.toUpperCase()
   ).length;
-  const filterMejaReserved = MOCKS_MEJA.filter(
-    meja => meja.status === 'reserved'
+  const filterMejaReserved = tables.filter(
+    table => table.status === 'reserved'.toUpperCase()
   ).length;
-  const filterMejaMaintenance = MOCKS_MEJA.filter(
-    meja => meja.status === 'maintenance'
+  const filterMejaMaintenance = tables.filter(
+    table => table.status === 'maintenance'.toUpperCase()
   ).length;
 
   const filteredItems = useMemo(() => {
-    return MOCKS_MEJA.filter(meja => {
+    return tables.filter(table => {
       const matchesSearch = searchTerm
-        ? meja.number.toLowerCase().includes(searchTerm.toLowerCase())
+        ? table.number
+            .toString()
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
         : true;
 
       const matchesFilter = selectedFilter
         ? selectedFilter === 'semua'
           ? true
-          : meja.status === selectedFilter
+          : table.status === selectedFilter
         : true;
       return matchesSearch && matchesFilter;
     });
-  }, [searchTerm, selectedFilter]);
+  }, [searchTerm, selectedFilter, tables]);
 
   return (
     <div className="space-y-6">
@@ -302,11 +258,11 @@ const ManagementTableSection = () => {
                   <Search className="h-8 w-8 text-[#8c7158]/50" />
                 </div>
                 <p className="mb-2 text-lg font-semibold text-[#6f4e37]">
-                  Tidak ada menu ditemukan
+                  Tidak ada meja ditemukan
                 </p>
                 <p className="max-w-md text-center text-sm text-[#8c7158]/70">
                   Coba ubah filter atau kata kunci pencarian untuk menemukan
-                  menu yang Anda cari.
+                  meja yang Anda cari.
                 </p>
               </div>
             )}
@@ -317,11 +273,28 @@ const ManagementTableSection = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
-      <TableModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        tableItem={selectedMeja}
-      />
+      {selectedMeja && (
+        <>
+          <TableModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setSelectedMeja(null);
+            }}
+            tableItem={selectedMeja}
+            onEdit={() => {
+              setIsModalOpen(false);
+              setIsEditModalOpen(true);
+            }}
+          />
+
+          <EditTableModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            tableItem={selectedMeja}
+          />
+        </>
+      )}
     </div>
   );
 };

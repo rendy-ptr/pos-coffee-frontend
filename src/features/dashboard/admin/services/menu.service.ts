@@ -1,10 +1,11 @@
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { BaseMenu, CreateMenuInput, UpdateMenuInput } from '../types/menu';
+import type { BaseMenu, UpdateMenuInput } from '../types/menu';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
+import type { CreateMenuInputPayload } from '../schema/menu.schema';
 
 export const createMenu = async (
-  payload: CreateMenuInput
+  payload: CreateMenuInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.MENU(),

@@ -1,13 +1,6 @@
-// ManagementTableItem.tsx
-import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  Users,
-  Wrench,
-} from 'lucide-react';
+import { lucideIcons } from '@/icon/lucide-react-icons';
 import type { BaseTable } from '../../../types/table.type';
+import { formatDateForDisplay } from '@/utils/formatDate';
 
 interface IManagementTableItemProps {
   tableItem: BaseTable;
@@ -18,9 +11,10 @@ const ManagementTableItem = ({
   tableItem,
   onClick,
 }: IManagementTableItemProps) => {
+  const { CheckCircle, Users, Calendar, Wrench, AlertTriangle } = lucideIcons;
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'available':
+      case 'AVAILABLE':
         return {
           color: 'text-green-700',
           border: 'border-green-200/60',
@@ -29,7 +23,7 @@ const ManagementTableItem = ({
           gradient: 'from-green-400 to-green-600',
           statusBg: 'bg-green-50/80',
         };
-      case 'occupied':
+      case 'OCCUPIED':
         return {
           color: 'text-blue-700',
           border: 'border-blue-200/60',
@@ -38,7 +32,7 @@ const ManagementTableItem = ({
           gradient: 'from-blue-400 to-blue-600',
           statusBg: 'bg-blue-50/80',
         };
-      case 'reserved':
+      case 'RESERVED':
         return {
           color: 'text-purple-700',
           border: 'border-purple-200/60',
@@ -47,7 +41,7 @@ const ManagementTableItem = ({
           gradient: 'from-purple-400 to-purple-600',
           statusBg: 'bg-purple-50/80',
         };
-      case 'maintenance':
+      case 'MAINTENANCE':
         return {
           color: 'text-red-700',
           border: 'border-red-200/60',
@@ -118,9 +112,9 @@ const ManagementTableItem = ({
           </div>
 
           <div className="flex items-center space-x-2 text-[#8c7158]/60">
-            <Clock className="h-3.5 w-3.5" />
             <span className="text-xs">
-              Terakhir dibersihkan: {tableItem.lastCleaned}
+              Terakhir dibersihkan:
+              {formatDateForDisplay(tableItem.lastCleaned)}
             </span>
           </div>
         </div>

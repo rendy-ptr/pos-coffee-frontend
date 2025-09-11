@@ -10,15 +10,18 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { iconOptions } from '../../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useCreateCategory } from '../../../../hooks/category.hook';
 import { useToast } from '@/components/shared/ToastProvider';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';
-import type { CreateCategoryInput } from '../../../../types/category';
 import { AxiosError } from 'axios';
+import { useCreateCategoryForm } from '../../../../hooks/category.hook';
+
+import type { CreateCategoryInputPayload } from '../../../../schema/category.schema';
+import { useEffect } from 'react';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 
@@ -31,23 +34,21 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
   const {
     register,
     handleSubmit,
-    reset,
-    watch,
     control,
+    watch,
+    reset,
     formState: { errors },
-  } = useForm<CreateCategoryInput>({
-    defaultValues: {
-      name: '',
-      description: '',
-      icon: '',
-      isActive: true,
-    },
-  });
-
-  const selectedIcon = watch('icon');
-
+  } = useCreateCategoryForm();
   const { doCreateCategory, isPending: isLoadingSave } = useCreateCategory();
   const { addToast } = useToast();
+
+  useEffect(() => {
+    if (open) {
+      reset();
+    }
+  }, [open, reset]);
+
+  const selectedIcon = watch('icon');
 
   const getLoadingMessage = () => {
     if (isLoadingSave) return 'Menyimpan kategori...';
@@ -56,7 +57,8 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
 
   const isLoading = isLoadingSave || false;
 
-  const submitForm = async (data: CreateCategoryInput) => {
+  const submitForm = async (data: CreateCategoryInputPayload) => {
+    console.log('Form submitted with:', data);
     try {
       const response = await doCreateCategory(data);
       if (response.success) {
@@ -82,7 +84,6 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
       } else if (err instanceof Error) {
         message = err.message || message;
       }
-
       addToast(message, 'error', 3000);
     }
   };
@@ -181,7 +182,13 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
               name="isActive"
               render={({ field }) => (
                 <RadioGroup
-                  value={field.value ? 'true' : 'false'}
+                  value={
+                    field.value === true
+                      ? 'true'
+                      : field.value === false
+                        ? 'false'
+                        : undefined
+                  }
                   onValueChange={val => field.onChange(val === 'true')}
                   className="grid grid-cols-2 gap-4"
                 >
@@ -189,7 +196,7 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
                   <label
                     htmlFor="aktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
-                      field.value
+                      field.value === true
                         ? 'border-emerald-600 bg-emerald-50 text-emerald-700 shadow-sm'
                         : 'border-[#e6d9c9]/70 bg-white text-[#6f4e37] hover:border-[#6f4e37]'
                     }`}
@@ -206,7 +213,7 @@ const AddCategoryModal = ({ open, onClose }: AddCategoryModalProps) => {
                   <label
                     htmlFor="nonaktif"
                     className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-3 font-medium transition-all ${
-                      !field.value
+                      field.value === false
                         ? 'border-red-600 bg-red-50 text-red-700 shadow-sm'
                         : 'border-[#e6d9c9]/70 bg-white text-[#6f4e37] hover:border-[#6f4e37]'
                     }`}

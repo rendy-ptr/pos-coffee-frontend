@@ -17,18 +17,19 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
+import { useCreateMenuForm } from '../../../hooks/menu.hook';
 
-import type { CreateMenuInput } from '../../../types/menu';
 import type { BaseCategory } from '../../../types/category';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
 import { useCreateMenu } from '../../../hooks/menu.hook';
 import { useUploadImage } from '../../../hooks/useUpload';
 import { AxiosError } from 'axios';
+import type { CreateMenuInputPayload } from '../../../schema/menu.schema';
 
 type LucideIconName = keyof typeof LucideIcons;
 type LucideIconComponent = React.ForwardRefExoticComponent<
@@ -55,17 +56,6 @@ interface AddMenuModalProps {
   categories: BaseCategory[];
 }
 
-const FORM_DEFAULTS = {
-  imageUrl: '',
-  name: '',
-  categoryId: '',
-  stock: 0,
-  productionCapital: 0,
-  sellingPrice: 0,
-  profit: 0,
-  isActive: true,
-} as const;
-
 const IMAGE_CONSTRAINTS = {
   MAX_SIZE: 5 * 1024 * 1024,
   ACCEPTED_TYPES: 'image/*',
@@ -75,14 +65,14 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
   const {
     register,
     handleSubmit,
-    reset,
     watch,
     setValue,
+    reset,
     control,
+    setError,
+    clearErrors,
     formState: { errors },
-  } = useForm<CreateMenuInput>({
-    defaultValues: FORM_DEFAULTS,
-  });
+  } = useCreateMenuForm();
 
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -167,6 +157,32 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     }
   };
 
+  const validateImageInput = (): boolean => {
+    const hasImageUrl =
+      watchedValues.imageUrl && watchedValues.imageUrl.trim() !== '';
+    const hasImageFile = imageFile !== null;
+
+    if (!hasImageUrl && !hasImageFile) {
+      setError('imageUrl', {
+        type: 'manual',
+        message: 'Silakan upload gambar atau masukkan URL gambar',
+      });
+      return false;
+    }
+
+    // Jika ada imageUrl, validasi apakah URL valid
+    if (hasImageUrl && !isValidUrl(watchedValues.imageUrl ?? '')) {
+      setError('imageUrl', {
+        type: 'manual',
+        message: 'URL gambar tidak valid',
+      });
+      return false;
+    }
+
+    clearErrors('imageUrl');
+    return true;
+  };
+
   const resetImageState = () => {
     setImageFile(null);
     setImagePreview(null);
@@ -191,6 +207,7 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
 
     setImageFile(file);
     setValue('imageUrl', '');
+    clearErrors('imageUrl');
     setImagePreview(URL.createObjectURL(file));
   };
 
@@ -223,9 +240,13 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setValue('imageUrl', url);
-    if (url) {
+    if (url && url.trim() !== '') {
       setImageFile(null);
       setImagePreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      clearErrors('imageUrl');
     }
   };
 
@@ -245,28 +266,19 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
     onClose();
   };
 
-  const submitForm = async (data: CreateMenuInput) => {
+  const submitForm = async (data: CreateMenuInputPayload) => {
     try {
-      // Image validation
-      if (!imageFile && !data.imageUrl) {
-        addToast(
-          'Silakan upload gambar atau masukkan URL gambar',
-          'error',
-          3000
-        );
+      if (!validateImageInput()) {
         return;
       }
 
-      if (data.imageUrl && !isValidUrl(data.imageUrl)) {
-        addToast('URL gambar tidak valid', 'error', 3000);
-        return;
-      }
+      let finalImageUrl = '';
 
-      // Handle image upload
-      let finalImageUrl = data.imageUrl;
       if (imageFile) {
         const result = await doUploadImage(imageFile);
         finalImageUrl = result.imageUrl;
+      } else if (data.imageUrl && data.imageUrl.trim() !== '') {
+        finalImageUrl = data.imageUrl;
       }
 
       // Create menu

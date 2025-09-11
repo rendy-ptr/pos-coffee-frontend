@@ -7,12 +7,22 @@ import {
 } from '../services/menu.service';
 
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { CreateMenuInput, UpdateMenuInput, BaseMenu } from '../types/menu';
+import type { UpdateMenuInput, BaseMenu } from '../types/menu';
+import {
+  createMenuSchema,
+  type CreateMenuInputPayload,
+} from '../schema/menu.schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateMenu = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<null>, Error, CreateMenuInput>({
+  const mutation = useMutation<
+    ApiResponse<null>,
+    Error,
+    CreateMenuInputPayload
+  >({
     mutationFn: createMenu,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['menus'] });
@@ -69,4 +79,12 @@ export const useDeleteMenu = () => {
     ...mutation,
     doDeleteMenu: mutation.mutateAsync,
   };
+};
+
+export const useCreateMenuForm = () => {
+  const method = useForm<CreateMenuInputPayload>({
+    resolver: zodResolver(createMenuSchema),
+    mode: 'onBlur',
+  });
+  return method;
 };

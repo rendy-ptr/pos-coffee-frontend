@@ -1,15 +1,15 @@
-import type {
-  BaseCategory,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from '../types/category';
+import type { BaseCategory } from '../types/category';
 import apiClient from '@/utils/apiClient';
 import type { ApiResponse } from '@/types/ApiResponse';
 
 import { API_PATHS } from '@/constants/apiPaths';
+import type {
+  UpdateCategoryInputPayload,
+  CreateCategoryInputPayload,
+} from '../schema/category.schema';
 
 export const createCategory = async (
-  payload: CreateCategoryInput
+  payload: CreateCategoryInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.KATEGORI(),
@@ -30,7 +30,7 @@ export const fetchCategories = async (): Promise<
 
 export const updateCategory = async (
   id: string,
-  payload: UpdateCategoryInput
+  payload: UpdateCategoryInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.KATEGORI(id),

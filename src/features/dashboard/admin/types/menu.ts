@@ -17,17 +17,6 @@ export interface BaseMenu {
   category: BaseCategory;
 }
 
-export interface CreateMenuInput {
-  imageUrl: string;
-  name: string;
-  categoryId: string;
-  stock: number;
-  productionCapital: number;
-  sellingPrice: number;
-  profit: number;
-  isActive: boolean;
-}
-
 export interface UpdateMenuInput {
   imageUrl: string;
   name: string;

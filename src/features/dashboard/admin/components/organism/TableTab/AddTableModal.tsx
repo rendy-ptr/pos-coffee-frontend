@@ -9,12 +9,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
-// import { useCreateTable } from '../../../hooks/tableHooks';
-import type { CreateTableInput } from '../../../types/table.type';
 import {
   Select,
   SelectContent,
@@ -22,34 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { AxiosError } from 'axios';
-import { useCreateTable } from '../../../hooks/table.hook';
+import { useCreateTable, useCreateTableForm } from '../../../hooks/table.hook';
+
+import type { CreateTableFormData } from '../../../schema/table.schema';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const { CheckCircle, XCircle, SquaresExclude, Home, Palmtree } = lucideIcons;
-
-// Zod schema for form validation
-const tableSchema = z.object({
-  number: z
-    .string()
-    .min(1, 'Nomor meja wajib diisi')
-    .regex(/^\d+$/, 'Nomor meja harus berupa angka'),
-  capacity: z
-    .string()
-    .min(1, 'Kapasitas wajib diisi')
-    .regex(/^\d+$/, 'Kapasitas harus berupa angka'),
-  location: z.enum(['INDOOR', 'OUTDOOR'], {
-    required_error: 'Lokasi wajib dipilih',
-  }),
-});
-
-const FORM_DEFAULTS = {
-  number: '',
-  capacity: '',
-  location: 'INDOOR' as const,
-};
 
 interface AddTableModalProps {
   isOpen: boolean;
@@ -58,15 +35,12 @@ interface AddTableModalProps {
 
 const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
   const {
+    control,
     register,
     handleSubmit,
     reset,
-    control,
     formState: { errors },
-  } = useForm<CreateTableInput>({
-    resolver: zodResolver(tableSchema),
-    defaultValues: FORM_DEFAULTS,
-  });
+  } = useCreateTableForm();
 
   const { addToast } = useToast();
   const { doCreateTable, isPending: isLoading } = useCreateTable();
@@ -76,7 +50,7 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
     onClose();
   };
 
-  const submitForm = async (data: CreateTableInput) => {
+  const submitForm = async (data: CreateTableFormData) => {
     try {
       const response = await doCreateTable(data);
       if (response.success) {
@@ -88,7 +62,10 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
         console.log('Table created:', response);
         console.log('Status :', response.success);
         handleClose();
+      } else {
+        addToast(response.message || 'Gagal menambahkan meja', 'error', 3000);
       }
+      console.log('Response:', response);
     } catch (err) {
       if (err instanceof AxiosError) {
         addToast(err.response?.data?.message || err.message, 'error', 3000);
@@ -134,13 +111,16 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
                 <div className="space-y-2">
                   <Label
                     className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
+                    htmlFor="table-number"
                   >
                     Nomor Meja <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    {...register('number')}
-                    placeholder="Contoh: 1"
-                    className={`h-10 rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
+                    id="table-number"
+                    type="number"
+                    {...register('number', { valueAsNumber: true })}
+                    placeholder="Contoh: 01"
+                    className={`h-10 rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
                       errors.number
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
                         : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
@@ -158,13 +138,16 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
                 <div className="space-y-2">
                   <Label
                     className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
+                    htmlFor="table-capacity"
                   >
                     Kapasitas <span className="text-red-500">*</span>
                   </Label>
                   <Input
-                    {...register('capacity')}
+                    id="table-capacity"
+                    type="number"
+                    {...register('capacity', { valueAsNumber: true })}
                     placeholder="Contoh: 4"
-                    className={`h-10 rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
+                    className={`h-10 rounded-xl border-2 bg-white/70 ${COLOR.TEXT_PRIMARY} transition-all duration-200 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none ${
                       errors.capacity
                         ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
                         : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'

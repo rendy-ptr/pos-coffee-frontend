@@ -10,19 +10,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { iconOptions } from '../../../../constant/iconOptions';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useUpdateCategory } from '../../../../hooks/category.hook';
 import { useToast } from '@/components/shared/ToastProvider';
-import type {
-  UpdateCategoryInput,
-  BaseCategory,
-} from '../../../../types/category';
+import type { BaseCategory } from '../../../../types/category';
 import { useEffect } from 'react';
 import { CheckCircle } from 'lucide-react';
 import { COLOR } from '@/constants/Style';
 import { AxiosError } from 'axios';
+import { useFormPatch } from '@/hooks/patch.hook';
+import { useUpdateCategoryForm } from '../../../../hooks/category.hook';
+import type { UpdateCategoryInputPayload } from '@/features/dashboard/admin/schema/category.schema';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 
@@ -40,33 +40,28 @@ const EditCategoryModal = ({
   const {
     register,
     handleSubmit,
+    formState: { errors, dirtyFields },
+    control,
     reset,
     watch,
-    control,
-    formState: { errors },
-  } = useForm<UpdateCategoryInput>({
-    defaultValues: {
-      name: '',
-      description: '',
-      icon: '',
-      isActive: true,
-    },
-  });
+  } = useUpdateCategoryForm();
+
+  const { doUpdateCategory, isPending: isLoadingEdit } = useUpdateCategory();
+  const { addToast } = useToast();
+  const { createPatch } = useFormPatch<UpdateCategoryInputPayload>();
 
   useEffect(() => {
-    if (categoryItem) {
+    if (open && categoryItem) {
       reset({
         name: categoryItem.name,
-        description: categoryItem.description ?? '',
+        description: categoryItem.description,
         icon: categoryItem.icon,
         isActive: categoryItem.isActive,
       });
     }
-  }, [categoryItem, reset]);
+  }, [categoryItem, reset, open]);
 
   const selectedIcon = watch('icon');
-  const { doUpdateCategory, isPending: isLoadingEdit } = useUpdateCategory();
-  const { addToast } = useToast();
 
   const getLoadingMessage = () => {
     if (isLoadingEdit) return 'Mengedit kategori...';
@@ -75,11 +70,20 @@ const EditCategoryModal = ({
 
   const isLoading = isLoadingEdit || false;
 
-  const submitForm = async (data: UpdateCategoryInput) => {
+  const submitForm = async (data: UpdateCategoryInputPayload) => {
     try {
+      const patchData = createPatch(data, dirtyFields);
+      console.log('patchData', patchData);
+
+      if (Object.keys(patchData).length === 0) {
+        addToast('Tidak ada perubahan untuk disimpan', 'info', 3000);
+        onClose();
+        return;
+      }
+
       const response = await doUpdateCategory({
         id: categoryItem.id,
-        payload: data,
+        payload: patchData,
       });
       if (response.success) {
         addToast(
@@ -104,7 +108,6 @@ const EditCategoryModal = ({
       } else if (err instanceof Error) {
         message = err.message || message;
       }
-
       addToast(message, 'error', 3000);
     }
   };

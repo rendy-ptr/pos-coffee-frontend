@@ -5,13 +5,17 @@ import {
   updateCategory,
   deleteCategory,
 } from '../services/category.service';
-import type {
-  BaseCategory,
-  CreateCategoryInput,
-  UpdateCategoryInput,
-} from '../types/category';
+import type { BaseCategory } from '../types/category';
 import type { ApiResponse } from '@/types/ApiResponse';
 import { AxiosError } from 'axios';
+import {
+  type UpdateCategoryInputPayload,
+  type CreateCategoryInputPayload,
+  createCategorySchema,
+  updateCategorySchema,
+} from '../schema/category.schema';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useFetchCategories = () => {
   const query = useQuery<ApiResponse<BaseCategory[]>>({
@@ -28,7 +32,11 @@ export const useFetchCategories = () => {
 export const useCreateCategory = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<null>, Error, CreateCategoryInput>({
+  const mutation = useMutation<
+    ApiResponse<null>,
+    Error,
+    CreateCategoryInputPayload
+  >({
     mutationFn: createCategory,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -47,7 +55,7 @@ export const useUpdateCategory = () => {
   const mutation = useMutation<
     ApiResponse<null>,
     Error,
-    { id: string; payload: UpdateCategoryInput }
+    { id: string; payload: UpdateCategoryInputPayload }
   >({
     mutationFn: ({ id, payload }) => updateCategory(id, payload),
     onSuccess: () => {
@@ -79,4 +87,26 @@ export const useDeleteCategory = () => {
     ...mutation,
     doDeleteCategory: mutation.mutateAsync,
   };
+};
+
+export const useCreateCategoryForm = () => {
+  const methods = useForm<CreateCategoryInputPayload>({
+    resolver: zodResolver(createCategorySchema),
+    mode: 'onBlur',
+    defaultValues: {
+      name: '',
+      description: '',
+      icon: '',
+      isActive: undefined,
+    },
+  });
+  return methods;
+};
+
+export const useUpdateCategoryForm = () => {
+  const methods = useForm<UpdateCategoryInputPayload>({
+    resolver: zodResolver(updateCategorySchema),
+    mode: 'onBlur',
+  });
+  return methods;
 };

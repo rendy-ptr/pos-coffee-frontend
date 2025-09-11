@@ -83,12 +83,20 @@ import {
   BadgeInfo,
   Table2,
   Palmtree,
+  Sparkles,
+  Wrench,
+  BookmarkCheck,
+  TreeDeciduous,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
   Palmtree,
   Lock,
+  Sparkles,
+  TreeDeciduous,
+  BookmarkCheck,
+  Wrench,
   Table2,
   BadgeInfo,
   SquaresExclude,

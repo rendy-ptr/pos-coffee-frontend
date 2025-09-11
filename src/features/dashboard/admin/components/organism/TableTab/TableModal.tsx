@@ -15,25 +15,30 @@ import {
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { formatDateForDisplay } from '@/utils/formatDate';
 
-// Mock Meja type for demonstration
 import type { BaseTable } from '../../../types/table.type';
 
 interface ITableModalProps {
   isOpen: boolean;
   onClose: () => void;
-  tableItem: BaseTable | null;
+  tableItem: BaseTable;
+  onEdit: () => void;
 }
 
-const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
-  if (!tableItem) return null;
-
+const TableModal = ({
+  isOpen,
+  onClose,
+  tableItem,
+  onEdit,
+}: ITableModalProps) => {
   const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'available':
+      case 'AVAILABLE':
         return {
           color: 'text-emerald-600',
           bg: 'bg-emerald-50/80',
@@ -46,7 +51,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
           pulse: 'animate-pulse',
           description: 'Meja siap untuk digunakan',
         };
-      case 'occupied':
+      case 'OCCUPIED':
         return {
           color: 'text-blue-600',
           bg: 'bg-blue-50/80',
@@ -59,7 +64,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
           pulse: '',
           description: 'Sedang digunakan pelanggan',
         };
-      case 'reserved':
+      case 'RESERVED':
         return {
           color: 'text-purple-600',
           bg: 'bg-purple-50/80',
@@ -72,7 +77,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
           pulse: '',
           description: 'Telah dibooking pelanggan',
         };
-      case 'maintenance':
+      case 'MAINTENANCE':
         return {
           color: 'text-red-600',
           bg: 'bg-red-50/80',
@@ -120,7 +125,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
     {
       icon: Clock,
       label: 'Terakhir dibersihkan',
-      value: tableItem.lastCleaned,
+      value: formatDateForDisplay(tableItem.lastCleaned),
       description: 'Kebersihan meja',
     },
   ];
@@ -176,12 +181,12 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
                   <DialogTitle className="text-2xl font-bold tracking-tight text-gray-900">
                     Meja {tableItem.number}
                   </DialogTitle>
-                  <div className="flex items-center space-x-2 text-sm">
+                  <DialogDescription className="flex items-center space-x-2 text-sm">
                     <MapPin className="h-4 w-4 text-amber-600" />
                     <span className="font-medium text-gray-600">
                       {tableItem.location}
                     </span>
-                  </div>
+                  </DialogDescription>
                 </div>
               </div>
             </div>
@@ -249,7 +254,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
           </div>
 
           {/* Premium Reservation Info */}
-          {tableItem.status === 'reserved' && tableItem.reservedBy && (
+          {tableItem.status === 'RESERVED' && tableItem.reservedBy && (
             <div className="via-purple-25/60 mb-6 transform overflow-hidden rounded-xl border border-purple-200/60 bg-gradient-to-br from-purple-50/80 to-white/40 backdrop-blur-sm transition-all duration-500 hover:scale-[1.01] hover:shadow-lg hover:shadow-purple-500/20">
               {/* Animated background */}
               <div className="absolute inset-0 animate-pulse bg-gradient-to-r from-purple-400/5 via-purple-500/10 to-purple-600/5" />
@@ -279,7 +284,7 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
                         Waktu Reservasi
                       </span>
                       <span className="font-bold text-purple-900">
-                        {tableItem.reservedTime}
+                        {formatDateForDisplay(tableItem.reservedTime)}
                       </span>
                     </div>
                   )}
@@ -290,7 +295,10 @@ const TableModal = ({ isOpen, onClose, tableItem }: ITableModalProps) => {
 
           {/* Premium Action Buttons */}
           <div className="flex space-x-3">
-            <button className="group relative flex-1 overflow-hidden rounded-xl bg-gradient-to-r from-[#6f4e37] via-[#8b5e3c] to-[#5d4130] px-6 py-4 font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-amber-500/30 active:scale-[0.98]">
+            <button
+              className="group relative flex-1 overflow-hidden rounded-xl bg-gradient-to-r from-[#6f4e37] via-[#8b5e3c] to-[#5d4130] px-6 py-4 font-bold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl hover:shadow-amber-500/30 active:scale-[0.98]"
+              onClick={onEdit}
+            >
               {/* Button shine effect */}
               <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
 
