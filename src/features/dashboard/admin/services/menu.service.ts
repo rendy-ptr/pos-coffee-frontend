@@ -1,8 +1,11 @@
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { BaseMenu, UpdateMenuInput } from '../types/menu';
+import type { BaseMenu } from '../types/menu';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
-import type { CreateMenuInputPayload } from '../schema/menu.schema';
+import type {
+  CreateMenuInputPayload,
+  UpdateMenuInputPayload,
+} from '../schema/menu.schema';
 
 export const createMenu = async (
   payload: CreateMenuInputPayload
@@ -23,7 +26,7 @@ export const getMenus = async (): Promise<ApiResponse<BaseMenu[]>> => {
 
 export const updateMenu = async (
   id: string,
-  payload: UpdateMenuInput
+  payload: UpdateMenuInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.MENU(id),

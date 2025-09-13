@@ -17,16 +17,18 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
+import { useFormPatch } from '@/hooks/patch.hook';
 
-import type { UpdateMenuInput, BaseMenu } from '../../../types/menu';
+import type { UpdateMenuInputPayload } from '../../../schema/menu.schema';
+import type { BaseMenu } from '../../../types/menu';
 import type { BaseCategory } from '../../../types/category';
 import * as LucideIcons from 'lucide-react';
 import type { LucideProps } from 'lucide-react';
-import { useUpdateMenu } from '../../../hooks/menu.hook';
+import { useUpdateMenu, useEditMenuForm } from '../../../hooks/menu.hook';
 import { useUploadImage } from '../../../hooks/useUpload';
 import { AxiosError } from 'axios';
 
@@ -56,17 +58,6 @@ interface EditMenuModalProps {
   categories: BaseCategory[];
 }
 
-const FORM_DEFAULTS = {
-  imageUrl: '',
-  name: '',
-  categoryId: '',
-  stock: 0,
-  productionCapital: 0,
-  sellingPrice: 0,
-  profit: 0,
-  isActive: true,
-} as const;
-
 const IMAGE_CONSTRAINTS = {
   MAX_SIZE: 5 * 1024 * 1024,
   ACCEPTED_TYPES: 'image/*',
@@ -78,18 +69,6 @@ const EditMenuModal = ({
   menuItem,
   categories,
 }: EditMenuModalProps) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<UpdateMenuInput>({
-    defaultValues: FORM_DEFAULTS,
-  });
-
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
   // Local state
@@ -101,6 +80,18 @@ const EditMenuModal = ({
   const { addToast } = useToast();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
   const { doUpdateMenu, isPending: isLoadingSave } = useUpdateMenu();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    watch,
+    setValue,
+    setError,
+    clearErrors,
+    formState: { errors, dirtyFields },
+  } = useEditMenuForm();
+  const { createPatch } = useFormPatch<UpdateMenuInputPayload>();
 
   useEffect(() => {
     if (open && menuItem) {
@@ -137,10 +128,10 @@ const EditMenuModal = ({
 
   // Watched values
   const watchedValues = {
-    price: watch('sellingPrice'),
-    cost: watch('productionCapital'),
-    imageUrl: watch('imageUrl'),
-    profit: watch('profit'),
+    price: watch('sellingPrice') ?? 0,
+    cost: watch('productionCapital') ?? 0,
+    imageUrl: watch('imageUrl') ?? '',
+    profit: watch('profit') ?? 0,
   };
 
   // Computed values
@@ -200,6 +191,41 @@ const EditMenuModal = ({
     }
   };
 
+  const validateImageInput = (): boolean => {
+    const hasImageUrl =
+      watchedValues.imageUrl && watchedValues.imageUrl.trim() !== '';
+    const hasImageFile = imageFile !== null;
+
+    if (!hasImageUrl && !hasImageFile) {
+      setError('imageUrl', {
+        type: 'manual',
+        message: 'Silakan upload gambar atau masukkan URL gambar',
+      });
+
+      addToast(
+        'Gagal menyimpan: menu harus memiliki gambar (upload atau URL)',
+        'error',
+        4000
+      );
+
+      return false;
+    }
+
+    if (hasImageUrl && !isValidUrl(watchedValues.imageUrl ?? '')) {
+      setError('imageUrl', {
+        type: 'manual',
+        message: 'URL gambar tidak valid',
+      });
+
+      addToast('URL gambar yang dimasukkan tidak valid', 'error', 4000);
+
+      return false;
+    }
+
+    clearErrors('imageUrl');
+    return true;
+  };
+
   const resetImageState = () => {
     setImageFile(null);
     setImagePreview(null);
@@ -251,11 +277,13 @@ const EditMenuModal = ({
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const url = e.target.value;
     setValue('imageUrl', url);
-    if (url) {
+    if (url && url.trim() !== '') {
       setImageFile(null);
-      setImagePreview(url);
-    } else {
-      setImagePreview(menuItem?.imageUrl || null);
+      setImagePreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      clearErrors('imageUrl');
     }
   };
 
@@ -274,37 +302,31 @@ const EditMenuModal = ({
     onClose();
   };
 
-  const submitForm = async (data: UpdateMenuInput) => {
+  const submitForm = async (data: UpdateMenuInputPayload) => {
     try {
-      // Image validation
-      if (!imageFile && !data.imageUrl && !menuItem.imageUrl) {
-        addToast(
-          'Silakan upload gambar atau gunakan gambar lama',
-          'error',
-          3000
-        );
-        return;
-      }
+      if (!validateImageInput()) return;
 
-      if (data.imageUrl && !isValidUrl(data.imageUrl)) {
-        addToast('URL gambar tidak valid', 'error', 3000);
-        return;
-      }
-
-      // Handle image upload
-      let finalImageUrl = data.imageUrl || menuItem.imageUrl;
+      // Tentukan imageUrl final
+      let finalImageUrl = menuItem.imageUrl ?? '';
       if (imageFile) {
         const result = await doUploadImage(imageFile);
         finalImageUrl = result.imageUrl;
+      } else if (data.imageUrl && data.imageUrl.trim() !== '') {
+        finalImageUrl = data.imageUrl;
       }
 
-      // Create menu
+      // Buat patch hanya field yang berubah
+      const patchPayload: UpdateMenuInputPayload = {
+        ...createPatch(data, dirtyFields),
+        imageUrl: finalImageUrl,
+      };
+
+      console.log(' Patch payload yang dikirim:', patchPayload);
+
+      // Call API
       const response = await doUpdateMenu({
         id: menuItem.id,
-        payload: {
-          ...data,
-          imageUrl: finalImageUrl,
-        },
+        payload: patchPayload,
       });
 
       if (response.success) {
@@ -319,13 +341,11 @@ const EditMenuModal = ({
       }
     } catch (err) {
       let message = 'Gagal memperbarui menu';
-
       if (err instanceof AxiosError) {
         message = err.response?.data?.message || err.message || message;
       } else if (err instanceof Error) {
         message = err.message || message;
       }
-
       addToast(message, 'error', 3000);
     }
   };

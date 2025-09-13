@@ -13,6 +13,9 @@ export const createMenuSchema = z.object({
 
 export type CreateMenuInputPayload = z.infer<typeof createMenuSchema>;
 
+export const editMenuSchema = createMenuSchema.partial();
+export type UpdateMenuInputPayload = z.infer<typeof editMenuSchema>;
+
 // export interface CreateMenuInput {
 //   imageUrl: string;
 //   name: string;

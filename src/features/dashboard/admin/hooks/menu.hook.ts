@@ -7,10 +7,12 @@ import {
 } from '../services/menu.service';
 
 import type { ApiResponse } from '@/types/ApiResponse';
-import type { UpdateMenuInput, BaseMenu } from '../types/menu';
+import type { BaseMenu } from '../types/menu';
 import {
   createMenuSchema,
+  editMenuSchema,
   type CreateMenuInputPayload,
+  type UpdateMenuInputPayload,
 } from '../schema/menu.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -52,7 +54,7 @@ export const useUpdateMenu = () => {
   const mutation = useMutation<
     ApiResponse<null>,
     Error,
-    { id: string; payload: UpdateMenuInput }
+    { id: string; payload: UpdateMenuInputPayload }
   >({
     mutationFn: ({ id, payload }) => updateMenu(id, payload),
     onSuccess: () => {
@@ -84,6 +86,14 @@ export const useDeleteMenu = () => {
 export const useCreateMenuForm = () => {
   const method = useForm<CreateMenuInputPayload>({
     resolver: zodResolver(createMenuSchema),
+    mode: 'onBlur',
+  });
+  return method;
+};
+
+export const useEditMenuForm = () => {
+  const method = useForm<UpdateMenuInputPayload>({
+    resolver: zodResolver(editMenuSchema),
     mode: 'onBlur',
   });
   return method;
