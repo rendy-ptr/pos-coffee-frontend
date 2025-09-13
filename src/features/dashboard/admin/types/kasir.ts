@@ -13,25 +13,3 @@ export interface KasirProfile {
   totalOrder: number;
   userId: string;
 }
-
-export interface CreateKasirInput {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  profilePicture?: string | null;
-  shiftStart: string;
-  shiftEnd: string;
-  isActive: boolean;
-}
-
-export interface UpdateKasirInput {
-  name: string;
-  email: string;
-  password: string;
-  phone: string;
-  profilePicture?: string | null;
-  shiftStart: string;
-  shiftEnd: string;
-  isActive: boolean;
-}

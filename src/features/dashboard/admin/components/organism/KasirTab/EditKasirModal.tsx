@@ -10,13 +10,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Controller, useForm } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useUploadImage } from '../../../hooks/useUpload';
-import { useUpdateKasir } from '../../../hooks/kasir.hook';
-import type { CreateKasirInput, BaseKasir } from '../../../types/kasir';
+import { useUpdateKasir, useEditKasirForm } from '../../../hooks/kasir.hook';
+import { useFormPatch } from '@/hooks/patch.hook';
+import type { BaseKasir } from '../../../types/kasir';
 import {
   Select,
   SelectContent,
@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { calculateShiftDuration } from '@/utils/calculateShiftDuration';
 import { AxiosError } from 'axios';
+import type { UpdateKasirInputPayload } from '../../../schema/kasir.schema';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const {
@@ -49,35 +50,12 @@ interface EditKasirModalProps {
   kasirItem: BaseKasir;
 }
 
-const FORM_DEFAULTS = {
-  name: '',
-  email: '',
-  password: '',
-  phone: '',
-  profilePicture: '',
-  shiftStart: '',
-  shiftEnd: '',
-  isActive: true,
-} as const;
-
 const IMAGE_CONSTRAINTS = {
   MAX_SIZE: 5 * 1024 * 1024,
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
 const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<CreateKasirInput>({
-    defaultValues: FORM_DEFAULTS,
-  });
-
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -90,6 +68,17 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
   const { addToast } = useToast();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
   const { doUpdateKasir, isPending: isLoadingSave } = useUpdateKasir();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, dirtyFields },
+    watch,
+    setValue,
+    reset,
+    Controller,
+    control,
+  } = useEditKasirForm();
+  const { createPatch } = useFormPatch<UpdateKasirInputPayload>();
 
   useEffect(() => {
     if (open && kasirItem) {
@@ -98,7 +87,7 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
         email: kasirItem.email,
         password: '',
         phone: kasirItem.phone,
-        profilePicture: kasirItem.profilePicture,
+        profilePicture: kasirItem.profilePicture || undefined,
         shiftStart: kasirItem.kasirProfile.shiftStart,
         shiftEnd: kasirItem.kasirProfile.shiftEnd,
         isActive: kasirItem.isActive,
@@ -166,7 +155,7 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
   const resetImageState = () => {
     setImageFile(null);
     setImagePreview(null);
-    setValue('profilePicture', null);
+    setValue('profilePicture', undefined);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -231,9 +220,9 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
     onClose();
   };
 
-  const submitForm = async (data: CreateKasirInput) => {
+  const submitForm = async (data: UpdateKasirInputPayload) => {
     try {
-      let finalProfilePicture: string | null = null;
+      let finalProfilePicture: string | undefined = undefined;
 
       if (imageFile) {
         const result = await doUploadImage(imageFile);
@@ -242,15 +231,18 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
         finalProfilePicture = data.profilePicture;
       }
 
-      const kasirData = {
-        id: kasirItem.id,
-        payload: {
-          ...data,
-          profilePicture: finalProfilePicture,
-        },
-      };
+      const patchPayload = createPatch(data, dirtyFields);
 
-      const response = await doUpdateKasir(kasirData);
+      if (finalProfilePicture !== null) {
+        patchPayload.profilePicture = finalProfilePicture;
+      }
+
+      console.log('🟢 Patch payload yang dikirim:', patchPayload);
+
+      const response = await doUpdateKasir({
+        id: kasirItem.id,
+        payload: patchPayload,
+      });
 
       if (response.success) {
         addToast(
@@ -657,8 +649,8 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
                       <p className="text-sm text-[#6f4e37]/80">Durasi Shift</p>
                       <p className="animate-in fade-in-50 text-lg font-semibold text-[#3e2723]">
                         {calculateShiftDuration(
-                          watch('shiftStart'),
-                          watch('shiftEnd')
+                          watch('shiftStart') ?? '',
+                          watch('shiftEnd') ?? ''
                         )}
                       </p>
                     </div>

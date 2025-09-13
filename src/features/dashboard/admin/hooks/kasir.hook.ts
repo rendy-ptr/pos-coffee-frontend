@@ -1,9 +1,5 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import type {
-  CreateKasirInput,
-  BaseKasir,
-  UpdateKasirInput,
-} from '../types/kasir';
+import type { BaseKasir } from '../types/kasir';
 import type { ApiResponse } from '@/types/ApiResponse';
 import {
   createKasir,
@@ -12,11 +8,23 @@ import {
   refreshKasir,
   updateKasir,
 } from '../services/kasir.service';
+import {
+  CreateKasirSchema,
+  editKasirSchema,
+  type CreateKasirInputPayload,
+  type UpdateKasirInputPayload,
+} from '../schema/kasir.schema';
+import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 export const useCreateKasir = () => {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<ApiResponse<null>, Error, CreateKasirInput>({
+  const mutation = useMutation<
+    ApiResponse<null>,
+    Error,
+    CreateKasirInputPayload
+  >({
     mutationFn: createKasir,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['kasirs'] });
@@ -46,7 +54,7 @@ export const useUpdateKasir = () => {
   const mutation = useMutation<
     ApiResponse<null>,
     Error,
-    { id: string; payload: UpdateKasirInput }
+    { id: string; payload: UpdateKasirInputPayload }
   >({
     mutationFn: ({ id, payload }) => updateKasir(id, payload),
     onSuccess: () => {
@@ -87,5 +95,27 @@ export const useRefreshKasir = () => {
   return {
     ...mutation,
     doRefreshKasir: mutation.mutateAsync,
+  };
+};
+
+export const useCreateKasirForm = () => {
+  const method = useForm<CreateKasirInputPayload>({
+    resolver: zodResolver(CreateKasirSchema),
+    mode: 'onBlur',
+  });
+  return {
+    ...method,
+    Controller,
+  };
+};
+
+export const useEditKasirForm = () => {
+  const method = useForm<UpdateKasirInputPayload>({
+    resolver: zodResolver(editKasirSchema),
+    mode: 'onBlur',
+  });
+  return {
+    ...method,
+    Controller,
   };
 };

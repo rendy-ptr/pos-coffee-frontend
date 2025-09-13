@@ -1,14 +1,14 @@
 import type { ApiResponse } from '@/types/ApiResponse';
 import apiClient from '@/utils/apiClient';
 import { API_PATHS } from '@/constants/apiPaths';
+import type { BaseKasir } from '../types/kasir';
 import type {
-  CreateKasirInput,
-  BaseKasir,
-  UpdateKasirInput,
-} from '../types/kasir';
+  CreateKasirInputPayload,
+  UpdateKasirInputPayload,
+} from '../schema/kasir.schema';
 
 export const createKasir = async (
-  payload: CreateKasirInput
+  payload: CreateKasirInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.post<ApiResponse<null>>(
     API_PATHS.ADMIN.KASIR(),
@@ -26,7 +26,7 @@ export const getKasirs = async (): Promise<ApiResponse<BaseKasir[]>> => {
 
 export const updateKasir = async (
   id: string,
-  payload: UpdateKasirInput
+  payload: UpdateKasirInputPayload
 ): Promise<ApiResponse<null>> => {
   const { data } = await apiClient.patch<ApiResponse<null>>(
     API_PATHS.ADMIN.KASIR(id),

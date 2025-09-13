@@ -10,13 +10,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Controller, useForm } from 'react-hook-form';
 import { COLOR } from '@/constants/Style';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useUploadImage } from '../../../hooks/useUpload';
-import { useCreateKasir } from '../../../hooks/kasir.hook';
-import type { CreateKasirInput } from '../../../types/kasir';
+import { useCreateKasir, useCreateKasirForm } from '../../../hooks/kasir.hook';
 import {
   Select,
   SelectContent,
@@ -26,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { calculateShiftDuration } from '@/utils/calculateShiftDuration';
 import { AxiosError } from 'axios';
+import type { CreateKasirInputPayload } from '../../../schema/kasir.schema';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION, BUTTON_CANCEL } = COLOR;
 const {
@@ -37,7 +36,6 @@ const {
   Clock,
   Mail,
   Phone,
-  Lock,
   Camera,
   UserCheck,
   Timer,
@@ -48,35 +46,12 @@ interface AddKasirModalProps {
   onClose: () => void;
 }
 
-const FORM_DEFAULTS = {
-  name: '',
-  email: '',
-  password: '',
-  phone: '',
-  profilePicture: '',
-  shiftStart: '',
-  shiftEnd: '',
-  isActive: true,
-} as const;
-
 const IMAGE_CONSTRAINTS = {
   MAX_SIZE: 5 * 1024 * 1024,
   ACCEPTED_TYPES: 'image/*',
 } as const;
 
 const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm<CreateKasirInput>({
-    defaultValues: FORM_DEFAULTS,
-  });
-
   // Refs
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -89,6 +64,16 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
   const { addToast } = useToast();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
   const { doCreateKasir, isPending: isLoadingSave } = useCreateKasir();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    watch,
+    setValue,
+    reset,
+    Controller,
+  } = useCreateKasirForm();
 
   // Watched values
   const watchedValues = {
@@ -203,10 +188,10 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
     onClose();
   };
 
-  const submitForm = async (data: CreateKasirInput) => {
+  const submitForm = async (data: CreateKasirInputPayload) => {
     try {
       // Handle image upload if file exists
-      let finalProfilePicture: string | null = null;
+      let finalProfilePicture: string | undefined = undefined;
       if (imageFile) {
         const result = await doUploadImage(imageFile);
         finalProfilePicture = result.imageUrl;
@@ -216,7 +201,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
 
       const kasirData = {
         ...data,
-        profilePicture: finalProfilePicture,
+        ...(finalProfilePicture && { profilePicture: finalProfilePicture }),
       };
 
       const response = await doCreateKasir(kasirData);
@@ -434,39 +419,27 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                     )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label
-                      className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
-                    >
-                      Password <span className="text-red-500">*</span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        type="password"
-                        {...register('password', {
-                          required: 'Password wajib diisi',
-                          minLength: {
-                            value: 6,
-                            message: 'Password minimal 6 karakter',
-                          },
-                        })}
-                        placeholder="Masukkan password"
-                        className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
-                          errors.password
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
-                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
-                        }`}
-                      />
-                      <Lock
-                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
-                      />
+                  <div className="rounded-2xl border-2 border-[#e6d9c9]/50 bg-gradient-to-r from-[#f8f5f0] to-[#faf9f7] p-5 shadow-md transition-all duration-300 hover:shadow-lg">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`rounded-lg ${COLOR.BG_ICON} p-2.5 shadow-sm`}
+                      >
+                        <Mail className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <p
+                          className={`text-sm leading-relaxed ${COLOR.TEXT_SECONDARY}`}
+                        >
+                          Password akan{' '}
+                          <strong
+                            className={`font-semibold ${COLOR.TEXT_PRIMARY}`}
+                          >
+                            di-generate otomatis
+                          </strong>{' '}
+                          dan dikirim ke email kasir setelah akun dibuat.
+                        </p>
+                      </div>
                     </div>
-                    {errors.password && (
-                      <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
-                        <XCircle className="h-4 w-4" />
-                        {errors.password.message}
-                      </p>
-                    )}
                   </div>
 
                   <div className="space-y-2">
