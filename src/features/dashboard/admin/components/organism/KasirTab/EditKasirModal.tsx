@@ -38,7 +38,6 @@ const {
   Clock,
   Mail,
   Phone,
-  Lock,
   Camera,
   UserCheck,
   Timer,
@@ -85,7 +84,6 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
       reset({
         name: kasirItem.name,
         email: kasirItem.email,
-        password: '',
         phone: kasirItem.phone,
         profilePicture: kasirItem.profilePicture || undefined,
         shiftStart: kasirItem.kasirProfile.shiftStart,
@@ -453,35 +451,6 @@ const EditKasirModal = ({ open, onClose, kasirItem }: EditKasirModalProps) => {
                       <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
                         <XCircle className="h-4 w-4" />
                         {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label
-                      className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
-                    >
-                      Password
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        type="password"
-                        {...register('password')}
-                        placeholder="Masukkan password"
-                        className={`h-12 rounded-xl border-2 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 ${
-                          errors.password
-                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/30'
-                            : 'border-[#e6d9c9]/50 focus:border-[#6f4e37] focus:ring-[#6f4e37]/30'
-                        }`}
-                      />
-                      <Lock
-                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
-                      />
-                    </div>
-                    {errors.password && (
-                      <p className="animate-in slide-in-from-left-2 flex items-center gap-2 text-sm text-red-500">
-                        <XCircle className="h-4 w-4" />
-                        {errors.password.message}
                       </p>
                     )}
                   </div>

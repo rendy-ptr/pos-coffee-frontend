@@ -18,25 +18,34 @@ import TableModal from '../../organism/TableTab/TableModal';
 import AddTableModal from '../../organism/TableTab/AddTableModal';
 import { useGetTables } from '../../../hooks/table.hook';
 import EditTableModal from '../../organism/TableTab/EditTableModal';
+import DeleteTableModal from '../../organism/TableTab/DeleteTableModal';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
+const STATUS = {
+  AVAILABLE: 'AVAILABLE',
+  OCCUPIED: 'OCCUPIED',
+  RESERVED: 'RESERVED',
+  MAINTENANCE: 'MAINTENANCE',
+} as const;
+
 const filterOptions = [
-  { value: 'semua', label: 'Semua' },
-  { value: 'reserved', label: 'Meja Reserved' },
-  { value: 'maintenance', label: 'Meja Maintenance' },
-  { value: 'occupied', label: 'Meja Terisi' },
-  { value: 'available', label: 'Meja Tersedia' },
+  { value: 'SEMUA', label: 'Semua' },
+  { value: STATUS.RESERVED, label: 'Meja Reserved' },
+  { value: STATUS.MAINTENANCE, label: 'Meja Maintenance' },
+  { value: STATUS.OCCUPIED, label: 'Meja Terisi' },
+  { value: STATUS.AVAILABLE, label: 'Meja Tersedia' },
 ];
 
 const ManagementTableSection = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState('semua');
+  const [selectedFilter, setSelectedFilter] = useState('SEMUA');
   const [selectedMeja, setSelectedMeja] = useState<BaseTable | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const { tables } = useGetTables();
 
@@ -54,32 +63,27 @@ const ManagementTableSection = () => {
 
   const filterMejaSemua = tables.length;
   const filterMejaAvailable = tables.filter(
-    table => table.status === 'available'.toUpperCase()
+    t => t.status === STATUS.AVAILABLE
   ).length;
   const filterMejaOccupied = tables.filter(
-    table => table.status === 'occupied'.toUpperCase()
+    t => t.status === STATUS.OCCUPIED
   ).length;
   const filterMejaReserved = tables.filter(
-    table => table.status === 'reserved'.toUpperCase()
+    t => t.status === STATUS.RESERVED
   ).length;
   const filterMejaMaintenance = tables.filter(
-    table => table.status === 'maintenance'.toUpperCase()
+    t => t.status === STATUS.MAINTENANCE
   ).length;
 
   const filteredItems = useMemo(() => {
     return tables.filter(table => {
       const matchesSearch = searchTerm
-        ? table.number
-            .toString()
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+        ? table.number.toString().includes(searchTerm)
         : true;
 
-      const matchesFilter = selectedFilter
-        ? selectedFilter === 'semua'
-          ? true
-          : table.status === selectedFilter
-        : true;
+      const matchesFilter =
+        selectedFilter === 'SEMUA' ? true : table.status === selectedFilter;
+
       return matchesSearch && matchesFilter;
     });
   }, [searchTerm, selectedFilter, tables]);
@@ -253,7 +257,7 @@ const ManagementTableSection = () => {
                 />
               ))
             ) : (
-              <div className="flex flex-col items-center justify-center py-12">
+              <div className="col-span-full flex flex-col items-center justify-center">
                 <div className="mb-4 rounded-full bg-[#e6d9c9]/20 p-4">
                   <Search className="h-8 w-8 text-[#8c7158]/50" />
                 </div>
@@ -286,11 +290,20 @@ const ManagementTableSection = () => {
               setIsModalOpen(false);
               setIsEditModalOpen(true);
             }}
+            onDelete={() => {
+              setIsModalOpen(false);
+              setIsDeleteModalOpen(true);
+            }}
           />
 
           <EditTableModal
             isOpen={isEditModalOpen}
             onClose={() => setIsEditModalOpen(false)}
+            tableItem={selectedMeja}
+          />
+          <DeleteTableModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
             tableItem={selectedMeja}
           />
         </>

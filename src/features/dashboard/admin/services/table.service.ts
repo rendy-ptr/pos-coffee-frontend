@@ -34,3 +34,10 @@ export const updateTable = async (
   );
   return data;
 };
+
+export const deleteTable = async (id: string): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.delete<ApiResponse<null>>(
+    API_PATHS.ADMIN.TABLE(id)
+  );
+  return data;
+};

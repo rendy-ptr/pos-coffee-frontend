@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createTable, getTables, updateTable } from '../services/table.service';
+import {
+  createTable,
+  deleteTable,
+  getTables,
+  updateTable,
+} from '../services/table.service';
 import { createTableSchema, editTableSchema } from '../schema/table.schema';
 
 import type { ApiResponse } from '@/types/ApiResponse';
@@ -56,6 +61,21 @@ export const useUpdateTable = () => {
   return {
     ...mutation,
     doUpdateTable: mutation.mutateAsync,
+  };
+};
+
+export const useDeleteTable = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation<ApiResponse<null>, Error, string>({
+    mutationFn: deleteTable,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tables'] });
+    },
+  });
+  return {
+    ...mutation,
+    doDeleteTable: mutation.mutateAsync,
   };
 };
 

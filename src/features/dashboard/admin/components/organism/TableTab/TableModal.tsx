@@ -28,6 +28,7 @@ interface ITableModalProps {
   onClose: () => void;
   tableItem: BaseTable;
   onEdit: () => void;
+  onDelete: () => void;
 }
 
 const TableModal = ({
@@ -35,6 +36,7 @@ const TableModal = ({
   onClose,
   tableItem,
   onEdit,
+  onDelete,
 }: ITableModalProps) => {
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -308,7 +310,10 @@ const TableModal = ({
               </div>
             </button>
 
-            <button className="group relative overflow-hidden rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100/50 px-4 py-4 font-bold text-red-700 transition-all duration-300 hover:scale-[1.02] hover:border-red-300 hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98]">
+            <button
+              className="group relative overflow-hidden rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100/50 px-4 py-4 font-bold text-red-700 transition-all duration-300 hover:scale-[1.02] hover:border-red-300 hover:shadow-lg hover:shadow-red-500/20 active:scale-[0.98]"
+              onClick={onDelete}
+            >
               {/* Button shine effect */}
               <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-500 group-hover:translate-x-full" />
 
