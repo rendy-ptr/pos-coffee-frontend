@@ -12,7 +12,7 @@ const {
   Coffee,
   AlertCircle,
 } = lucideIcons;
-import AddMenuModal from '../../organism/MenuTab/AddMenuModal';
+import AddMenuModal from '../../molecule/MenuTab/AddMenuModal';
 import { COLOR } from '@/constants/Style';
 import { useMenus } from '../../../hooks/menu.hook';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';

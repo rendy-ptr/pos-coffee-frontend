@@ -2,8 +2,8 @@ import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { formatCurrency } from '@/utils/formatCurrency';
 import { useState } from 'react';
-import EditMenuModal from './EditMenuModal';
-import DeleteMenuModal from './DeleteMenuModal';
+import EditMenuModal from '../../molecule/MenuTab/EditMenuModal';
+import DeleteMenuModal from '../../molecule/MenuTab/DeleteMenuModal';
 import type { BaseMenu } from '../../../types/menu';
 import type { BaseCategory } from '../../../types/category';
 

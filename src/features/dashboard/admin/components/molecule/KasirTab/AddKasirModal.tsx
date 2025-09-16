@@ -642,7 +642,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                       >
                         <div className="flex items-center justify-center gap-2">
                           <CheckCircle className="h-5 w-5" />
-                          <span className="text-base">Menu Aktif</span>
+                          <span className="text-base">Kasir Aktif</span>
                         </div>
                         {field.value === true && (
                           <div className="absolute inset-0 animate-pulse bg-emerald-400/10"></div>
@@ -661,7 +661,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                       >
                         <div className="flex items-center justify-center gap-2">
                           <XCircle className="h-5 w-5" />
-                          <span className="text-base">Tidak Aktif</span>
+                          <span className="text-base">Kasir Non-Aktif</span>
                         </div>
                         {field.value === false && (
                           <div className="absolute inset-0 animate-pulse bg-red-400/10"></div>

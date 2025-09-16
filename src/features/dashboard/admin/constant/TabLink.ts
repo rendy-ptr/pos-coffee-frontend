@@ -16,12 +16,12 @@ export const TAB_LINK = [
     label: 'Meja',
   },
   {
-    value: 'pesanan',
-    label: 'Pesanan',
-  },
-  {
     value: 'reward',
     label: 'Reward',
+  },
+  {
+    value: 'pesanan',
+    label: 'Pesanan',
   },
   {
     value: 'laporan',

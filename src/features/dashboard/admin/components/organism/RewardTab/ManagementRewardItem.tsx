@@ -1,43 +1,35 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { CHILDREN_SHADOW_CARD_STYLE } from '@/constants/Style';
+import type { BaseRewards } from '../../../types/reward';
+import EditRewardModal from '../../molecule/RewardTab/EditRewardModal';
+import { useState } from 'react';
+import DeleteRewardModal from '../../molecule/RewardTab/DeleteRewardModal';
 
 interface IManagementRewardItemProps {
-  reward: {
-    id: number;
-    name: string;
-    points?: number | null;
-    description: string;
-    status: 'aktif' | 'nonaktif';
-    type: 'reward' | 'voucher';
-    terms?: string;
-    expiredAt?: string;
-    secretCode?: string;
-  };
-  onEdit?: (id: number) => void;
-  onDelete?: (id: number) => void;
+  rewardItem: BaseRewards;
 }
 
-const getStatusConfig = (status: string) => {
-  const configs = {
-    aktif: {
+const getStatusConfig = (isActive: boolean) => {
+  if (isActive) {
+    return {
       bgColor: 'bg-emerald-500',
       textColor: 'text-white',
       text: 'Aktif',
       dot: 'bg-emerald-400',
-    },
-    nonaktif: {
-      bgColor: 'bg-gray-500',
-      textColor: 'text-white',
-      text: 'Tidak Aktif',
-      dot: 'bg-gray-400',
-    },
-  };
+    };
+  }
 
-  return configs[status as keyof typeof configs] || configs.aktif;
+  return {
+    bgColor: 'bg-gray-500',
+    textColor: 'text-white',
+    text: 'Tidak Aktif',
+    dot: 'bg-gray-400',
+  };
 };
 
 const getTypeConfig = (type: string) => {
+  const normalized = type.toLowerCase();
   const configs = {
     reward: {
       bgColor: 'bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c]',
@@ -59,14 +51,12 @@ const getTypeConfig = (type: string) => {
     },
   };
 
-  return configs[type as keyof typeof configs] || configs.reward;
+  return configs[normalized as keyof typeof configs] || configs.reward;
 };
 
-const ManagementRewardItem = ({
-  reward,
-  onEdit,
-  onDelete,
-}: IManagementRewardItemProps) => {
+const ManagementRewardItem = ({ rewardItem }: IManagementRewardItemProps) => {
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const {
     Edit,
     Trash2,
@@ -78,22 +68,10 @@ const ManagementRewardItem = ({
     Hash,
     Copy,
   } = lucideIcons;
-  const statusConfig = getStatusConfig(reward.status);
-  const typeConfig = getTypeConfig(reward.type);
+  const statusConfig = getStatusConfig(rewardItem.isActive);
+  const typeConfig = getTypeConfig(rewardItem.type);
 
   const IconComponent = typeConfig.icon === 'Gift' ? Gift : Ticket;
-
-  const handleEdit = () => {
-    if (onEdit) {
-      onEdit(reward.id);
-    }
-  };
-
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(reward.id);
-    }
-  };
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -112,7 +90,7 @@ const ManagementRewardItem = ({
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  const daysLeft = getDaysUntilExpiry(reward.expiredAt);
+  const daysLeft = getDaysUntilExpiry(rewardItem.expiryDate);
   const isExpiringSoon = daysLeft !== null && daysLeft <= 7 && daysLeft > 0;
 
   return (
@@ -136,7 +114,7 @@ const ManagementRewardItem = ({
             <div className="mb-2 flex items-start justify-between gap-2">
               <div>
                 <h3 className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-base font-semibold text-transparent">
-                  {reward.name}
+                  {rewardItem.title}
                 </h3>
                 <div className="mt-1 flex items-center gap-2">
                   <span
@@ -157,23 +135,25 @@ const ManagementRewardItem = ({
             </div>
 
             {/* Description */}
-            <p className="mb-3 text-sm text-[#8c7158]">{reward.description}</p>
+            <p className="mb-3 text-sm text-[#8c7158]">
+              {rewardItem.description}
+            </p>
 
             {/* Info Grid */}
             <div className="mb-4 grid grid-cols-2 gap-3">
-              {reward.points && (
+              {rewardItem.points && (
                 <div className="rounded-lg border border-amber-200/50 bg-gradient-to-br from-amber-50 to-yellow-50 p-3">
                   <div className="flex items-center gap-1 text-xs text-amber-700">
                     <Coffee className="h-3 w-3" />
                     Poin Diperlukan
                   </div>
                   <div className="mt-1 font-semibold text-amber-800">
-                    {reward.points.toLocaleString()}
+                    {rewardItem.points.toLocaleString()}
                   </div>
                 </div>
               )}
 
-              {reward.secretCode && (
+              {rewardItem.code && (
                 <div className="rounded-lg border border-[#6f4e37]/30 bg-gradient-to-br from-[#6f4e37]/10 to-[#8b5e3c]/10 p-3">
                   <div className="flex items-center gap-1 text-xs text-[#6f4e37]">
                     <Hash className="h-3 w-3" />
@@ -181,11 +161,11 @@ const ManagementRewardItem = ({
                   </div>
                   <div className="mt-1 flex items-center gap-2">
                     <span className="font-mono text-sm font-bold text-[#6f4e37]">
-                      {reward.secretCode}
+                      {rewardItem.code}
                     </span>
                     <button
                       onClick={() =>
-                        navigator.clipboard?.writeText(reward.secretCode || '')
+                        navigator.clipboard?.writeText(rewardItem.code || '')
                       }
                       className="text-[#6f4e37]/60 transition-colors hover:text-[#6f4e37]"
                       title="Copy kode"
@@ -196,13 +176,13 @@ const ManagementRewardItem = ({
                 </div>
               )}
 
-              {reward.expiredAt && (
+              {rewardItem.expiryDate && (
                 <div
                   className={`rounded-lg border p-3 ${
                     isExpiringSoon
                       ? 'border-red-200/50 bg-gradient-to-br from-red-50 to-orange-50'
                       : 'border-[#6f4e37]/20 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5'
-                  } ${reward.secretCode ? 'col-span-2' : ''}`}
+                  } ${rewardItem.code ? 'col-span-2' : ''}`}
                 >
                   <div
                     className={`flex items-center gap-1 text-xs ${
@@ -219,19 +199,21 @@ const ManagementRewardItem = ({
                   >
                     {isExpiringSoon
                       ? `${daysLeft} hari lagi`
-                      : formatDate(reward.expiredAt)}
+                      : formatDate(rewardItem.expiryDate)}
                   </div>
                 </div>
               )}
             </div>
 
             {/* Terms (if exists) */}
-            {reward.terms && (
+            {rewardItem.conditions && (
               <div className="mb-4 rounded-lg border border-[#6f4e37]/20 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-3">
                 <div className="mb-1 text-xs font-medium text-[#6f4e37]">
                   Syarat & Ketentuan:
                 </div>
-                <div className="text-xs text-[#8c7158]">{reward.terms}</div>
+                <div className="text-xs text-[#8c7158]">
+                  {rewardItem.conditions}
+                </div>
               </div>
             )}
 
@@ -251,7 +233,7 @@ const ManagementRewardItem = ({
                 variant="outline"
                 size="sm"
                 className="flex-1 border-[#6f4e37]/30 text-sm text-[#6f4e37] transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white"
-                onClick={handleEdit}
+                onClick={() => setIsEditOpen(true)}
               >
                 <Edit className="mr-1.5 h-4 w-4" />
                 Edit
@@ -260,7 +242,7 @@ const ManagementRewardItem = ({
                 variant="outline"
                 size="sm"
                 className="flex-1 border-red-200 text-red-600 transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white"
-                onClick={handleDelete}
+                onClick={() => setIsDeleteOpen(true)}
               >
                 <Trash2 className="mr-1.5 h-4 w-4" />
                 Hapus
@@ -286,7 +268,7 @@ const ManagementRewardItem = ({
             <div className="min-w-0 flex-1">
               <div className="mb-2 flex items-start justify-between">
                 <h3 className="bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] bg-clip-text text-lg font-semibold text-transparent">
-                  {reward.name}
+                  {rewardItem.title}
                 </h3>
                 <div className="ml-4 flex items-center gap-2">
                   <span
@@ -305,28 +287,28 @@ const ManagementRewardItem = ({
                 </div>
               </div>
 
-              <p className="text-sm text-[#8c7158]">{reward.description}</p>
+              <p className="text-sm text-[#8c7158]">{rewardItem.description}</p>
 
               {/* Points & Expiry Info */}
               <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
-                {reward.points && (
+                {rewardItem.points && (
                   <div className="flex items-center gap-1.5 text-[#6f4e37]">
                     <Coffee className="h-4 w-4 text-amber-600" />
                     <span className="font-medium">
-                      {reward.points.toLocaleString()} poin
+                      {rewardItem.points.toLocaleString()} poin
                     </span>
                   </div>
                 )}
 
-                {reward.secretCode && (
+                {rewardItem.code && (
                   <div className="flex items-center gap-1.5 text-[#6f4e37]">
                     <Hash className="h-4 w-4" />
                     <span className="rounded bg-[#6f4e37]/10 px-2 py-1 font-mono text-sm font-medium">
-                      {reward.secretCode}
+                      {rewardItem.code}
                     </span>
                     <button
                       onClick={() =>
-                        navigator.clipboard?.writeText(reward.secretCode || '')
+                        navigator.clipboard?.writeText(rewardItem.code || '')
                       }
                       className="text-[#6f4e37]/60 transition-colors hover:text-[#6f4e37]"
                       title="Copy kode"
@@ -336,7 +318,7 @@ const ManagementRewardItem = ({
                   </div>
                 )}
 
-                {reward.expiredAt && (
+                {rewardItem.expiryDate && (
                   <div
                     className={`flex items-center gap-1.5 ${isExpiringSoon ? 'text-red-600' : 'text-[#8c7158]'}`}
                   >
@@ -344,7 +326,7 @@ const ManagementRewardItem = ({
                     <span className="font-medium">
                       {isExpiringSoon
                         ? `${daysLeft} hari lagi`
-                        : formatDate(reward.expiredAt)}
+                        : formatDate(rewardItem.expiryDate)}
                     </span>
                   </div>
                 )}
@@ -354,12 +336,14 @@ const ManagementRewardItem = ({
 
           {/* Terms & Conditions */}
           <div className="col-span-4">
-            {reward.terms ? (
+            {rewardItem.conditions ? (
               <div className="rounded-lg border border-[#6f4e37]/20 bg-gradient-to-br from-[#6f4e37]/5 to-[#8b5e3c]/5 p-4">
                 <div className="mb-2 text-sm font-medium text-[#6f4e37]">
                   Syarat & Ketentuan:
                 </div>
-                <div className="text-sm text-[#8c7158]">{reward.terms}</div>
+                <div className="text-sm text-[#8c7158]">
+                  {rewardItem.conditions}
+                </div>
               </div>
             ) : (
               <div className="text-center text-sm text-[#8c7158]/60">
@@ -384,7 +368,7 @@ const ManagementRewardItem = ({
               variant="outline"
               size="sm"
               className="border-[#6f4e37]/30 text-sm text-[#6f4e37] shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-[#6f4e37] hover:to-[#8b5e3c] hover:text-white hover:shadow-md"
-              onClick={handleEdit}
+              onClick={() => setIsEditOpen(true)}
             >
               <Edit className="mr-1.5 h-4 w-4" />
               Edit
@@ -393,7 +377,7 @@ const ManagementRewardItem = ({
               variant="outline"
               size="sm"
               className="border-red-200 text-red-600 shadow-sm transition-all duration-300 hover:border-transparent hover:bg-gradient-to-r hover:from-red-500 hover:to-red-600 hover:text-white hover:shadow-md"
-              onClick={handleDelete}
+              onClick={() => setIsDeleteOpen(true)}
             >
               <Trash2 className="mr-1.5 h-4 w-4" />
               Hapus
@@ -401,6 +385,16 @@ const ManagementRewardItem = ({
           </div>
         </div>
       </div>
+      <EditRewardModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        rewardItem={rewardItem}
+      />
+      <DeleteRewardModal
+        open={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        rewardItem={rewardItem}
+      />
     </div>
   );
 };

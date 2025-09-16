@@ -4,7 +4,7 @@ import { lucideIcons } from '@/icon/lucide-react-icons';
 import { PackagePlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import ManagementCategoryItem from '../../../organism/MenuBar/Category/ManagementCategoryItem';
-import AddCategoryModal from '../../../organism/MenuBar/Category/AddCategoryModal';
+import AddCategoryModal from '../../../molecule/MenuBar/Category/AddCategoryModal';
 import { useFetchCategories } from '../../../../hooks/category.hook';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import { COLOR } from '@/constants/Style';

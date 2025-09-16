@@ -1,9 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import type { BaseCategory } from '../../../../types/category';
-import EditCategoryModal from './EditCategoryModal';
+import EditCategoryModal from '../../../molecule/MenuBar/Category/EditCategoryModal';
 import { useState } from 'react';
-import DeleteCategoryModal from './DeleteCategoryModal';
+import DeleteCategoryModal from '../../../molecule/MenuBar/Category/DeleteCategoryModal';
 
 interface IManagementCategoryItemProps {
   categoryItem: BaseCategory;

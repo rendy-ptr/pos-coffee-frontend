@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import ManagementRewardItem from '../../organism/RewardTab/ManagementRewardItem';
+import AddRewardModal from '../../molecule/RewardTab/AddRewardModal';
 const {
   Tickets,
   TicketPlus,
@@ -12,6 +13,7 @@ const {
   CheckCircle,
   AlertCircle,
 } = lucideIcons;
+import { useRewards } from '../../../hooks/reward.hook';
 
 const filterOptions = [
   { value: 'semua', label: 'Semua' },
@@ -21,104 +23,101 @@ const filterOptions = [
   { value: 'voucher-non-aktif', label: 'Voucher Nonaktif' },
 ];
 
-const availableRewards = [
-  {
-    id: 1,
-    name: 'Free Croissant',
-    points: 300,
-    description: 'Croissant gratis pilihan Anda',
-    status: 'aktif',
-    type: 'reward',
-  },
-  {
-    id: 2,
-    name: 'Diskon 20%',
-    points: 500,
-    description: 'Diskon 20% untuk semua menu',
-    status: 'aktif',
-    type: 'reward',
-  },
-  {
-    id: 3,
-    name: 'Free Coffee',
-    points: 800,
-    description: 'Kopi gratis pilihan Anda',
-    status: 'aktif',
-    type: 'reward',
-  },
-  {
-    id: 4,
-    name: 'VIP Workshop',
-    points: 1500,
-    description: 'Akses workshop kopi eksklusif',
-    status: 'aktif',
-    type: 'reward',
-  },
-  {
-    id: 5,
-    name: 'Discount New Customer',
-    description: 'Diskon 50% untuk pelanggan baru',
-    status: 'aktif',
-    type: 'voucher',
-    points: null,
-    terms: 'Hanya berlaku untuk pembelian pertama.',
-    expiredAt: '2025-09-01',
-    secretCode: 'NEW50',
-  },
-  {
-    id: 6,
-    name: 'Discount Buy 1 Get 1',
-    description: 'Beli satu menu, dapat satu gratis',
-    status: 'aktif',
-    type: 'voucher',
-    points: null,
-    terms: 'Berlaku untuk menu minuman ukuran reguler.',
-    expiredAt: '2025-08-30',
-    secretCode: 'BOGO2025',
-  },
-] as const;
+// const availableRewards = [
+//   {
+//     id: 1,
+//     name: 'Free Croissant',
+//     points: 300,
+//     description: 'Croissant gratis pilihan Anda',
+//     status: 'aktif',
+//     type: 'reward',
+//   },
+//   {
+//     id: 2,
+//     name: 'Diskon 20%',
+//     points: 500,
+//     description: 'Diskon 20% untuk semua menu',
+//     status: 'aktif',
+//     type: 'reward',
+//   },
+//   {
+//     id: 3,
+//     name: 'Free Coffee',
+//     points: 800,
+//     description: 'Kopi gratis pilihan Anda',
+//     status: 'aktif',
+//     type: 'reward',
+//   },
+//   {
+//     id: 4,
+//     name: 'VIP Workshop',
+//     points: 1500,
+//     description: 'Akses workshop kopi eksklusif',
+//     status: 'aktif',
+//     type: 'reward',
+//   },
+//   {
+//     id: 5,
+//     name: 'Discount New Customer',
+//     description: 'Diskon 50% untuk pelanggan baru',
+//     status: 'aktif',
+//     type: 'voucher',
+//     points: null,
+//     terms: 'Hanya berlaku untuk pembelian pertama.',
+//     expiredAt: '2025-09-01',
+//     secretCode: 'NEW50',
+//   },
+//   {
+//     id: 6,
+//     name: 'Discount Buy 1 Get 1',
+//     description: 'Beli satu menu, dapat satu gratis',
+//     status: 'aktif',
+//     type: 'voucher',
+//     points: null,
+//     terms: 'Berlaku untuk menu minuman ukuran reguler.',
+//     expiredAt: '2025-08-30',
+//     secretCode: 'BOGO2025',
+//   },
+// ] as const;
 
 const ManagementReward = () => {
-  const filterReward = availableRewards.filter(
-    reward => reward.type === 'reward'
-  ).length;
-  const filterVoucher = availableRewards.filter(
-    reward => reward.type === 'voucher'
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const { rewards } = useRewards();
+
+  // Total reward & voucher
+  const filterReward = rewards.filter(r => r.type === 'REWARD').length;
+  const filterVoucher = rewards.filter(r => r.type === 'VOUCHER').length;
+
+  // Reward aktif & non-aktif
+  const filterRewardAktif = rewards.filter(
+    r => r.isActive && r.type === 'REWARD'
   ).length;
 
-  const filterRewardAktif = availableRewards.filter(
-    reward => reward.status === 'aktif' && reward.type === 'reward'
-  ).length;
-  const filterRewardNonAktif = availableRewards.filter(
-    reward => reward.status !== 'aktif' && reward.type === 'reward'
-  ).length;
-  const filterVoucherAktif = availableRewards.filter(
-    v => v.status === 'aktif' && v.type === 'voucher'
-  ).length;
-  const filterVoucherNonAktif = availableRewards.filter(
-    v => v.status !== 'aktif' && v.type === 'voucher'
+  const filterRewardNonAktif = rewards.filter(
+    r => !r.isActive && r.type === 'REWARD'
   ).length;
 
-  const handleEdit = (id: number) => {
-    console.log('Edit reward with ID:', id);
-    // Implementasi logic edit
-  };
+  // Voucher aktif & non-aktif
+  const filterVoucherAktif = rewards.filter(
+    r => r.isActive && r.type === 'VOUCHER'
+  ).length;
 
-  const handleDelete = (id: number) => {
-    console.log('Delete reward with ID:', id);
-    // Implementasi logic delete
-  };
+  const filterVoucherNonAktif = rewards.filter(
+    r => !r.isActive && r.type === 'VOUCHER'
+  ).length;
 
   const [selectedFilter, setSelectedFilter] = useState('semua');
   const [searchTerm, setSearchTerm] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const filteredData = useMemo(() => {
-    return availableRewards.filter(item => {
+    return rewards.filter(rewardItem => {
       const matchesSearch =
-        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (item.description &&
-          item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        rewardItem.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (rewardItem.description &&
+          rewardItem.description
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()));
 
       if (selectedFilter === 'semua') {
         return matchesSearch;
@@ -126,31 +125,31 @@ const ManagementReward = () => {
 
       if (selectedFilter === 'reward-aktif') {
         return (
-          matchesSearch && item.status === 'aktif' && item.type === 'reward'
+          matchesSearch && rewardItem.isActive && rewardItem.type === 'REWARD'
         );
       }
 
       if (selectedFilter === 'reward-non-aktif') {
         return (
-          matchesSearch && item.status !== 'aktif' && item.type === 'reward'
+          matchesSearch && !rewardItem.isActive && rewardItem.type === 'REWARD'
         );
       }
 
       if (selectedFilter === 'voucher-aktif') {
         return (
-          matchesSearch && item.status === 'aktif' && item.type === 'voucher'
+          matchesSearch && rewardItem.isActive && rewardItem.type === 'VOUCHER'
         );
       }
 
       if (selectedFilter === 'voucher-non-aktif') {
         return (
-          matchesSearch && item.status !== 'aktif' && item.type === 'voucher'
+          matchesSearch && !rewardItem.isActive && rewardItem.type === 'VOUCHER'
         );
       }
 
       return false;
     });
-  }, [selectedFilter, searchTerm]);
+  }, [rewards, selectedFilter, searchTerm]);
 
   const selectedFilterLabel =
     filterOptions.find(option => option.value === selectedFilter)?.label ||
@@ -227,7 +226,10 @@ const ManagementReward = () => {
                   )}
                 </div>
               </div>
-              <Button className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg">
+              <Button
+                className="group flex items-center gap-2 rounded-lg border-0 bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c] px-4 py-2 text-sm font-medium text-white shadow-md transition-all duration-300 hover:from-[#5d4130] hover:to-[#7a5033] hover:shadow-lg"
+                onClick={() => setIsAddModalOpen(true)}
+              >
                 <TicketPlus className="h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
                 Tambah Rewards/Vouchers
               </Button>
@@ -317,12 +319,7 @@ const ManagementReward = () => {
           <div className="space-y-4 md:space-y-6">
             {filteredData.length > 0 ? (
               filteredData.map(reward => (
-                <ManagementRewardItem
-                  key={reward.id}
-                  reward={reward}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
+                <ManagementRewardItem key={reward.id} rewardItem={reward} />
               ))
             ) : (
               <div className="flex flex-col items-center justify-center py-12">
@@ -341,6 +338,10 @@ const ManagementReward = () => {
           </div>
         </CardContent>
       </Card>
+      <AddRewardModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+      />
     </div>
   );
 };

@@ -12,6 +12,7 @@ export const API_PATHS = {
     MENU: (id?: string) => (id ? `/admin/menu/${id}` : `/admin/menu`),
     KASIR: (id?: string) => (id ? `/admin/kasir/${id}` : `/admin/kasir`),
     TABLE: (id?: string) => (id ? `/admin/table/${id}` : `/admin/table`),
+    REWARD: (id?: string) => (id ? `/admin/reward/${id}` : `/admin/reward`),
   },
   PUBLIC: {
     UPLOAD_IMAGE: '/upload',

@@ -49,12 +49,12 @@ const AdminDashboardContainer = () => {
         <ManagementTableSection />
       </TabsContent>
 
-      <TabsContent value="pesanan" className="space-y-4 md:space-y-6">
-        <ManagementPesanan />
-      </TabsContent>
-
       <TabsContent value="reward" className="space-y-4 md:space-y-6">
         <ManagementReward />
+      </TabsContent>
+
+      <TabsContent value="pesanan" className="space-y-4 md:space-y-6">
+        <ManagementPesanan />
       </TabsContent>
     </Tabs>
   );

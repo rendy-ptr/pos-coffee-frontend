@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { Button } from '@/components/ui/button';
 import ManagementKasirItem from '../../organism/KasirTab/ManagementKasirItem';
-import AddKasirModal from '../../organism/KasirTab/AddKasirModal';
+import AddKasirModal from '../../molecule/KasirTab/AddKasirModal';
 import { useGetKasirs } from '../../../hooks/kasir.hook';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 const {

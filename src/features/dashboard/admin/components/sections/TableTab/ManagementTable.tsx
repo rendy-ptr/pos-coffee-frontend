@@ -15,10 +15,10 @@ import { COLOR } from '@/constants/Style';
 import ManagementTableItem from '../../organism/TableTab/ManagementTableItem';
 import type { BaseTable } from '../../../types/table.type';
 import TableModal from '../../organism/TableTab/TableModal';
-import AddTableModal from '../../organism/TableTab/AddTableModal';
+import AddTableModal from '../../molecule/TableTab/AddTableModal';
 import { useGetTables } from '../../../hooks/table.hook';
-import EditTableModal from '../../organism/TableTab/EditTableModal';
-import DeleteTableModal from '../../organism/TableTab/DeleteTableModal';
+import EditTableModal from '../../molecule/TableTab/EditTableModal';
+import DeleteTableModal from '../../molecule/TableTab/DeleteTableModal';
 
 const { BUTTON_HOVER_ICON, ICON_TRANSITION } = COLOR;
 
