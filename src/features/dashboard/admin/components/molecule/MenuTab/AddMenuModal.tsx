@@ -411,17 +411,30 @@ const AddMenuModal = ({ open, onClose, categories }: AddMenuModalProps) => {
                       </div>
                     </button>
                   )}
-                  <div className="relative">
-                    <Input
-                      type="url"
-                      {...register('imageUrl')}
-                      onChange={handleUrlChange}
-                      placeholder="Atau masukkan URL gambar..."
-                      className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 placeholder:${COLOR.TEXT_SECONDARY} focus:border-[#6f4e37] focus:bg-white focus:ring-4 focus:ring-[#6f4e37]/30`}
-                    />
-                    <Image
-                      className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
-                    />
+                  <div className="space-y-2">
+                    <Label
+                      htmlFor="imageUrl"
+                      className={`flex items-center gap-2 text-sm font-medium ${COLOR.TEXT_PRIMARY}`}
+                    >
+                      <span
+                        className={`text-xs font-normal ${COLOR.TEXT_SECONDARY}`}
+                      >
+                        (opsional • pilih salah satu: unggah atau gunakan URL)
+                      </span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="imageUrl"
+                        type="url"
+                        {...register('imageUrl')}
+                        onChange={handleUrlChange}
+                        placeholder="Atau masukkan URL gambar..."
+                        className={`h-12 rounded-xl border-2 border-[#e6d9c9]/50 bg-white/70 pl-12 ${COLOR.TEXT_PRIMARY} transition-all duration-200 placeholder:${COLOR.TEXT_SECONDARY} focus:border-[#6f4e37] focus:bg-white focus:ring-4 focus:ring-[#6f4e37]/30`}
+                      />
+                      <Image
+                        className={`absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 ${COLOR.TEXT_PRIMARY}`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

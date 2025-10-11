@@ -447,7 +447,7 @@ const AddKasirModal = ({ open, onClose }: AddKasirModalProps) => {
                       className={`flex items-center gap-2 text-base ${COLOR.TEXT_PRIMARY}`}
                     >
                       Nomor Telepon
-                      <span className="text-sm text-gray-500">(Opsional)</span>
+                      <span className="text-red-500">*</span>
                     </Label>
                     <div className="relative">
                       <Input

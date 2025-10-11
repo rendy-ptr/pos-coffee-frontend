@@ -188,14 +188,14 @@ const AddTableModal = ({ isOpen, onClose }: AddTableModalProps) => {
                         <SelectContent className="rounded-xl border border-[#e6d9c9]/60 bg-white shadow-lg">
                           <SelectItem
                             value="INDOOR"
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 text-[#6f4e37] hover:bg-[#f7f3ef]"
                           >
                             <Home className="h-4 w-4" />
                             INDOOR
                           </SelectItem>
                           <SelectItem
                             value="OUTDOOR"
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 text-[#6f4e37] hover:bg-[#f7f3ef]"
                           >
                             <Palmtree className="h-4 w-4" />
                             OUTDOOR
