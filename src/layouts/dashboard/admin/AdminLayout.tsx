@@ -1,5 +1,5 @@
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
-import { useAdminDashboard } from '@/features/dashboard/admin/hooks/useAdminDashboard';
+import { useAdminDashboard } from '@/features/dashboard/admin/hooks/admin.hook';
 import HeaderAdmin from '@/features/dashboard/admin/components/sections/Header/AdminHeader';
 import { Outlet } from 'react-router-dom';
 

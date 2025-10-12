@@ -11,7 +11,7 @@ import AdminAvatar from '../../molecule/Header/AdminAvatar';
 interface MobileMenuProps {
   show: boolean;
   onMenuItemClick: (
-    action: 'Dashboard' | 'Profile' | 'Settings' | 'Keluar' | 'Kategori'
+    action: 'Dashboard' | 'Profile' | 'Setting' | 'Keluar' | 'Kategori'
   ) => void;
 }
 
@@ -64,7 +64,7 @@ const MobileMenu = ({ show, onMenuItemClick }: MobileMenuProps) => {
           <span className="font-medium">View Profile</span>
         </button>
         <button
-          onClick={() => onMenuItemClick('Settings')}
+          onClick={() => onMenuItemClick('Setting')}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all duration-150 hover:bg-[#6f4e37]/5 hover:text-[#6f4e37]"
         >
           <Settings className="h-4 w-4" />

@@ -87,11 +87,13 @@ import {
   Wrench,
   BookmarkCheck,
   TreeDeciduous,
+  Loader2,
 } from 'lucide-react';
 
 export const lucideIcons = {
   Coffee,
   Palmtree,
+  Loader2,
   Lock,
   Sparkles,
   TreeDeciduous,

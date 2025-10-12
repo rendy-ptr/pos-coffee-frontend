@@ -6,9 +6,18 @@ export interface IAdminDashboardResponse {
     email: string;
     name: string;
     role: string;
-    phoneNumber: string;
+    phone: string;
     profilePicture: string;
   };
+}
+
+export interface IAdminUpdateProfilePayload {
+  name?: string;
+  email?: string;
+  phone?: string;
+  profilePicture?: string | null;
+  currentPassword?: string;
+  newPassword?: string;
 }
 
 export interface IAdminLogoutData {

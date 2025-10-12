@@ -1,10 +1,9 @@
-import type {
-  IAdminDashboardResponse,
-  IAdminLogoutData,
-} from '../types/AdminDashboardTypes';
+import type { IAdminDashboardResponse, IAdminLogoutData } from '../types/admin';
 import apiClient from '@/utils/apiClient';
 import axios from 'axios';
 import { API_PATHS } from '@/constants/apiPaths';
+import type { UpdateAdminProfileSchemaPayload } from '../schema/admin.schema';
+import type { ApiResponse } from '@/types/ApiResponse';
 
 export const logout = async (): Promise<IAdminLogoutData> => {
   const res = await apiClient.post(API_PATHS.AUTH.LOGOUT);
@@ -49,4 +48,15 @@ export const fetchAdminDashboard = async (
     }
     throw new Error('Terjadi kesalahan yang tidak diketahui');
   }
+};
+
+export const updateAdminProfile = async (
+  id: string,
+  payload: UpdateAdminProfileSchemaPayload
+): Promise<ApiResponse<null>> => {
+  const { data } = await apiClient.patch<ApiResponse<null>>(
+    API_PATHS.ADMIN.SETTING(id),
+    payload
+  );
+  return data;
 };

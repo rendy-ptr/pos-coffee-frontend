@@ -13,6 +13,8 @@ import AdminLayout from '@/layouts/dashboard/admin/AdminLayout';
 import AdminRootPage from '@/pages/dashboard/admin/AdminRootPage';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import AdminCategoryPage from '@/pages/dashboard/admin/AdminCategoryPage';
+import AdminProfilePage from '@/pages/dashboard/admin/AdminProfilePage';
+import AdminSettingPage from '@/pages/dashboard/admin/AdminSettingPage';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -92,6 +94,14 @@ const router = createBrowserRouter([
               {
                 path: 'kategori',
                 element: <AdminCategoryPage />,
+              },
+              {
+                path: 'profile',
+                element: <AdminProfilePage />,
+              },
+              {
+                path: 'setting',
+                element: <AdminSettingPage />,
               },
             ],
           },

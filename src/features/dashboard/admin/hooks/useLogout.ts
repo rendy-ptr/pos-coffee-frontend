@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAdminStore } from '@/store/adminStore';
-import { logout } from '../services/api.service';
-import type { IAdminLogoutData } from '../types/AdminDashboardTypes';
+import { logout } from '../services/admin.service';
+import type { IAdminLogoutData } from '../types/admin';
 
 export function useLogout() {
   const { clearAdminData } = useAdminStore();

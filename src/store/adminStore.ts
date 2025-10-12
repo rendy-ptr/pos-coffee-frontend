@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { IAdminDashboardResponse } from '../features/dashboard/admin/types/AdminDashboardTypes';
+import type { IAdminDashboardResponse } from '../features/dashboard/admin/types/admin';
 
 interface AdminStore {
   adminData: IAdminDashboardResponse['data'] | null;

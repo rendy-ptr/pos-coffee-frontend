@@ -30,7 +30,7 @@ const CoffeeLoadingAnimation = ({
   }, [messages, interval]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center bg-[#f8f3e9]">
       <div className="text-center">
         {/* Coffee Cup Animation */}
         <div className="relative mb-8">

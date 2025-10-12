@@ -7,6 +7,7 @@ export const API_PATHS = {
   },
   ADMIN: {
     DASHBOARD: '/dashboard/admin',
+    SETTING: (id?: string) => (id ? `/admin/setting/${id}` : `/admin/setting`),
     KATEGORI: (id?: string) =>
       id ? `/admin/kategori/${id}` : `/admin/kategori`,
     MENU: (id?: string) => (id ? `/admin/menu/${id}` : `/admin/menu`),
