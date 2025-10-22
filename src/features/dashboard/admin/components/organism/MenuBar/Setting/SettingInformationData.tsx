@@ -1,7 +1,9 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useUpdateAdminProfileForm } from '@/features/dashboard/admin/hooks/admin.hook';
+import { useFormContext } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
+import type { UpdateAdminProfileSchemaPayload } from '@/features/dashboard/admin/schema/admin.schema';
 
 const { User, Mail, Phone } = lucideIcons;
 
@@ -19,7 +21,7 @@ const SettingInformationData = ({
   const {
     register,
     formState: { errors },
-  } = useUpdateAdminProfileForm();
+  } = useFormContext<UpdateAdminProfileSchemaPayload>();
   return (
     <div className={cardClass}>
       <div className="flex flex-col gap-1 border-b border-dashed border-[#e6d9c9]/60 pb-5">
@@ -49,9 +51,13 @@ const SettingInformationData = ({
             />
             <User className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[#8c7158]" />
           </div>
-          {errors.name && (
-            <p className="text-sm text-red-500">{errors.name.message}</p>
-          )}
+          <ErrorMessage
+            errors={errors}
+            name="name"
+            render={({ message }) => (
+              <p className="text-sm text-red-500">{message}</p>
+            )}
+          />
         </div>
 
         <div className="space-y-1.5">
@@ -71,9 +77,13 @@ const SettingInformationData = ({
             />
             <Mail className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[#8c7158]" />
           </div>
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
+          <ErrorMessage
+            errors={errors}
+            name="email"
+            render={({ message }) => (
+              <p className="text-sm text-red-500">{message}</p>
+            )}
+          />
         </div>
 
         <div className="space-y-1.5 md:col-span-2">
@@ -92,9 +102,13 @@ const SettingInformationData = ({
             />
             <Phone className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[#8c7158]" />
           </div>
-          {errors.phone && (
-            <p className="text-sm text-red-500">{errors.phone.message}</p>
-          )}
+          <ErrorMessage
+            errors={errors}
+            name="phone"
+            render={({ message }) => (
+              <p className="text-sm text-red-500">{message}</p>
+            )}
+          />
         </div>
       </div>
 

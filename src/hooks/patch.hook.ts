@@ -1,4 +1,3 @@
-// useFormPatch.ts
 import { useCallback } from 'react';
 
 export const useFormPatch = <T extends object>() => {

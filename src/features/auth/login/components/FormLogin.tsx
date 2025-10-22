@@ -110,9 +110,9 @@ const FormLogin = () => {
               className="absolute top-1/2 right-3 -translate-y-1/2 transform text-[#8c7158] hover:text-[#6f4e37]"
             >
               {showPassword ? (
-                <EyeOff className="h-5 w-5" />
-              ) : (
                 <Eye className="h-5 w-5" />
+              ) : (
+                <EyeOff className="h-5 w-5" />
               )}
             </button>
           </div>

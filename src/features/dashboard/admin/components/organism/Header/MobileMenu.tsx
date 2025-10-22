@@ -11,12 +11,12 @@ import AdminAvatar from '../../molecule/Header/AdminAvatar';
 interface MobileMenuProps {
   show: boolean;
   onMenuItemClick: (
-    action: 'Dashboard' | 'Profile' | 'Setting' | 'Keluar' | 'Kategori'
+    action: 'Dashboard' | 'Setting' | 'Keluar' | 'Kategori'
   ) => void;
 }
 
 const MobileMenu = ({ show, onMenuItemClick }: MobileMenuProps) => {
-  const { Home, User, Settings, LogOut, Package } = lucideIcons;
+  const { Home, Settings, LogOut, Package } = lucideIcons;
   const { adminData } = useAdminStore();
   const isOnline = true;
   if (!show) return null;
@@ -55,13 +55,6 @@ const MobileMenu = ({ show, onMenuItemClick }: MobileMenuProps) => {
         >
           <Home className="h-4 w-4" />
           <span className="font-medium">Dashboard</span>
-        </button>
-        <button
-          onClick={() => onMenuItemClick('Profile')}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all duration-150 hover:bg-[#6f4e37]/5 hover:text-[#6f4e37]"
-        >
-          <User className="h-4 w-4" />
-          <span className="font-medium">View Profile</span>
         </button>
         <button
           onClick={() => onMenuItemClick('Setting')}

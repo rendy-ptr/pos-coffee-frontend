@@ -1,7 +1,9 @@
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { useUpdateAdminProfileForm } from '@/features/dashboard/admin/hooks/admin.hook';
+import { useFormContext } from 'react-hook-form';
+import { ErrorMessage } from '@hookform/error-message';
+import type { UpdateAdminProfileSchemaPayload } from '@/features/dashboard/admin/schema/admin.schema';
 
 const { Lock } = lucideIcons;
 
@@ -21,7 +23,7 @@ const SettingPassword = ({
   const {
     register,
     formState: { errors },
-  } = useUpdateAdminProfileForm();
+  } = useFormContext<UpdateAdminProfileSchemaPayload>();
   return (
     <div className={cardClass}>
       <div className="flex flex-col gap-1 border-b border-dashed border-[#e6d9c9]/60 pb-5">
@@ -53,11 +55,13 @@ const SettingPassword = ({
             />
             <Lock className="pointer-events-none absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-[#8c7158]" />
           </div>
-          {errors.currentPassword && (
-            <p className="text-sm text-red-500">
-              {errors.currentPassword.message}
-            </p>
-          )}
+          <ErrorMessage
+            errors={errors}
+            name="currentPassword"
+            render={({ message }) => (
+              <p className="text-sm text-red-500">{message}</p>
+            )}
+          />
           <p className="text-xs text-[#8c7158]">
             Hanya isi ketika ingin mengganti password.
           </p>
@@ -79,11 +83,13 @@ const SettingPassword = ({
               className={inputClass}
               {...register('newPassword')}
             />
-            {errors.newPassword && (
-              <p className="text-sm text-red-500">
-                {errors.newPassword.message}
-              </p>
-            )}
+            <ErrorMessage
+              errors={errors}
+              name="newPassword"
+              render={({ message }) => (
+                <p className="text-sm text-red-500">{message}</p>
+              )}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -101,11 +107,13 @@ const SettingPassword = ({
               className={inputClass}
               {...register('confirmPassword')}
             />
-            {errors.confirmPassword && (
-              <p className="text-sm text-red-500">
-                {errors.confirmPassword.message}
-              </p>
-            )}
+            <ErrorMessage
+              errors={errors}
+              name="confirmPassword"
+              render={({ message }) => (
+                <p className="text-sm text-red-500">{message}</p>
+              )}
+            />
           </div>
         </div>
       </div>

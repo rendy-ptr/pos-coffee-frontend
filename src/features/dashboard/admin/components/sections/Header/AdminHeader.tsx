@@ -14,7 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import AdminAvatar from '../../molecule/Header/AdminAvatar';
 
 // TYPES
-type MenuAction = 'Dashboard' | 'Profile' | 'Setting' | 'Keluar' | 'Kategori';
+type MenuAction = 'Dashboard' | 'Setting' | 'Keluar' | 'Kategori';
 
 const HeaderAdmin = () => {
   const { Coffee, Menu, ChevronDown } = lucideIcons;
@@ -74,9 +74,6 @@ const HeaderAdmin = () => {
       switch (action) {
         case 'Dashboard':
           navigate('/dashboard/admin');
-          break;
-        case 'Profile':
-          navigate('profile');
           break;
         case 'Setting':
           navigate('setting');

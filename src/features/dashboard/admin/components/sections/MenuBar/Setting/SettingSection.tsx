@@ -1,3 +1,4 @@
+import { FormProvider } from 'react-hook-form';
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import SettingHeader from '../../../organism/MenuBar/Setting/SettingHeader';
 import SettingProfileImage from '../../../organism/MenuBar/Setting/SettingProfileImage';
@@ -8,6 +9,7 @@ import { useSettingSectionFunc } from '@/features/dashboard/admin/hooks/function
 
 const SettingSection = () => {
   const {
+    form,
     admin,
     isLoadingData,
     isError,
@@ -24,6 +26,8 @@ const SettingSection = () => {
     onSubmit,
     IMAGE_CONSTRAINTS,
   } = useSettingSectionFunc();
+
+  console.log(admin);
 
   if (isLoadingData) {
     return (
@@ -54,47 +58,49 @@ const SettingSection = () => {
     'inline-flex items-center gap-2 rounded-2xl border border-[#e6d9c9]/60 bg-white/90 px-3 py-1.5 text-xs font-medium text-[#5d4130] shadow-sm';
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-[#e6d9c9]/70 bg-gradient-to-br from-[#fdf7f1] via-white to-[#f5e7d6] p-6 shadow-[0_32px_60px_-30px_rgba(111,78,55,0.45)] sm:p-10">
-      <SettingHeader admin={admin} summaryPillClass={summaryPillClass} />
+    <FormProvider {...form}>
+      <section className="relative overflow-hidden rounded-3xl border border-[#e6d9c9]/70 bg-gradient-to-br from-[#fdf7f1] via-white to-[#f5e7d6] p-6 shadow-[0_32px_60px_-30px_rgba(111,78,55,0.45)] sm:p-10">
+        <SettingHeader admin={admin} summaryPillClass={summaryPillClass} />
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="relative z-10 mt-10 space-y-10"
-      >
-        <div className="grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)] xl:items-start">
-          <SettingProfileImage
-            cardClass={cardClass}
-            sectionLabelClass={sectionLabelClass}
-            imageFile={imageFile}
-            imagePreview={imagePreview}
-            currentPreviewImage={currentPreviewImage}
-            fileInputRef={fileInputRef}
-            handleInputFileChange={handleInputFileChange}
-            resetImageState={resetImageState}
-            IMAGE_CONSTRAINTS={IMAGE_CONSTRAINTS}
-          />
-          <div className="flex flex-col gap-6">
-            <SettingInformationData
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="relative z-10 mt-10 space-y-10"
+        >
+          <div className="grid gap-8 lg:grid-cols-[340px_minmax(0,1fr)] xl:items-start">
+            <SettingProfileImage
               cardClass={cardClass}
               sectionLabelClass={sectionLabelClass}
-              inputWithIconClass={inputWithIconClass}
+              imageFile={imageFile}
+              imagePreview={imagePreview}
+              currentPreviewImage={currentPreviewImage}
+              fileInputRef={fileInputRef}
+              handleInputFileChange={handleInputFileChange}
+              resetImageState={resetImageState}
+              IMAGE_CONSTRAINTS={IMAGE_CONSTRAINTS}
             />
+            <div className="flex flex-col gap-6">
+              <SettingInformationData
+                cardClass={cardClass}
+                sectionLabelClass={sectionLabelClass}
+                inputWithIconClass={inputWithIconClass}
+              />
 
-            <SettingPassword
-              cardClass={cardClass}
-              sectionLabelClass={sectionLabelClass}
-              inputWithIconClass={inputWithIconClass}
-              inputClass={inputClass}
-            />
+              <SettingPassword
+                cardClass={cardClass}
+                sectionLabelClass={sectionLabelClass}
+                inputWithIconClass={inputWithIconClass}
+                inputClass={inputClass}
+              />
+            </div>
           </div>
-        </div>
-        <SettingButtonAction
-          isLoading={isLoading}
-          resetForm={resetForm}
-          getLoadingMessage={getLoadingMessage}
-        />
-      </form>
-    </section>
+          <SettingButtonAction
+            isLoading={isLoading}
+            resetForm={resetForm}
+            getLoadingMessage={getLoadingMessage}
+          />
+        </form>
+      </section>
+    </FormProvider>
   );
 };
 

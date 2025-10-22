@@ -21,18 +21,20 @@ export const useSettingSectionFunc = () => {
 
   // Hooks
   const { addToast } = useToast();
-  const { data, isLoading: isLoadingData, isError } = useAdminDashboard(true);
+  const {
+    data,
+    isLoading: isLoadingData,
+    isError,
+    isSuccess,
+  } = useAdminDashboard(true);
   const admin = data?.data;
   const { doUpdateAdminProfile, isPending: isLoadingSave } =
     useUpdateAdminProfile();
   const { doUploadImage, isPending: isLoadingUpload } = useUploadImage();
-  const {
-    handleSubmit,
-    reset,
-    watch,
-    setValue,
-    formState: { dirtyFields },
-  } = useUpdateAdminProfileForm();
+
+  const form = useUpdateAdminProfileForm();
+  const { handleSubmit, reset, watch, setValue, formState } = form;
+  const { dirtyFields } = formState;
   const { createPatch } = useFormPatch<UpdateAdminProfileSchemaPayload>();
 
   const IMAGE_CONSTRAINTS = {
@@ -41,7 +43,8 @@ export const useSettingSectionFunc = () => {
   } as const;
 
   useEffect(() => {
-    if (!admin) return;
+    if (!isSuccess || !admin) return;
+
     reset({
       name: admin.name,
       email: admin.email,
@@ -54,11 +57,7 @@ export const useSettingSectionFunc = () => {
 
     setImageFile(null);
     setImagePreview(admin.profilePicture || null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  }, [admin, reset]);
+  }, [isSuccess, admin, reset]);
 
   const watchedValues = {
     name: watch('name'),
@@ -175,6 +174,7 @@ export const useSettingSectionFunc = () => {
   const isLoading = isLoadingUpload || isLoadingSave;
 
   return {
+    form,
     admin,
     isLoadingData,
     isError,
