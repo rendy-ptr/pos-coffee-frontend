@@ -1,6 +1,10 @@
 // LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { BUTTON_STYLES, CARD_STYLES, TEXT_COLORS } from '../../constant/Style';
+import {
+  BUTTON_STYLES,
+  CARD_STYLES,
+  TEXT_COLORS,
+} from '../../../constant/Style';
 
 // HOOKS
 import { useCartStore } from '@/store/cartStore';
@@ -15,10 +19,7 @@ import { formatCurrency } from '@/utils/formatCurrency';
 import { getTotalAmount } from '@/utils/totalAmount';
 
 // TYPES
-import type { IMenuItem } from '@/types/kasir/menuitem';
-interface ICartItem extends IMenuItem {
-  quantity: number;
-}
+import type { ICartMenuItem } from '../../../types/cart';
 
 const CartItemContent = () => {
   const { cart, updateQuantity, resetCart } = useCartStore();
@@ -57,7 +58,7 @@ const CartItemContent = () => {
                 Keranjang kosong
               </p>
             ) : (
-              cart.map((item: ICartItem) => (
+              cart.map((item: ICartMenuItem) => (
                 <div
                   key={item.id}
                   className="flex items-center justify-between rounded border border-[#e6d9c9] p-2"
@@ -69,7 +70,7 @@ const CartItemContent = () => {
                       {item.name}
                     </h4>
                     <p className={`text-xs ${TEXT_COLORS.secondary}`}>
-                      {formatCurrency(item.price)}
+                      {formatCurrency(item.sellingPrice)}
                     </p>
                   </div>
                   <div className="ml-2 flex items-center gap-1 md:gap-2">

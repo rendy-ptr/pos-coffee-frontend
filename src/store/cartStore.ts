@@ -1,23 +1,20 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import type { IMenuItem } from '@/types/kasir/menuitem';
+import type { ICartMenuItem } from '../features/dashboard/kasir/types/cart';
+import type { MenuWithCategory } from '@/features/dashboard/kasir/types/menu';
 
-interface ICartItem extends IMenuItem {
-  quantity: number;
-}
-
-interface ICartStore {
-  cart: ICartItem[];
-  addToCart: (item: IMenuItem) => void;
-  updateQuantity: (id: number, quantity: number) => void;
+interface ICartMenuStore {
+  cart: ICartMenuItem[];
+  addToCart: (item: MenuWithCategory) => void;
+  updateQuantity: (id: string, quantity: number) => void;
   resetCart: () => void;
 }
 
-export const useCartStore = create<ICartStore>()(
+export const useCartStore = create<ICartMenuStore>()(
   persist(
     set => ({
       cart: [],
-      addToCart: (item: IMenuItem) =>
+      addToCart: (item: MenuWithCategory) =>
         set(state => {
           const existingItem = state.cart.find(
             cartItem => cartItem.id === item.id

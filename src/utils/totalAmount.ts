@@ -1,8 +1,8 @@
-import type { IMenuItem } from '@/types/kasir/menuitem';
-interface ICartItem extends IMenuItem {
-  quantity: number;
-}
+import type { ICartMenuItem } from '@/features/dashboard/kasir/types/cart';
 
-export const getTotalAmount = (cart: ICartItem[]) => {
-  return cart.reduce((total, item) => total + item.price * item.quantity, 0);
+export const getTotalAmount = (cart: ICartMenuItem[]) => {
+  return cart.reduce(
+    (total, item) => total + item.sellingPrice * item.quantity,
+    0
+  );
 };

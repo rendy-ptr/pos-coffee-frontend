@@ -1,10 +1,10 @@
 // LOCAL-IMPORTS
 import TabListSection from '../components/sections/TabList';
-import MenuItemContent from '../components/sections/MenuTransaksiContent';
-import CartItemContent from '../components/sections/CartItemContent';
+import MenuItemContent from '../components/sections/TransaksiTab/MenuTransaksiContent';
+import CartItemContent from '../components/sections/TransaksiTab/CartItemContent';
 import RiwayatPesananContent from '../components/sections/RiwayatPesananContent';
 import StatistikPesananContent from '../components/sections/StatistikPesananContent';
-import ManagementMenuContent from '../components/sections/ManagementMenuContent';
+import ManagementMenuContent from '../components/sections/MenuTab/ManagementMenuContent';
 import TableManager from '../components/sections/TableManager';
 
 // HOOKS

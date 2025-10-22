@@ -2,29 +2,32 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { formatCurrency } from '@/utils/formatCurrency';
-import { menuItems } from '../../mocks/MenuItem';
 import {
   CARD_STYLES,
   CARD_ITEM_STYLES,
   TEXT_COLORS,
   BUTTON_STYLES,
-} from '../../constant/Style';
+} from '../../../constant/Style';
 import clsx from 'clsx';
 import { lucideIcons } from '@/icon/lucide-react-icons';
+import { useMenus } from '../../../hooks/menu.hooks';
 
 const ManagementMenuContent = () => {
   const { Search } = lucideIcons;
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const { menus } = useMenus();
 
-  const categories = ['all', ...new Set(menuItems.map(item => item.category))];
+  console.log('menus:', menus);
 
-  const filteredItems = menuItems.filter(item => {
-    const matchName = item.name
+  const categories = ['all', ...new Set(menus.map(menu => menu.category.name))];
+
+  const filteredItems = menus.filter(menu => {
+    const matchName = menu.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
     const matchCategory =
-      categoryFilter === 'all' || item.category === categoryFilter;
+      categoryFilter === 'all' || menu.category.name === categoryFilter;
     return matchName && matchCategory;
   });
 
@@ -66,30 +69,30 @@ const ManagementMenuContent = () => {
 
       <CardContent>
         <div className="space-y-4">
-          {filteredItems.map(item => (
+          {filteredItems.map(menu => (
             <div
-              key={item.id}
+              key={menu.id}
               className={`flex items-start gap-4 ${CARD_ITEM_STYLES}`}
             >
               <img
-                src={item.image || '/placeholder.svg'}
-                alt={item.name}
+                src={menu.imageUrl || '/placeholder.svg'}
+                alt={menu.name}
                 className="h-20 w-20 rounded-md object-cover"
               />
               <div className="flex flex-col justify-between">
                 <h3
                   className={`text-base font-semibold ${TEXT_COLORS.primary}`}
                 >
-                  {item.name}
+                  {menu.name}
                 </h3>
                 <p className={`text-sm ${TEXT_COLORS.secondary}`}>
-                  {item.category}
+                  {menu.category.name}
                 </p>
                 <p className={`text-sm font-bold ${TEXT_COLORS.primary}`}>
-                  {formatCurrency(item.price)}
+                  {formatCurrency(menu.sellingPrice)}
                 </p>
                 <p className={`mt-1 text-xs ${TEXT_COLORS.secondary}`}>
-                  Stok: <span className="font-semibold">{item.stock}</span>
+                  Stok: <span className="font-semibold">{menu.stock}</span>
                 </p>
               </div>
             </div>
