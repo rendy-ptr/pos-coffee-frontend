@@ -2,13 +2,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { formatCurrency } from '@/utils/formatCurrency';
-import { menuItems } from '../mocks/MenuItem';
+import { menuItems } from '../../mocks/MenuItem';
 import {
   CARD_STYLES,
   CARD_ITEM_STYLES,
   TEXT_COLORS,
   BUTTON_STYLES,
-} from '../constant/Style';
+} from '../../constant/Style';
 import clsx from 'clsx';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 

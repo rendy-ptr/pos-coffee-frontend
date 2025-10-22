@@ -1,6 +1,6 @@
 // LOCAL-IMPORTS
-import TableCard from '../components/TableCardKasir';
-import { TableList } from '../mocks/TableList';
+import TableCard from '../TableCardKasir';
+import { TableList } from '../../mocks/TableList';
 
 // TYPES
 import type { ITableList } from '@/types/kasir/tablelist';

@@ -21,7 +21,7 @@ const AdminLayout = () => {
           />
         )}
         {isError && (
-          <p className="text-center text-sm text-red-500">
+          <p className="flex min-h-screen items-center justify-center text-center text-sm text-red-500">
             {(error as Error).message}
           </p>
         )}

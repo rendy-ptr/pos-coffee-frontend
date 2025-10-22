@@ -2,14 +2,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { logout } from '../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useNavigate } from 'react-router-dom';
 import { useKasirStore } from '@/store/kasirStore';
-import KasirAvatar from '../components/header/KasirAvatar';
-import ProfileDropdown from '../components/header/ProfileDropdown';
-import MobileMenu from '../components/header/MobileMenu';
+import KasirAvatar from '../../molecules/Header/KasirAvatar';
+import ProfileDropdown from '../../organisms/Header/ProfileDropdown';
+import MobileMenu from '../../organisms/Header/MobileMenu';
+import { useAuthStore } from '@/store/authStore';
+import { useLogout } from '../../../hooks/kasir.hook';
+import { capitalize } from '@/utils/formatCapitalize';
 
 type MenuAction = 'Profile' | 'Settings' | 'Keluar';
 
@@ -19,7 +21,9 @@ const KasirHeader = () => {
   const queryClient = useQueryClient();
   const { addToast } = useToast();
   const navigate = useNavigate();
-  const { kasirData, clearKasirData } = useKasirStore();
+  const { kasirData } = useKasirStore();
+  const { doLogout } = useLogout();
+  const { setLoggingOut } = useAuthStore();
   const [showProfileDropdown, setShowProfileDropdown] =
     useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -43,23 +47,24 @@ const KasirHeader = () => {
 
   const handleLogout = useCallback(async () => {
     try {
-      const response = await logout();
+      setLoggingOut(true);
+      const response = await doLogout();
+
+      console.log('Logout Response:', response.message);
+      addToast(response.message, 'success', 3000);
+
+      localStorage.removeItem('welcomeShown');
+      queryClient.removeQueries({ queryKey: ['auth'], exact: true });
+      await queryClient.cancelQueries();
       queryClient.clear();
-      if (kasirData?.id) {
-        localStorage.removeItem(`welcome_shown_${kasirData.id}`);
-        localStorage.removeItem(`isOnline_${kasirData.id}`);
-      }
-      clearKasirData();
-      addToast(response.message, 'success', 5000);
-      navigate(response.data.redirectUrl);
+
+      navigate('/auth/login', { replace: true });
     } catch (error) {
-      addToast(
-        error instanceof Error ? error.message : 'Terjadi kesalahan',
-        'error',
-        5000
-      );
+      const errorMessage =
+        error instanceof Error ? error.message : 'Terjadi kesalahan';
+      addToast(errorMessage, 'error', 5000);
     }
-  }, [addToast, clearKasirData, kasirData?.id, navigate, queryClient]);
+  }, [doLogout, navigate, addToast, queryClient, setLoggingOut]);
 
   const handleMenuItemClick = useCallback(
     (action: MenuAction): void => {
@@ -126,13 +131,13 @@ const KasirHeader = () => {
                 onClick={handleProfileClick}
                 className="flex cursor-pointer items-center gap-3 rounded-xl px-3 py-5"
               >
-                <KasirAvatar kasir={kasirData} size="sm" />
+                <KasirAvatar size="sm" />
                 <div className="hidden flex-col items-start lg:flex">
                   <span className="text-sm leading-tight font-semibold text-gray-900">
                     {kasirData.name}
                   </span>
                   <span className="text-xs leading-tight text-[#8c7158]">
-                    {kasirData.role}
+                    {capitalize(kasirData.role)}
                   </span>
                 </div>
                 <ChevronDown
@@ -143,7 +148,6 @@ const KasirHeader = () => {
               </Button>
               <ProfileDropdown
                 show={showProfileDropdown}
-                kasir={kasirData}
                 onMenuItemClick={handleMenuItemClick}
               />
             </div>
@@ -151,7 +155,6 @@ const KasirHeader = () => {
         </div>
         <MobileMenu
           show={showMobileMenu}
-          kasir={kasirData}
           onMenuItemClick={handleMenuItemClick}
         />
       </div>

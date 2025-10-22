@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/utils/formatCurrency';
-import { CARD_STYLES, TEXT_COLORS, CARD_ITEM_STYLES } from '../constant/Style';
-import { recentOrders } from '../mocks/RecentOrders';
+import {
+  CARD_STYLES,
+  TEXT_COLORS,
+  CARD_ITEM_STYLES,
+} from '../../constant/Style';
+import { recentOrders } from '../../mocks/RecentOrders';
 
 const RiwayatPesananContent = () => {
   return (

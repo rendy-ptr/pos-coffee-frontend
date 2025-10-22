@@ -6,7 +6,7 @@ class ToastController {
     | null = null;
 
   setHandler(
-    fn: (message: string, type: ToastType, duration?: number) => void
+    fn: ((message: string, type: ToastType, duration?: number) => void) | null
   ) {
     this._addToast = fn;
   }

@@ -15,6 +15,11 @@ export const API_PATHS = {
     TABLE: (id?: string) => (id ? `/admin/table/${id}` : `/admin/table`),
     REWARD: (id?: string) => (id ? `/admin/reward/${id}` : `/admin/reward`),
   },
+  KASIR: {
+    DASHBOARD: '/dashboard/kasir',
+    ORDER: (id?: string) => (id ? `/kasir/order/${id}` : `/kasir/order`),
+    ORDER_DETAIL: (id: string) => `/kasir/order/${id}/detail`,
+  },
   PUBLIC: {
     UPLOAD_IMAGE: '/upload',
     MENU: () => '/menu',

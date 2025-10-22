@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { IKasirDashboardResponse } from '../features/dashboard/kasir/types/KasirDashboardResponse';
+import type { IKasirDashboardResponse } from '../features/dashboard/kasir/types/kasir';
 
 interface KasirStore {
   kasirData: IKasirDashboardResponse['data'] | null;

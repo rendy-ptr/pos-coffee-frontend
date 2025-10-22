@@ -1,6 +1,6 @@
 import { TabsList } from '@radix-ui/react-tabs';
-import { TAB_LINK } from '../constant/TabLink';
-import TabItem from '../components/TabItem';
+import { TAB_LINK } from '../../constant/TabLink';
+import TabItem from '../TabItem';
 
 const TabListSection = () => {
   return (

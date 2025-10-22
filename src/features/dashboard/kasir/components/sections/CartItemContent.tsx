@@ -1,6 +1,6 @@
 // LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { BUTTON_STYLES, CARD_STYLES, TEXT_COLORS } from '../constant/Style';
+import { BUTTON_STYLES, CARD_STYLES, TEXT_COLORS } from '../../constant/Style';
 
 // HOOKS
 import { useCartStore } from '@/store/cartStore';

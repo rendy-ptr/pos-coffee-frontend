@@ -1,7 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency } from '@/utils/formatCurrency';
-import { todayStats } from '../mocks/todayStats';
-import { CARD_STYLES, CARD_ITEM_STYLES, TEXT_COLORS } from '../constant/Style';
+import { todayStats } from '../../mocks/todayStats';
+import {
+  CARD_STYLES,
+  CARD_ITEM_STYLES,
+  TEXT_COLORS,
+} from '../../constant/Style';
 
 const StatistikPesananContent = () => {
   return (

@@ -5,7 +5,6 @@ interface AdminAvatarProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-// Constants
 const COLORS = {
   primary: '#6f4e37',
   primaryLight: '#8c7158',

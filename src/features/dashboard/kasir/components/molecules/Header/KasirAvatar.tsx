@@ -1,12 +1,8 @@
 import type React from 'react';
 
-interface Kasir {
-  id: string;
-  name: string;
-}
+import { useKasirStore } from '@/store/kasirStore';
 
 interface KasirAvatarProps {
-  kasir: Kasir;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -18,7 +14,9 @@ const COLORS = {
   background: '#ffffff',
 } as const;
 
-const KasirAvatar: React.FC<KasirAvatarProps> = ({ kasir, size = 'md' }) => {
+const KasirAvatar = ({ size = 'md' }: KasirAvatarProps) => {
+  const { kasirData } = useKasirStore();
+
   const getAvatarUrl = (name: string): string => {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6f4e37&color=fff&size=128&bold=true`;
   };
@@ -53,7 +51,15 @@ const KasirAvatar: React.FC<KasirAvatarProps> = ({ kasir, size = 'md' }) => {
     lg: 'bottom-0.5 right-0.5',
   };
 
-  const isOnline = localStorage.getItem(`isOnline_${kasir.id}`) === 'true';
+  const isOnline = true;
+
+  if (!kasirData) {
+    return (
+      <div
+        className={`${sizeClasses[size]} animate-pulse rounded-full bg-gray-200`}
+      />
+    );
+  }
 
   return (
     <div className="relative">
@@ -61,8 +67,8 @@ const KasirAvatar: React.FC<KasirAvatarProps> = ({ kasir, size = 'md' }) => {
         className={`${sizeClasses[size]} overflow-hidden rounded-full ring-2 ring-[${COLORS.primary}]/10 shadow-sm`}
       >
         <img
-          src={getAvatarUrl(kasir.name)}
-          alt={`${kasir.name} avatar`}
+          src={kasirData.profilePicture || getAvatarUrl(kasirData.name)}
+          alt={`${kasirData.name} avatar`}
           className="h-full w-full object-cover"
           onError={e => handleImageError(e, size)}
         />

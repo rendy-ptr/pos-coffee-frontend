@@ -1,7 +1,7 @@
 // LOCAL-IMPORTS
 import { lucideIcons } from '@/icon/lucide-react-icons';
-import { CARD_STYLES, TEXT_COLORS, BUTTON_STYLES } from '../constant/Style';
-import { menuItems } from '../mocks/MenuItem';
+import { CARD_STYLES, TEXT_COLORS, BUTTON_STYLES } from '../../constant/Style';
+import { menuItems } from '../../mocks/MenuItem';
 
 // HOOKS
 import { useState } from 'react';
