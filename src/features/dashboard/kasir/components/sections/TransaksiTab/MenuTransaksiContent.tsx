@@ -22,21 +22,31 @@ import { formatCurrency } from '@/utils/formatCurrency';
 // TYPES
 
 const MenuTransaksiContent = () => {
-  const { Search, Coffee, Plus } = lucideIcons;
+  const { Search, Coffee, Plus, X } = lucideIcons;
   const [searchQuery, setSearchQuery] = useState('');
-  const { addToCart } = useCartStore();
   const { menus } = useMenus();
+  const { cart, addToCart } = useCartStore();
 
   const filteredMenuItems = menus.filter(menu =>
     menu.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const menuWithStockInfo = filteredMenuItems.map(menu => {
+    const cartItem = cart.find(item => item.id === menu.id);
+    const remainingStock = Math.max(0, menu.stock - (cartItem?.quantity ?? 0));
+    const isOutOfStock = remainingStock === 0;
+
+    return {
+      ...menu,
+      remainingStock,
+      isOutOfStock,
+    };
+  });
+
   return (
     <div className="order-2 lg:order-1 lg:col-span-2">
-      <Card
-        className={`${CARD_STYLES} border-[#e3d0b9] bg-[#fffdf8] shadow-lg transition-shadow`}
-      >
-        <CardHeader className="space-y-4 border-b border-[#f1e2cf] px-6 py-5">
+      <Card className={`${CARD_STYLES} shadow-lg transition-shadow`}>
+        <CardHeader className="space-y-4 border-b border-[#e6d9c9] px-6 py-5">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
               <div className="flex flex-col gap-1">
@@ -47,8 +57,8 @@ const MenuTransaksiContent = () => {
                   Temukan menu terbaik dan tambahkan ke keranjang pelanggan.
                 </p>
               </div>
-              <Badge className="hidden border-transparent bg-[#f3e1cb] text-[#815636] md:inline-flex">
-                {filteredMenuItems.length} menu tersedia
+              <Badge className="hidden border-transparent bg-[#8b5e3c] py-1 text-white md:inline-flex">
+                {menuWithStockInfo.length} menu tersedia
               </Badge>
             </div>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
@@ -62,13 +72,13 @@ const MenuTransaksiContent = () => {
                 />
               </div>
               <Badge className="border-transparent bg-[#f3e1cb] text-[#815636] md:hidden">
-                {filteredMenuItems.length} menu tersedia
+                {menuWithStockInfo.length} menu tersedia
               </Badge>
             </div>
           </div>
         </CardHeader>
         <CardContent className="p-6">
-          {filteredMenuItems.length === 0 ? (
+          {menuWithStockInfo.length === 0 ? (
             <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-[#e8d8c4] bg-white/80 px-6 py-14 text-center">
               <Coffee className="h-10 w-10 text-[#c4a484]" />
               <p className={`text-sm font-semibold ${TEXT_COLORS.primary}`}>
@@ -81,9 +91,7 @@ const MenuTransaksiContent = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredMenuItems.map(menu => {
-                const isOutOfStock = menu.stock === 0;
-
+              {menuWithStockInfo.map(menu => {
                 return (
                   <div
                     key={menu.id}
@@ -98,10 +106,14 @@ const MenuTransaksiContent = () => {
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                       <Badge
-                        variant={isOutOfStock ? 'destructive' : 'secondary'}
-                        className={`absolute top-3 left-3 border-none text-[11px] tracking-wide uppercase ${isOutOfStock ? 'bg-[#d76666]' : 'bg-white/90 text-[#6f4e37]'}`}
+                        variant={
+                          menu.isOutOfStock ? 'destructive' : 'secondary'
+                        }
+                        className={`absolute top-3 left-3 border-none text-[11px] tracking-wide uppercase ${menu.isOutOfStock ? 'bg-[#d76666]' : 'bg-white/90 text-[#6f4e37]'}`}
                       >
-                        {isOutOfStock ? 'Stok habis' : `${menu.stock} tersedia`}
+                        {menu.isOutOfStock
+                          ? 'Stok habis'
+                          : `${menu.remainingStock} tersedia`}
                       </Badge>
                     </div>
                     <div className="flex flex-1 flex-col gap-3 p-4">
@@ -130,12 +142,15 @@ const MenuTransaksiContent = () => {
                           </span>
                         </div>
                         <button
-                          disabled={isOutOfStock}
+                          disabled={menu.isOutOfStock}
                           onClick={() => addToCart(menu)}
-                          className={`${BUTTON_STYLES} flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase shadow-sm transition-transform duration-200 ${isOutOfStock ? 'cursor-not-allowed opacity-60' : 'hover:-translate-y-0.5'}`}
+                          className={`${BUTTON_STYLES} flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase shadow-sm transition-transform duration-200 ${menu.isOutOfStock ? 'cursor-not-allowed opacity-60' : 'hover:-translate-y-0.5'}`}
                         >
-                          {isOutOfStock ? (
-                            'Stok Habis'
+                          {menu.isOutOfStock ? (
+                            <div className="mx-auto flex items-center gap-1">
+                              <X className="h-4 w-4" />
+                              Stock Habis
+                            </div>
                           ) : (
                             <div className="mx-auto flex items-center gap-1">
                               <Plus className="h-4 w-4" />
