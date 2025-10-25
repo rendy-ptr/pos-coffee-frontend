@@ -18,6 +18,8 @@ export const API_PATHS = {
   KASIR: {
     DASHBOARD: '/dashboard/kasir',
     MENU: (id?: string) => (id ? `/kasir/menu/${id}` : `/kasir/menu`),
+    CATEGORY: (id?: string) =>
+      id ? `/kasir/category/${id}` : `/kasir/category`,
     ORDER: (id?: string) => (id ? `/kasir/order/${id}` : `/kasir/order`),
     ORDER_DETAIL: (id: string) => `/kasir/order/${id}/detail`,
   },

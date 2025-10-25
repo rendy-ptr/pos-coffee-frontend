@@ -1,7 +1,7 @@
 // LOCAL-IMPORTS
 import TabListSection from '../components/sections/TabList';
-import MenuItemContent from '../components/sections/TransaksiTab/MenuTransaksiContent';
-import CartItemContent from '../components/sections/TransaksiTab/CartItemContent';
+import MenuItemContent from '../components/sections/TransaksiTab/Menu/MenuTransaksiContent';
+import CartItemContent from '../components/sections/TransaksiTab/Cart/CartItemContent';
 import RiwayatPesananContent from '../components/sections/RiwayatPesananContent';
 import StatistikPesananContent from '../components/sections/StatistikPesananContent';
 import ManagementMenuContent from '../components/sections/MenuTab/ManagementMenuContent';
@@ -36,12 +36,9 @@ const KasirDashboardContainer = () => {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <TabListSection />
-      {/* Keranjang Tab */}
       <TabsContent value="transaksi">
         <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
-          {/* Menu Items */}
           <MenuItemContent />
-          {/* Cart */}
           <CartItemContent />
         </div>
       </TabsContent>

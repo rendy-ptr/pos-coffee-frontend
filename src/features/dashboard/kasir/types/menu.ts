@@ -11,3 +11,8 @@ export interface MenuWithCategory {
     icon: string;
   };
 }
+
+export interface MenuWithStockInfo extends MenuWithCategory {
+  remainingStock: number;
+  isOutOfStock: boolean;
+}
