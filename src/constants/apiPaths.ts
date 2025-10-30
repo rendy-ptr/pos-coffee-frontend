@@ -20,6 +20,7 @@ export const API_PATHS = {
     MENU: (id?: string) => (id ? `/kasir/menu/${id}` : `/kasir/menu`),
     CATEGORY: (id?: string) =>
       id ? `/kasir/category/${id}` : `/kasir/category`,
+    TABLE: (id?: string) => (id ? `/kasir/table/${id}` : `/kasir/table`),
     ORDER: (id?: string) => (id ? `/kasir/order/${id}` : `/kasir/order`),
     ORDER_DETAIL: (id: string) => `/kasir/order/${id}/detail`,
   },

@@ -5,7 +5,7 @@ import CartItemContent from '../components/sections/TransaksiTab/Cart/CartItemCo
 import RiwayatPesananContent from '../components/sections/RiwayatPesananContent';
 import StatistikPesananContent from '../components/sections/StatistikPesananContent';
 import ManagementMenuContent from '../components/sections/MenuTab/ManagementMenuContent';
-import TableManager from '../components/sections/TableManager';
+import ManagementTableContent from '../components/sections/TableTab/ManagementTableContent';
 
 // HOOKS
 import { useState, useEffect } from 'react';
@@ -43,7 +43,6 @@ const KasirDashboardContainer = () => {
         </div>
       </TabsContent>
       <TabsContent value="riwayat-transaksi">
-        {/* Riwayat Transaksi dan Statistik */}
         <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-3">
           <RiwayatPesananContent />
           <StatistikPesananContent />
@@ -53,8 +52,7 @@ const KasirDashboardContainer = () => {
         <ManagementMenuContent />
       </TabsContent>
       <TabsContent value="kelola-meja">
-        {/* Konten untuk Kelola Meja */}
-        <TableManager />
+        <ManagementTableContent />
       </TabsContent>
     </Tabs>
   );
