@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ICustomerDashboardResponse } from '../features/dashboard/customer/types/CustomerDashboardResponse';
+import type { ICustomerDashboardResponse } from '../features/dashboard/customer/types/customer.type';
 
 interface CustomerStore {
   customerData: ICustomerDashboardResponse['data'] | null;

@@ -25,8 +25,19 @@ const CartItemContent = () => {
   const isCartEmpty = totalItems === 0;
 
   const handleCheckout = () => {
+    // Validate cart before checkout
+    if (isCartEmpty) {
+      return;
+    }
+
+    // Navigate to checkout page with cart data
     navigate('/dashboard/kasir/checkout', {
-      state: { cart, total: totalAmount },
+      state: {
+        cart,
+        totalAmount,
+        totalItems,
+        totalQuantity,
+      },
     });
   };
 

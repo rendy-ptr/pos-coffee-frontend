@@ -1,4 +1,4 @@
-import type { ICustomerDashboardResponse } from '../types/CustomerDashboardResponse';
+import type { ICustomerDashboardResponse } from '../types/customer.type';
 import type { ICustomerLogoutData } from '../types/logoutData';
 import apiClient from '@/utils/apiClient';
 import axios from 'axios';

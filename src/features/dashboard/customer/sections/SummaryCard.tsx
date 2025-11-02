@@ -1,6 +1,5 @@
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import MetricCard from '@/components/shared/MetricCard';
-import { customerData as mocks } from '../mocks/customer';
 import { useCustomerStore } from '@/store/customerStore';
 
 const SummaryCardSection = () => {
@@ -11,7 +10,7 @@ const SummaryCardSection = () => {
   const cardConfigs = [
     {
       title: 'Poin Loyalty',
-      value: customerData.loyaltyPoints,
+      value: customerData.customerProfile.loyaltyPoints,
       subtext: '+73 poin minggu ini',
       Icon: Star,
       gradient: 'bg-gradient-to-r from-[#6f4e37] to-[#8b5e3c]',
@@ -20,7 +19,7 @@ const SummaryCardSection = () => {
     },
     {
       title: 'Total Pesanan',
-      value: mocks.totalOrders,
+      value: 0,
       subtext: '+3 pesanan bulan ini',
       Icon: Coffee,
       gradient: 'bg-gradient-to-r from-[#8c7158] to-[#a08b7a]',
@@ -29,7 +28,7 @@ const SummaryCardSection = () => {
     },
     {
       title: 'Menu Favorit',
-      value: mocks.favoriteOrder,
+      value: 'testing',
       subtext: 'Dipesan 12 kali',
       Icon: Heart,
       gradient: 'bg-gradient-to-r from-[#a66a4c] to-[#c17a5d]',

@@ -2,6 +2,7 @@ import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import { useAdminDashboard } from '@/features/dashboard/admin/hooks/admin.hook';
 import HeaderAdmin from '@/features/dashboard/admin/components/sections/Header/AdminHeader';
 import { Outlet } from 'react-router-dom';
+import CoffeeErrorAnimation from '@/components/shared/CoffeeErrorAnimation';
 
 const AdminLayout = () => {
   const { isLoading, isError, error } = useAdminDashboard(true);
@@ -21,9 +22,14 @@ const AdminLayout = () => {
           />
         )}
         {isError && (
-          <p className="flex min-h-screen items-center justify-center text-center text-sm text-red-500">
-            {(error as Error).message}
-          </p>
+          <CoffeeErrorAnimation
+            title="Error Loading Dashboard"
+            messages={[
+              'Failed to load dashboard',
+              'Unable to fetch data',
+              error?.message || 'An unexpected error occurred',
+            ]}
+          />
         )}
         <Outlet />
       </div>

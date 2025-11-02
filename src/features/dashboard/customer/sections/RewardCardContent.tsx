@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/card';
 import RewardItemCustomer from '../components/RewardItemCustomer';
 import { availableRewards } from '../mocks/reward';
-import { customerData } from '../mocks/customer';
 import { TEXT_COLORS, CARD_STYLES, SHADOW_CARD_STYLE } from '@/constants/Style';
 
 const RewardCardContentSection = () => {
@@ -25,7 +24,7 @@ const RewardCardContentSection = () => {
             <RewardItemCustomer
               key={reward.id}
               reward={reward}
-              loyaltyPoints={customerData.loyaltyPoints}
+              loyaltyPoints={0}
             />
           ))}
         </div>

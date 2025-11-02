@@ -7,7 +7,6 @@ import {
 } from '@/components/ui/card';
 import { lucideIcons } from '@/icon/lucide-react-icons';
 import { useCustomerStore } from '@/store/customerStore';
-import { customerData as mocks } from '../mocks/customer';
 import { CARD_STYLES, TEXT_COLORS, SHADOW_CARD_STYLE } from '@/constants/Style';
 
 const CardCustomerSection = () => {
@@ -35,7 +34,7 @@ const CardCustomerSection = () => {
           <div className="grid grid-cols-2 gap-4 md:block md:space-y-4">
             <div className="text-center">
               <div className={`text-xl md:text-2xl ${TEXT_COLORS.bold}`}>
-                {customerData.loyaltyPoints}
+                {customerData.customerProfile.loyaltyPoints}
               </div>
               <div className={`text-xs md:text-sm ${TEXT_COLORS.secondary}`}>
                 Poin Loyalty
@@ -45,7 +44,7 @@ const CardCustomerSection = () => {
               <div
                 className={`text-lg font-semibold md:text-lg ${TEXT_COLORS.primary}`}
               >
-                {mocks.totalOrders}
+                {0}
               </div>
               <div className={`text-xs md:text-sm ${TEXT_COLORS.secondary}`}>
                 Total Pesanan
@@ -59,7 +58,7 @@ const CardCustomerSection = () => {
             <div
               className={`text-xs font-medium md:text-sm ${TEXT_COLORS.primary}`}
             >
-              {mocks.nextReward}
+              {0}
             </div>
           </div>
         </CardContent>

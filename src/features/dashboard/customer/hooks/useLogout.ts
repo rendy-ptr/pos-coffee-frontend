@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCustomerStore } from '@/store/customerStore';
-import { logout } from '../services/api';
+import { logout } from '../services/customer.service';
 import type { ICustomerLogoutData } from '../types/logoutData';
 
 export function useLogout() {

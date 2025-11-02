@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { fetchCustomerDashboard } from '../services/api';
+import { fetchCustomerDashboard } from '../services/customer.service';
 import { useCustomerStore } from '@/store/customerStore';
 
 export const useCustomerDashboard = (enabled: boolean) => {

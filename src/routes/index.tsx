@@ -14,6 +14,7 @@ import AdminRootPage from '@/pages/dashboard/admin/AdminRootPage';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import AdminCategoryPage from '@/pages/dashboard/admin/AdminCategoryPage';
 import AdminSettingPage from '@/pages/dashboard/admin/AdminSettingPage';
+import KasirCheckoutPage from '@/pages/dashboard/kasir/KasirCheckoutPage';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -71,12 +72,12 @@ const router = createBrowserRouter([
                 index: true,
                 element: <KasirPage />,
               },
+              {
+                path: 'checkout',
+                element: <KasirCheckoutPage />,
+              },
             ],
           },
-          // {
-          //   path: 'checkout',
-          //   element: <KasirDetailCheckout />,
-          // },
         ],
       },
       {

@@ -6,13 +6,11 @@ import TabListSection from '../sections/TabList';
 import OrderHistoryContentSection from '../sections/OrderHistoryCardContent';
 import FavoriteCardContentSection from '../sections/FavoriteCardContent';
 import RewardCardContentSection from '../sections/RewardCardContent';
-import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 
 // HOOKS
 import { useState, useEffect } from 'react';
 import { useToast } from '@/components/shared/ToastProvider';
 import { useCustomerStore } from '@/store/customerStore';
-import { useCustomerDashboard } from '../hooks/useCustomerDashboard';
 
 // THIRD-PARTY
 import { Tabs, TabsContent } from '@/components/ui/tabs';
@@ -23,33 +21,17 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 
 const CustomerDashboardContainer = () => {
   const [activeTab, setActiveTab] = useState('ringkasan');
-  const {
-    data: queryData,
-    isLoading,
-    isError,
-    error,
-  } = useCustomerDashboard(true);
   const { customerData } = useCustomerStore();
   const { addToast } = useToast();
-
-  const data = queryData?.data || customerData;
 
   useEffect(() => {
     const alreadyShown = localStorage.getItem('welcomeShown');
 
-    if (data?.name && !alreadyShown) {
-      addToast(`Selamat datang, ${data.name}!`, 'info', 5000);
+    if (customerData?.name && !alreadyShown) {
+      addToast(`Selamat datang, ${customerData.name}!`, 'info', 5000);
       localStorage.setItem('welcomeShown', 'true');
     }
-  }, [data, addToast]);
-
-  if (isLoading) return <CoffeeLoadingAnimation />;
-
-  if (isError) {
-    const message =
-      error instanceof Error ? error.message : 'Terjadi kesalahan';
-    addToast(message, 'error', 3000);
-  }
+  }, [customerData, addToast]);
 
   return (
     <div className="grid grid-cols-1 gap-4 md:gap-8 lg:grid-cols-4">
