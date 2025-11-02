@@ -76,6 +76,7 @@ export const MemberIdAutocomplete = ({
 
     setSearchTerm(value);
     setValue('memberId', value);
+    setValue('customerName', '');
     setShowSuggestions(value.length > PREFIX.length);
   };
 
@@ -109,15 +110,17 @@ export const MemberIdAutocomplete = ({
     }
   };
 
-  const handleSelectSuggestion = (memberId: string) => {
+  const handleSelectSuggestion = (memberId: string, memberName: string) => {
     setSearchTerm(memberId);
     setValue('memberId', memberId);
+    setValue('customerName', memberName);
     setShowSuggestions(false);
   };
 
   const handleClear = () => {
     setSearchTerm(PREFIX);
     setValue('memberId', PREFIX);
+    setValue('customerName', '');
     setShowSuggestions(false);
     inputRef.current?.focus();
   };
@@ -169,7 +172,12 @@ export const MemberIdAutocomplete = ({
                 <button
                   key={member.id}
                   type="button"
-                  onClick={() => handleSelectSuggestion(member.memberId || '')}
+                  onClick={() =>
+                    handleSelectSuggestion(
+                      member.memberId || '',
+                      member.name || ''
+                    )
+                  }
                   className="w-full border-b border-[#e6d9c9] px-4 py-2 text-left transition-colors last:border-b-0 hover:bg-[#f5f0ea]"
                 >
                   <div className="text-sm font-medium text-[#8b5e3c]">
