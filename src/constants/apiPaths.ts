@@ -21,6 +21,7 @@ export const API_PATHS = {
     CATEGORY: (id?: string) =>
       id ? `/kasir/category/${id}` : `/kasir/category`,
     TABLE: (id?: string) => (id ? `/kasir/table/${id}` : `/kasir/table`),
+    MEMBER_ID: (id?: string) => (id ? `/kasir/member/${id}` : `/kasir/member`),
     ORDER: (id?: string) => (id ? `/kasir/order/${id}` : `/kasir/order`),
     ORDER_DETAIL: (id: string) => `/kasir/order/${id}/detail`,
   },

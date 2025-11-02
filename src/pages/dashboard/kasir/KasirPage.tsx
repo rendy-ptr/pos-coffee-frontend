@@ -1,4 +1,4 @@
-import KasirDashboardContainer from '@/features/dashboard/kasir/container';
+import KasirDashboardContainer from '@/features/dashboard/kasir/pages';
 
 const KasirPage = () => {
   return <KasirDashboardContainer />;

@@ -1,14 +1,4 @@
-export interface ICustomerData {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  isActive: boolean;
-  profilePicture?: string;
-  phone?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { IUserData } from '@/types/user.type';
 
 export interface ICustomerProfileData {
   id: string;
@@ -19,7 +9,7 @@ export interface ICustomerProfileData {
 export interface ICustomerDashboardResponse {
   success: boolean;
   message: string;
-  data: ICustomerData & {
+  data: IUserData & {
     customerProfile: ICustomerProfileData;
   };
 }

@@ -1,7 +1,12 @@
 import apiClient from '@/utils/apiClient';
-import type { IKasirDashboardResponse, IKasirLogoutData } from '../types/kasir';
+import type {
+  IKasirDashboardResponse,
+  IKasirLogoutData,
+  IMemberIdData,
+} from '../types/kasir';
 import axios from 'axios';
 import { API_PATHS } from '@/constants/apiPaths';
+import type { ApiResponse } from '@/types/ApiResponse';
 
 export const fetchKasirDashboard = async (
   signal?: AbortSignal
@@ -45,5 +50,16 @@ export const logout = async (): Promise<IKasirLogoutData> => {
     throw new Error(data.message);
   }
 
+  return data;
+};
+
+export const fetchMemberId = async (
+  searchQuery?: string
+): Promise<ApiResponse<IMemberIdData[]>> => {
+  const url = searchQuery
+    ? `${API_PATHS.KASIR.MEMBER_ID()}?q=${encodeURIComponent(searchQuery)}`
+    : API_PATHS.KASIR.MEMBER_ID();
+
+  const { data } = await apiClient.get<ApiResponse<IMemberIdData[]>>(url);
   return data;
 };

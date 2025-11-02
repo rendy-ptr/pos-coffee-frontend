@@ -1,6 +1,6 @@
 import CoffeeLoadingAnimation from '@/components/shared/CoffeeLoadingAnimation';
 import { useKasirDashboard } from '@/features/dashboard/kasir/hooks/kasir.hook';
-import KasirHeader from '@/features/dashboard/kasir/components/sections/Header/KasirHeader';
+import KasirHeader from '@/features/dashboard/kasir/components/index-components/sections/Header/KasirHeader';
 import { Outlet } from 'react-router-dom';
 
 const KasirLayout = () => {

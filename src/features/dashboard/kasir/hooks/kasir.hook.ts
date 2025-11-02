@@ -1,9 +1,14 @@
 import { useKasirStore } from '@/store/kasirStore';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { fetchKasirDashboard, logout } from '../services/kasir.service';
 import { useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  fetchKasirDashboard,
+  logout,
+  fetchMemberId,
+} from '../services/kasir.service';
 import axios from 'axios';
-import type { IKasirLogoutData } from '../types/kasir';
+import type { IKasirLogoutData, IMemberIdData } from '../types/kasir';
+import type { ApiResponse } from '@/types/ApiResponse';
 
 export const useKasirDashboard = (enabled: boolean) => {
   const { setKasirData, clearKasirData } = useKasirStore();
@@ -59,3 +64,19 @@ export function useLogout() {
     doLogout: mutation.mutateAsync,
   };
 }
+
+export const useMemberId = (searchQuery?: string) => {
+  const query = useQuery<ApiResponse<IMemberIdData[]>>({
+    queryKey: ['memberId', searchQuery],
+    queryFn: () => fetchMemberId(searchQuery),
+    enabled: (searchQuery?.length ?? 0) >= 2,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return {
+    memberIds: query.data?.data ?? [],
+    isLoading: query.isLoading,
+    isError: query.isError,
+    error: query.error,
+  };
+};
