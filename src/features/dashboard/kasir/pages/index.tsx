@@ -19,7 +19,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 
 // TYPES
 
-const KasirDashboardContainer = () => {
+const KasirDashboardIndex = () => {
   const [activeTab, setActiveTab] = useState('transaksi');
   const { addToast } = useToast();
   const { kasirData } = useKasirStore();
@@ -58,4 +58,4 @@ const KasirDashboardContainer = () => {
   );
 };
 
-export default KasirDashboardContainer;
+export default KasirDashboardIndex;

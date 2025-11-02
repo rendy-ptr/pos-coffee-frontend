@@ -13,6 +13,8 @@ import {
 } from '../schema/admin.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo } from 'react';
+import { SETTING_STYLES } from '../constant/setting.constant';
 
 export const useAdminDashboard = (enabled: boolean) => {
   const { setAdminData, clearAdminData } = useAdminStore();
@@ -84,4 +86,20 @@ export const useUpdateAdminProfileForm = () => {
     },
   });
   return methods;
+};
+
+export const useSettingStyles = () => {
+  const styles = useMemo(
+    () => ({
+      input: SETTING_STYLES.input,
+      inputWithIcon: SETTING_STYLES.inputWithIcon,
+      card: SETTING_STYLES.card,
+      sectionLabel: SETTING_STYLES.sectionLabel,
+      summaryPill: SETTING_STYLES.summaryPill,
+      container: SETTING_STYLES.container,
+    }),
+    []
+  );
+
+  return styles;
 };

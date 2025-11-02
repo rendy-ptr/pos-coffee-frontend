@@ -8,13 +8,13 @@ import CustomerLayout from '@/layouts/dashboard/customer/CustomerLayout';
 import CustomerPage from '@/pages/dashboard/customer/CustomerPage';
 import CustomerSettings from '@/pages/dashboard/customer/CustomerSettingPage';
 import KasirLayout from '@/layouts/dashboard/kasir/KasirLayout';
-import KasirPage from '@/pages/dashboard/kasir/KasirPage';
 import AdminLayout from '@/layouts/dashboard/admin/AdminLayout';
-import AdminRootPage from '@/pages/dashboard/admin/AdminRootPage';
 import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
-import AdminCategoryPage from '@/pages/dashboard/admin/AdminCategoryPage';
-import AdminSettingPage from '@/pages/dashboard/admin/AdminSettingPage';
+import AdminCategoryPage from '@/features/dashboard/admin/pages/category';
+import AdminSettingPage from '@/features/dashboard/admin/pages/setting';
 import KasirCheckoutPage from '@/features/dashboard/kasir/pages/checkout';
+import KasirDashboardIndex from '@/features/dashboard/kasir/pages';
+import AdminDashboardIndex from '@/features/dashboard/admin/pages';
 // import KasirDetailCheckout from '@/pages/dashboard/kasir/KasirDetailCheckout';
 
 const router = createBrowserRouter([
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <KasirPage />,
+                element: <KasirDashboardIndex />,
               },
               {
                 path: 'checkout',
@@ -89,7 +89,7 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <AdminRootPage />,
+                element: <AdminDashboardIndex />,
               },
               {
                 path: 'kategori',

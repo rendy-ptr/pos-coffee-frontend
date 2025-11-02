@@ -16,6 +16,7 @@ import {
 } from '../schema/category.schema';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMemo, useState } from 'react';
 
 export const useFetchCategories = () => {
   const query = useQuery<ApiResponse<BaseCategory[]>>({
@@ -109,4 +110,55 @@ export const useUpdateCategoryForm = () => {
     mode: 'onBlur',
   });
   return methods;
+};
+
+export interface FilterOption {
+  value: string;
+  label: string;
+}
+
+export const FILTER_OPTIONS: FilterOption[] = [
+  { value: 'semua', label: 'Semua' },
+  { value: 'aktif', label: 'Kategori Aktif' },
+  { value: 'tidakAktif', label: 'Kategori Tidak Aktif' },
+];
+
+export const useCategoryFilter = (categories: BaseCategory[]) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('semua');
+
+  const stats = useMemo(
+    () => ({
+      total: categories.length,
+      active: categories.filter(c => c.isActive).length,
+      inactive: categories.filter(c => !c.isActive).length,
+    }),
+    [categories]
+  );
+
+  const filteredCategories = useMemo(() => {
+    return categories.filter(category => {
+      const matchesSearch = searchTerm
+        ? category.name.toLowerCase().includes(searchTerm.toLowerCase())
+        : true;
+
+      const matchesFilter =
+        selectedFilter === 'semua'
+          ? true
+          : selectedFilter === 'aktif'
+            ? category.isActive === true
+            : category.isActive === false;
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [categories, searchTerm, selectedFilter]);
+
+  return {
+    searchTerm,
+    setSearchTerm,
+    selectedFilter,
+    setSelectedFilter,
+    filteredCategories,
+    stats,
+  };
 };
